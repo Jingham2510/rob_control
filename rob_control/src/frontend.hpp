@@ -21,7 +21,18 @@
 
 namespace frontend {
 
-	void setup_landing_page(bool*, std::vector<std::vector<std::string>>);
+	//Flag vector accessor
+	enum page_flag {
+		LANDING = 0,
+		ABB_LOGIN = 1
+	};
+
+
+
+	void landing_page(std::vector<bool *>, std::vector<std::string>);
+
+
+	void ABB_landing_page(std::vector<bool *>, std::vector<std::vector<std::string>>);
 
 	void load_configs(std::vector<std::vector<std::string>>*);
 

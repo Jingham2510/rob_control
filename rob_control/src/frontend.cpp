@@ -3,9 +3,40 @@
 
 
 
+
+
+
+
+void frontend::landing_page(std::vector<bool *> page_flags, std::vector<std::string> modules) {
+
+
+    std::vector<enum frontend::page_flag> flag_list = { ABB_LOGIN };
+
+    //Create the window
+    ImGui::Begin("Robo Connect");
+
+    //Display the welcome text
+    ImGui::Text("Please select a robot brand:");
+
+    //Create the robot brand buttons
+    for (int i = 0; i < modules.size(); i++) {
+        if (ImGui::Button(modules[i].c_str())) {
+            *page_flags[flag_list[i]] = true;
+            *page_flags[LANDING] = false;
+
+        }
+    }
+
+    ImGui::End();
+
+}
+
+
+
 //Creates the ip preset buttons
 void load_ip_presets(std::vector<std::vector<std::string>> ip_presets, std::string* ip, std::string* port) {
 
+    
     //Create a button for every preset
     for (int i = 0; i < ip_presets.size(); i++) {
 
@@ -14,7 +45,13 @@ void load_ip_presets(std::vector<std::vector<std::string>> ip_presets, std::stri
             *ip = ip_presets[i][1];
             *port = ip_presets[i][2];
         }
+        //Ensures preset buttons on same line
+        ImGui::SameLine();
+        
     }
+
+    //Start new lines for next bits
+    ImGui::NewLine();
 
 
 }
@@ -22,7 +59,7 @@ void load_ip_presets(std::vector<std::vector<std::string>> ip_presets, std::stri
 
 //Landing page for the robot controller
 // *page_flag is an externally passed flag that the main loop uses to determine whether to render the page or not
-void frontend::setup_landing_page(bool *page_flag, std::vector<std::vector<std::string>> ip_presets) {
+void frontend::ABB_landing_page(std::vector<bool*> page_flags, std::vector<std::vector<std::string>> ip_presets) {
 
     static std::string ip;
     static std::string port;
@@ -30,11 +67,9 @@ void frontend::setup_landing_page(bool *page_flag, std::vector<std::vector<std::
 
     //Create the login window
     ImGui::Begin("ABB Connect");
+  
 
-    //WILL REQUIRE FORMATTING LATER - FUNCIONALITY FIRST
-
-
-    //Setup the landing page
+    //Setup the ABB connect page
 
     //Display the welcome text
     ImGui::Text("Please enter the IP and Port!");
@@ -49,8 +84,13 @@ void frontend::setup_landing_page(bool *page_flag, std::vector<std::vector<std::
 
     //Connection Button
     if (ImGui::Button("Connect")) {
-        std::cout << ip << "\n";
-        *page_flag = false;
+        *page_flags[ABB_LOGIN] = false;
+    }
+
+    //Back button
+    if (ImGui::Button("Back")) {
+        *page_flags[ABB_LOGIN] = false;
+        *page_flags[LANDING] = true;
     }
 
 
@@ -82,23 +122,19 @@ void frontend::load_configs(std::vector<std::vector<std::string>> *ip_presets)
     //Iterate line by line 
     while (std::getline(file, curr_line)) {
 
-        std::cout << curr_line << "\n";
 
         int i = 0;
 
-        //Find the next comma
+        //Find the next comma 
         while ((comma_pos = curr_line.find(delimiter)) != std::string::npos) {
 
             if (i == 0) {
-                //Extract the info - keep unwrapped for now
                 name = curr_line.substr(0, comma_pos);
             }
 
             if (i == 1) {
                 ip = curr_line.substr(0, comma_pos);
-            }
-
-    
+            }   
 
             //Erase the bit already stored
             curr_line.erase(0, comma_pos + delimiter.length());
@@ -106,16 +142,11 @@ void frontend::load_configs(std::vector<std::vector<std::string>> *ip_presets)
             i = i + 1;
         }
 
+        //format of the config allows us to know that only the port is left
         port = curr_line;
 
         //Save the preset
         ip_presets->push_back({ name, ip, port });
     }
-
-
-
-
-
-
 }
 

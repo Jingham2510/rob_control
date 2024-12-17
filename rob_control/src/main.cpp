@@ -1,10 +1,5 @@
-// Dear ImGui: standalone example application for DirectX 12
-
-// Learn about Dear ImGui:
-// - FAQ                  https://dearimgui.com/faq
-// - Getting Started      https://dearimgui.com/getting-started
-// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
-// - Introduction, links and more at the top of imgui.cpp
+//ImGui gui for Robot Connection and Control
+//Boilerplate code taken from DX12 example
 
 #include"frontend.hpp"
 #include "imgui.h"
@@ -115,9 +110,9 @@ int main(int, char**)
 {
     // Create application window
     //ImGui_ImplWin32_EnableDpiAwareness();
-    WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
+    WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"Robo Control", nullptr };
     ::RegisterClassExW(&wc);
-    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX12 Example", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
+    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Robo Control", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
 
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
@@ -162,15 +157,22 @@ int main(int, char**)
         
     //Page flags
     bool landing_page_flag = true;
+    bool ABB_login_page_flag = false;
+
+
+
+
+    std::vector<bool *> page_flags = {&landing_page_flag, &ABB_login_page_flag};
     
     
     
     //Config settings
-    std::vector<std::vector<std::string>> ip_presets;
+    std::vector<std::vector<std::string>> ABB_ip_presets;
+    std::vector<std::string> enabled_modules = {"ABB"};
 
 
     //Load config
-    frontend::load_configs(&ip_presets);
+    frontend::load_configs(&ABB_ip_presets);
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -206,8 +208,14 @@ int main(int, char**)
 
 
         //------CUSTOM BITS
+
+        //Check which page to load
         if (landing_page_flag) {
-            frontend::setup_landing_page(&landing_page_flag, ip_presets);
+            frontend::landing_page(page_flags, enabled_modules);
+        }
+
+        if (ABB_login_page_flag) {
+            frontend::ABB_landing_page(page_flags, ABB_ip_presets);
         }
             
 
