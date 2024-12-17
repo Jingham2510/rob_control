@@ -24,17 +24,20 @@ namespace frontend {
 	//Flag vector accessor
 	enum page_flag {
 		LANDING = 0,
-		ABB_LOGIN = 1
+		ABB_LOGIN = 1,
+		ABB_MAIN = 2
 	};
 
 
 
-	void landing_page(std::vector<bool *>, std::vector<std::string>);
+	void load_configs(std::vector<std::vector<std::string>>*);
 
+	void landing_page(std::vector<bool *>, std::vector<std::string>);
 
 	void ABB_landing_page(std::vector<bool *>, std::vector<std::vector<std::string>>);
 
-	void load_configs(std::vector<std::vector<std::string>>*);
+	void ABB_control_page(std::vector<bool *>, std::string, int);
+
 
 }
 

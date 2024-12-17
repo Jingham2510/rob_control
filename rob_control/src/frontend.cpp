@@ -150,3 +150,15 @@ void frontend::load_configs(std::vector<std::vector<std::string>> *ip_presets)
     }
 }
 
+
+//Connects to and controls an ABB robot at a given ip and port
+void frontend::ABB_control_page(std::vector<bool*> page_flags, std::string ip, int port) {
+
+    //Attempt to connect to the robot
+
+
+    //Create the robot model as well
+
+
+}
+
