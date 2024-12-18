@@ -78,6 +78,8 @@ RobotDH::RobotDH(std::string model_name) {
 
             //Get the link info from the line
             getline(file, curr_line);
+
+            std::cout << curr_line << "\n";
             
             //Split the link info by the delimiter ","
             str_pos = 0;
@@ -140,13 +142,15 @@ void RobotDH::calc_transform(){
 
     //Iterate through the links   - start one later
     for (int i = 1; i < n_of_links; i++){
-        //std::cout << link_list.at(i).get_hg();
-        //std::cout << "\n";
+        std::cout << "----------LINK " << i << "-----------" << "\n";
+
+        std::cout << link_list.at(i).get_hg();
+        std::cout << "\n";
 
         trans_mat = trans_mat * link_list.at(i).get_hg();
 
-        //std::cout << trans_mat;
-        //std::cout << "\n";
+        std::cout << trans_mat;
+        std::cout << "\n";
 
     }
 }
