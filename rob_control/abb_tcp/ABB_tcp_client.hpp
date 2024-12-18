@@ -1,20 +1,27 @@
-#include <winsock2.h>
-#include<WS2tcpip.h>
+#pragma once
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#include <WinSock2.h>
 #include <string>
 #include <vector>
+
+//Relevant winsock library
+#pragma comment(lib, "ws2_32.lib")
+
 
 #ifndef ABB_TCP_CLIENT 
 #define ABB_TCP_CLIENT
 
 
-//Relevant winsock library
-#pragma comment(lib, "ws2_32.lib")
 
 //Definition of the ABB-http client 
 class ABB_tcp_client{
     public:
+
+        //default
+        ABB_tcp_client();
+
         //Creates the http client and auto connects to the socket
-        ABB_tcp_client(const char *, int);
+        ABB_tcp_client(const char *, int, bool *);
 
         //connection test - sends an echo request to the server and times it 
         float ping();
@@ -28,11 +35,29 @@ class ABB_tcp_client{
         //Get the robots current xyz pos
         std::string get_xyz();
 
+        //Get the robots model
+        std::string get_model();
+
 
         //Closes the connection
         void close_connection();
 
     private:
+
+
+
+        //FLAGS
+
+        //Connection flag (supplied externally)
+        bool* connected;
+
+        //startup flags
+        bool wsa_flag = false;
+        bool sock_flag = false;
+
+
+
+
         //Windows socket data
         WSADATA wsa;
         //ABB server socket

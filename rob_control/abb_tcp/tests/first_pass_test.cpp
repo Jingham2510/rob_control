@@ -112,7 +112,9 @@ int first_pass() {
 	//Connect to the ABB robot
 	//ABB_tcp_client client = ABB_tcp_client("192.168.125.1", 8888);
 
-	ABB_tcp_client client = ABB_tcp_client("127.0.0.1", 8888);
+	bool connected = false;
+
+	ABB_tcp_client client = ABB_tcp_client("127.0.0.1", 8888, &connected);
 
 	//Move the robot to the starting position - checked manually for now
 	client.set_joints({-20.01, 58.59, 46.97, 4.81, 43.57, -32.28});

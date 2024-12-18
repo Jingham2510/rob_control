@@ -4,28 +4,61 @@
 #include<sstream>
 
 
+
+ABB_tcp_client::ABB_tcp_client() {
+
+}
+
+
 //Creates and connects to the ABB http socket
-ABB_tcp_client::ABB_tcp_client(const char *client_ip, int client_port){
+ABB_tcp_client::ABB_tcp_client(const char *client_ip, int client_port, bool *connect_flag){
 
 
     ip = client_ip;
     port = client_port;
+    connected = connect_flag;
+
+ 
 
 
-    //Initialise the WSA routines
-    std::cout << "Starting client..." << "\n";
+    //Only inisitalise WSA once
+    if (!wsa_flag) {
 
-    if (WSAStartup(MAKEWORD(2,2), &wsa) !=0){
-        std::cout << "Startup failed. ERR: " << WSAGetLastError() << "\n";
+        //Initialise the WSA routines
+        std::cout << "Starting client..." << "\n";
+
+        if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+            std::cout << "Startup failed. ERR: " << WSAGetLastError() << "\n";
+            *connected = false;
+        }
+
+        else {
+            wsa_flag = true;
+            std::cout << "Client started" << "\n";
+        }
+        
     }
 
-    std::cout << "Client started" << "\n";
+    
 
-    //Create the socket
-    create_sock();
+    //If the robot successfully connects
+    if(wsa_flag){        
 
-    //Connect to the server
-    connect_to_ABB();
+        *connect_flag = true;
+        
+
+        if (!sock_flag)
+        {
+            //Create the socket
+            create_sock();
+        }
+
+        //Only try to connect if the socket connected
+        if (*connected) {
+            //Connect to the server
+            connect_to_ABB();
+        }
+    }
 
 
 }
@@ -42,10 +75,12 @@ void ABB_tcp_client::create_sock(){
     if((sock = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET){
 
         std::cout << "Socket Creation Failed: " << WSAGetLastError();
+        *connected = false;
 
     }
 
     else{
+        sock_flag = true;
         std::cout << "Socket created" << "\n";
     }
 }
@@ -57,8 +92,8 @@ void ABB_tcp_client::connect_to_ABB(){
     std::cout << "Connecting to server..." << "\n";
 
     //Setup the server struct
-    inet_pton(AF_INET, ip, &ABB_server.sin_addr);
-
+    ABB_server.sin_addr.s_addr = inet_addr(ip);
+    //InetPton(AF_INET, ip, &ABB_server.sin_addr.s_addr);
     ABB_server.sin_family = AF_INET;    
     ABB_server.sin_port = htons(8888);
 
@@ -67,6 +102,7 @@ void ABB_tcp_client::connect_to_ABB(){
     if(connect(sock, (struct sockaddr*) &ABB_server, sizeof(ABB_server)) < 0){
 
         std::cout << "Connection error: " << WSAGetLastError() << "\n";
+        *connected = false;
 
     }
     else{
@@ -222,6 +258,13 @@ std::string ABB_tcp_client::get_xyz() {
 
     return recieve();
 
+}
+
+std::string ABB_tcp_client::get_model() {
+    //Send the model request command
+    request("RMDL:0");
+
+    return recieve();
 }
 
 //Takes in a vector of floats then returns it as a string - comma seperated

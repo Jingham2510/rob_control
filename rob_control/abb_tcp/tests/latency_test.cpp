@@ -17,7 +17,9 @@ int  latency_test(){
 
     //ABB_tcp_client client = ABB_tcp_client("192.168.125.1", 8888);
 
-    ABB_tcp_client client = ABB_tcp_client("127.0.0.1", 8888);
+    bool connected = false;
+
+    ABB_tcp_client client = ABB_tcp_client("127.0.0.1", 8888, &connected);
 
 
     std::vector<float> times;

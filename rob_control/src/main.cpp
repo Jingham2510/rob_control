@@ -1,6 +1,7 @@
 //ImGui gui for Robot Connection and Control
 //Boilerplate code taken from DX12 example
 
+
 #include"frontend.hpp"
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -152,29 +153,16 @@ int main(int, char**)
     init_info.SrvDescriptorAllocFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle) { return g_pd3dSrvDescHeapAlloc.Alloc(out_cpu_handle, out_gpu_handle); };
     init_info.SrvDescriptorFreeFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle) { return g_pd3dSrvDescHeapAlloc.Free(cpu_handle, gpu_handle); };
     ImGui_ImplDX12_Init(&init_info);
-
-
-        
-    //Page flags
-    bool landing_page_flag = true;
-    bool ABB_login_page_flag = false;
-
-
-
-
-    std::vector<bool *> page_flags = {&landing_page_flag, &ABB_login_page_flag};
     
+
+    //Create the GUI controller
+    frontend_cntrl gui_cntrl = frontend_cntrl::frontend_cntrl();
     
-    
-    //Config settings
-    std::vector<std::vector<std::string>> ABB_ip_presets;
-    std::vector<std::string> enabled_modules = {"ABB"};
 
-
-    //Load config
-    frontend::load_configs(&ABB_ip_presets);
-
+    //Colours definition
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+
 
     // Main loop
     bool done = false;
@@ -210,13 +198,24 @@ int main(int, char**)
         //------CUSTOM BITS
 
         //Check which page to load
-        if (landing_page_flag) {
-            frontend::landing_page(page_flags, enabled_modules);
+        if (gui_cntrl.landing_page_flag) {
+            gui_cntrl.landing_page();
         }
 
-        if (ABB_login_page_flag) {
-            frontend::ABB_landing_page(page_flags, ABB_ip_presets);
+        if (gui_cntrl.ABB_login_page_flag) {
+            gui_cntrl.ABB_landing_page();
         }
+
+        if (gui_cntrl.ABB_control_page_flag) {
+            gui_cntrl.ABB_control_page();
+        }
+
+        if (gui_cntrl.err_page_flag) {
+            gui_cntrl.error_page();
+        }
+
+
+
             
 
 
@@ -264,7 +263,13 @@ int main(int, char**)
         frameCtx->FenceValue = fenceValue;
     }
 
+
     WaitForLastSubmittedFrame();
+
+
+ 
+
+
 
     // Cleanup
     ImGui_ImplDX12_Shutdown();
