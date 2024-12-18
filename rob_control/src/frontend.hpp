@@ -38,6 +38,9 @@ public:
 	bool ABB_login_page_flag;
 	bool ABB_control_page_flag;
 
+	//Close window flag
+	bool not_close_window = true;
+
 
 
 

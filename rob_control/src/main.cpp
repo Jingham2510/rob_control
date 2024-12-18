@@ -261,6 +261,14 @@ int main(int, char**)
         g_pd3dCommandQueue->Signal(g_fence, fenceValue);
         g_fenceLastSignaledValue = fenceValue;
         frameCtx->FenceValue = fenceValue;
+
+
+        //If the window has been closed
+        if (!gui_cntrl.not_close_window) {
+            done = true;
+        }
+
+
     }
 
 
@@ -268,7 +276,7 @@ int main(int, char**)
 
 
  
-
+    
 
 
     // Cleanup

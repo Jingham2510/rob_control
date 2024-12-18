@@ -32,7 +32,7 @@ void frontend_cntrl::landing_page() {
 
 
     //Create the window
-    ImGui::Begin("Robo Connect");
+    ImGui::Begin("Robo Connect", &not_close_window);
 
     //Display the welcome text
     ImGui::Text("Please select a robot brand:");
@@ -135,7 +135,7 @@ void frontend_cntrl::ABB_landing_page() {
 
 
     //Create the login window
-    ImGui::Begin("ABB Connect");
+    ImGui::Begin("ABB Connect", &not_close_window);
   
 
     //Setup the ABB connect page
@@ -181,7 +181,7 @@ void frontend_cntrl::ABB_landing_page() {
 void frontend_cntrl::ABB_control_page() {
 
 
-    ImGui::Begin("ABB Control");
+    ImGui::Begin("ABB Control", &not_close_window);
 
 
     if (!connected) {
@@ -204,7 +204,18 @@ void frontend_cntrl::ABB_control_page() {
 
 
 
+
+
+
+    //Ping button (placeholder)
+    if (ImGui::Button("PING!")) {
+        ABB_rob.ping();
+    }
+
+
+
     //Get the robot model
+
 
     //Create the mathematical model of the robot
 
@@ -219,7 +230,7 @@ void frontend_cntrl::ABB_control_page() {
 //Create an error box that takes the user back to the previous page 
 void frontend_cntrl::error_page() {
 
-    ImGui::Begin("ERROR");
+    ImGui::Begin("ERROR", &not_close_window);
 
     //Display the error message
     ImGui::Text(err_msg.msg.c_str());
