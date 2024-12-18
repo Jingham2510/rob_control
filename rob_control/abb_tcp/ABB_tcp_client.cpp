@@ -5,6 +5,7 @@
 
 
 
+
 ABB_tcp_client::ABB_tcp_client() {
 
 }
@@ -264,7 +265,12 @@ std::string ABB_tcp_client::get_model() {
     //Send the model request command
     request("RMDL:0");
 
-    return recieve();
+    std::string model = recieve();
+
+    //Strip the garbage data
+    model = model.substr(0, model.find("!"));
+
+    return model;
 }
 
 //Takes in a vector of floats then returns it as a string - comma seperated

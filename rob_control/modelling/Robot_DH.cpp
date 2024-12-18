@@ -1,5 +1,7 @@
 #include"Robot_DH.hpp"
-#include<iostream>
+
+
+
 
 
 RobotDH::RobotDH(std::vector<DHLink> links, std::vector<std::string> offsets){
@@ -24,6 +26,71 @@ RobotDH::RobotDH(std::vector<DHLink> links, std::vector<std::string> offsets){
     //Update the position and orientation
     update_pos_orient();
     
+}
+
+//Constructor when a model is provided
+RobotDH::RobotDH(std::string model_name) {
+
+    bool valid_model = false;
+    int model_pos;
+
+    //See if the model is valid
+    for (int i = 0; i < VALID_MODELS.size(); i++) {
+        if (model_name == VALID_MODELS[i]) {
+            valid_model = true;
+            model_pos = i;
+            break;
+        }
+    }
+
+
+    //Check that the model is valid
+    if (valid_model) {        
+
+        std::cout << "Valid model: " << model_pos << "\n";
+        
+        //Load the models info
+        std::ifstream file("models/" + MODEL_FILENAMES[model_pos]);
+        std::string curr_line;
+
+        //check the number of links - stored on the first line 
+        getline(file, curr_line);
+
+        n_of_links = std::stoi(curr_line);
+
+        std::cout << n_of_links << "\n";
+
+
+        //Iterate through N link lines
+
+
+        //Read the coupling offset config
+
+
+
+
+        //Close the file
+        file.close();
+
+
+        //Update the links and positions 
+        update_link_offsets();
+
+        update_pos_orient();
+
+
+    }
+
+    else if (model_name == "NA") {
+        //DO NOTHING - INITIALISING
+    }
+
+    else {
+        std::cout << "WARNING: INVALID MODEL" << "\n";
+    }
+
+
+
 }
 
 
@@ -89,12 +156,13 @@ void RobotDH::update_link_offsets(){
     //Check if offsets are coupled with other joints
     for(std::string c : offset_config){
 
-
+        //Positive coupling
         if (c.substr(0, 1).compare("p") == 0){    
 
             coupled_offsets.push_back(link_list.at(std::stoi(c.substr(1, c.size()))).get_theta());          
 
         }
+        //Negative Coupling
         else if (c.substr(0, 1).compare("m") == 0){
             coupled_offsets.push_back(-link_list.at(std::stoi(c.substr(1, c.size()))).get_theta());
             

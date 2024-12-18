@@ -2,6 +2,7 @@
 
 
 #include"../abb_tcp/ABB_tcp_client.hpp"
+#include"../modelling/Robot_DH.hpp"
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
@@ -13,6 +14,7 @@
 #include<iostream>
 #include<fstream>
 #include<vector>
+
 
 
 
@@ -42,17 +44,20 @@ public:
 	bool not_close_window = true;
 
 
-
-
-
+	//Constructor
 	frontend_cntrl();
 
+
+	//Opening page which shows vailable modules
 	void landing_page();
 
+	//ABB ip connection page
 	void ABB_landing_page();
-
+	//ABB robot control page
 	void ABB_control_page();
 
+
+	//Displays in case of an error
 	void error_page();
 
 		
@@ -76,7 +81,7 @@ private:
 	const std::vector<std::string> ENABLED_MODULES = { "ABB" };
 	const std::vector<enum page_flag> ENABLED_LANDING_PAGES = { ABB_LOGIN };
 
-
+	//defines what is displayed on the error page
 	struct err_msg {
 		enum page_flag prev_page;
 		std::string msg;
@@ -101,6 +106,11 @@ private:
 	//Connected to a device
 	bool connected;
 
+	//Known robot model
+	bool robot_model_known;
+	std::string robot_name;
+
+	RobotDH *rob_model;
 
 	//Robot placeholders
 	ABB_tcp_client ABB_rob;

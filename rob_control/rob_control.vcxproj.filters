@@ -107,5 +107,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="config\preset_ips.txt" />
+    <Text Include="models\IRB_6400.txt" />
   </ItemGroup>
 </Project>

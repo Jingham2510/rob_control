@@ -2,6 +2,8 @@
 
 
 
+
+
 //GUI controller constructor
 frontend_cntrl::frontend_cntrl() {
 
@@ -114,6 +116,7 @@ void frontend_cntrl::load_ABB_ip_presets() {
         if (ImGui::Button(ABB_ip_presets[i][0].c_str())) {
             ip = ABB_ip_presets[i][1];
             port = ABB_ip_presets[i][2];
+
         }
         //Ensures preset buttons on same line
         ImGui::SameLine();
@@ -159,6 +162,9 @@ void frontend_cntrl::ABB_landing_page() {
         //Set the page flags
         *page_flags[ABB_LOGIN] = false;
         *page_flags[ABB_MAIN] = true;  
+
+        //When connecting make sure that we are checking the robot model
+        robot_model_known = false;
     }
 
     //Back button
@@ -203,6 +209,26 @@ void frontend_cntrl::ABB_control_page() {
     }
 
 
+    //Create the robot model if not already done
+    if (!robot_model_known) {
+        //Get the robot model
+        robot_name = ABB_rob.get_model();
+
+ 
+        //Create the mathematical model of the robot
+        *rob_model = RobotDH(robot_name);
+
+
+
+
+        robot_model_known = true;
+
+
+    }
+
+
+
+
 
 
 
@@ -211,14 +237,6 @@ void frontend_cntrl::ABB_control_page() {
     if (ImGui::Button("PING!")) {
         ABB_rob.ping();
     }
-
-
-
-    //Get the robot model
-
-
-    //Create the mathematical model of the robot
-
 
     ImGui::End();
 

@@ -1,8 +1,11 @@
 #include "DH_Link.hpp"
 #include <math.h>
 #include <vector>
+
 #include <string>
 #include <Eigen/Dense>
+#include<iostream>
+#include<fstream>
 
 using Eigen::MatrixXf;
 using Eigen::Matrix3f;
@@ -13,8 +16,22 @@ using Eigen::Matrix3f;
 //Class that defines the DH representation of a robot
 class RobotDH{
     public:
+                
+       
+        
         //Constructor
         RobotDH(std::vector<DHLink>, std::vector<std::string>);
+
+        //Alternative constructor when the model is known
+        RobotDH(std::string);
+
+
+        //Copy assignment
+        RobotDH& operator=(const RobotDH&) {
+            return *this;
+        }
+
+
         //Add a link to the link list
         void add_link(DHLink, std::string);
         //Remove a link from the link list
@@ -39,6 +56,11 @@ class RobotDH{
         MatrixXf get_jacobian();
 
     private:
+
+        const std::vector<std::string> VALID_MODELS = {"IRB 6400R-200/2.8"};
+        const std::vector<std::string> MODEL_FILENAMES = {"IRB_6400.txt"};
+
+
         //Contains the links representing the robot
         std::vector<DHLink> link_list;
         //couplde offsets (when the offsets are tied to other joints)
