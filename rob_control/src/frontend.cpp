@@ -210,30 +210,21 @@ void frontend_cntrl::ABB_control_page() {
 
 
     //Create the robot model if not already done
-    if (!robot_model_known) {
+    if (connected and !robot_model_known) {
         //Get the robot model
         robot_name = ABB_rob.get_model();
          
         //Create the mathematical model of the robot
         rob_model = RobotDH(robot_name);
 
-        std::vector<float> pos = rob_model.get_pos();
+        std::vector<float> model_pos = rob_model.get_pos();
 
-        for (int i = 0; i < pos.size(); i++) {
-            std::cout << pos[i] << "\n";
+              
+        for (int i = 0; i < model_pos.size(); i++) {
+            std::cout << model_pos[i] << "\n";
         }
-
-
         robot_model_known = true;
-
     }
-
-
-
-
-
-
-
 
     //Ping button (placeholder)
     if (ImGui::Button("PING!")) {

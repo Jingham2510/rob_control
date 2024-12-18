@@ -86,6 +86,10 @@ RobotDH::RobotDH(std::string model_name) {
                 link_info.push_back(std::stof(token));
                 curr_line.erase(0, str_pos + delimiter.length());
             }
+
+            //Add the last token 
+            link_info.push_back(std::stof(curr_line));
+
             //Create link and put it in the link list
             link_list.push_back(DHLink(link_info[0], link_info[1], link_info[2], link_info[3], link_info[4]));
         }
@@ -131,9 +135,8 @@ void RobotDH::calc_transform(){
     //Reset the transform matrix to the first transform
     trans_mat = link_list.at(0).get_hg();   
 
-    //std::cout << trans_mat << "\n";
+    //std::cout << trans_mat << "\n";  
     
-    int n_of_links = link_list.size();
 
     //Iterate through the links   - start one later
     for (int i = 1; i < n_of_links; i++){
@@ -159,13 +162,14 @@ Matrix4f RobotDH::get_trans(){
 void RobotDH::update_pos_orient(){
     //Calculate the transform matrix
     calc_transform();
+    
+    //update the position vector
+    pos = { trans_mat(0, 3), trans_mat(1, 3), trans_mat(2, 3) };
 
-    pos = {trans_mat(0,3), trans_mat(1,3), trans_mat(2,3)};
-
+    //Update the orientation matrix
     orient_mat << trans_mat(0,0), trans_mat(0,1), trans_mat(0,2),
                   trans_mat(1,0), trans_mat(1,1), trans_mat(1,2),
                   trans_mat(2,0), trans_mat(2,1), trans_mat(2,2);
-
 
 
 }

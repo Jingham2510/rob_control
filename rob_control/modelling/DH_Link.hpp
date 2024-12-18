@@ -33,11 +33,6 @@ class DHLink{
         //The homogeneous transformation matrix
         Matrix4f hg_mat;
 
-        //Robot end-effector pos
-        std::vector<float> pos;
-
-        //Orientation matrix
-        Eigen::Matrix3f orient_mat;
 
         //Should only be called when parameters change
         void update_hg();

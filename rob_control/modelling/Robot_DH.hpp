@@ -27,8 +27,21 @@ class RobotDH{
         RobotDH(std::string);
 
 
-        //Copy assignment
-        RobotDH& operator=(const RobotDH&) {
+        //Move assignment -- overwrite everything
+        RobotDH& operator=(const RobotDH& other) noexcept{
+
+
+            //Copy all the stuff across without calculating it again
+            this->link_list = other.link_list;
+            this->offset_config = other.offset_config;
+
+            this->coupled_offsets = other.coupled_offsets;
+            this->trans_mat = other.trans_mat;
+            this->pos = other.pos;
+            this->orient_mat = other.orient_mat;
+            this->n_of_links = other.n_of_links;
+
+
             return *this;
         }
 

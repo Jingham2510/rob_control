@@ -110,6 +110,7 @@ private:
 	bool robot_model_known;
 	std::string robot_name;
 
+	//Create a blank model
 	RobotDH rob_model;
 
 	//Robot placeholders
