@@ -3,6 +3,10 @@
 
 
 
+RobotDH::RobotDH() {
+
+}
+
 
 RobotDH::RobotDH(std::vector<DHLink> links, std::vector<std::string> offsets){
     
@@ -58,17 +62,44 @@ RobotDH::RobotDH(std::string model_name) {
 
         n_of_links = std::stoi(curr_line);
 
-        std::cout << n_of_links << "\n";
+        //list contianing the link info
+        std::vector<float> link_info;
 
+        //Used to help split the string
+        size_t str_pos;
+        std::string token;
+        std::string delimiter = ",";
 
         //Iterate through N link lines
+        for (int i = 0; i < n_of_links; i++) {
+            //Clear the link info
+            link_info.clear();
 
+
+            //Get the link info from the line
+            getline(file, curr_line);
+            
+            //Split the link info by the delimiter ","
+            str_pos = 0;
+            while ((str_pos = curr_line.find(delimiter)) != std::string::npos) {
+                token = curr_line.substr(0, str_pos);
+                link_info.push_back(std::stof(token));
+                curr_line.erase(0, str_pos + delimiter.length());
+            }
+            //Create link and put it in the link list
+            link_list.push_back(DHLink(link_info[0], link_info[1], link_info[2], link_info[3], link_info[4]));
+        }
 
         //Read the coupling offset config
-
-
-
-
+        getline(file, curr_line);
+        
+        //Split the coupling offset by the delimiter ","
+        str_pos = 0;
+        while ((str_pos = curr_line.find(delimiter)) != std::string::npos) {
+            token = curr_line.substr(0, str_pos);
+            offset_config.push_back(token);
+            curr_line.erase(0, str_pos + delimiter.length());
+        }
         //Close the file
         file.close();
 
@@ -134,6 +165,8 @@ void RobotDH::update_pos_orient(){
     orient_mat << trans_mat(0,0), trans_mat(0,1), trans_mat(0,2),
                   trans_mat(1,0), trans_mat(1,1), trans_mat(1,2),
                   trans_mat(2,0), trans_mat(2,1), trans_mat(2,2);
+
+
 
 }
 
@@ -271,6 +304,8 @@ MatrixXf RobotDH::get_jacobian(){
         return J;
 
 }
+
+
 
 
 

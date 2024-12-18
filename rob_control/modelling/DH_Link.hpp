@@ -1,6 +1,7 @@
 
 #include<Eigen\Dense>
 #include<math.h>
+#include<vector>
 
 using Eigen::Matrix4f;
 
@@ -31,6 +32,12 @@ class DHLink{
         float a, alpha, d, theta, base_offset, curr_offset;
         //The homogeneous transformation matrix
         Matrix4f hg_mat;
+
+        //Robot end-effector pos
+        std::vector<float> pos;
+
+        //Orientation matrix
+        Eigen::Matrix3f orient_mat;
 
         //Should only be called when parameters change
         void update_hg();

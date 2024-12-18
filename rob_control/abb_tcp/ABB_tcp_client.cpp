@@ -155,8 +155,8 @@ std::string ABB_tcp_client::recieve(){
         response = buff;
     }
 
-    //Convert the c-string to a c++ string
-    return response;
+    //Convert the c-string to a c++ string - and strip the garbage
+    return response.substr(0, response.find("!"));
 }
 
 //Connection test
@@ -267,8 +267,6 @@ std::string ABB_tcp_client::get_model() {
 
     std::string model = recieve();
 
-    //Strip the garbage data
-    model = model.substr(0, model.find("!"));
 
     return model;
 }

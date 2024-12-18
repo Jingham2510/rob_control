@@ -213,16 +213,18 @@ void frontend_cntrl::ABB_control_page() {
     if (!robot_model_known) {
         //Get the robot model
         robot_name = ABB_rob.get_model();
-
- 
+         
         //Create the mathematical model of the robot
-        *rob_model = RobotDH(robot_name);
+        rob_model = RobotDH(robot_name);
 
+        std::vector<float> pos = rob_model.get_pos();
 
+        for (int i = 0; i < pos.size(); i++) {
+            std::cout << pos[i] << "\n";
+        }
 
 
         robot_model_known = true;
-
 
     }
 

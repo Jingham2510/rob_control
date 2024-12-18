@@ -110,7 +110,7 @@ private:
 	bool robot_model_known;
 	std::string robot_name;
 
-	RobotDH *rob_model;
+	RobotDH rob_model;
 
 	//Robot placeholders
 	ABB_tcp_client ABB_rob;

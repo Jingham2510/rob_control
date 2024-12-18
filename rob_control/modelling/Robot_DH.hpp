@@ -17,8 +17,9 @@ using Eigen::Matrix3f;
 class RobotDH{
     public:
                 
-       
-        
+       //Default constructor
+        RobotDH();
+
         //Constructor
         RobotDH(std::vector<DHLink>, std::vector<std::string>);
 
@@ -72,7 +73,6 @@ class RobotDH{
 
         //Position vector
         std::vector<float> pos;
-
         //Orientation matrix
         Matrix3f orient_mat;
 
