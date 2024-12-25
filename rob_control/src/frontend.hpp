@@ -11,6 +11,7 @@
 #include <dxgi1_4.h>
 #include <tchar.h>
 #include<string>
+#include<sstream>
 #include<iostream>
 #include<fstream>
 #include<vector>
@@ -123,6 +124,10 @@ private:
 	//Load the configs
 	void load_ABB_ip_presets();
 	void load_configs();
+
+
+	//Load the robot info
+	void load_robot_info();
 
 
 

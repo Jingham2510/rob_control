@@ -137,24 +137,13 @@ void RobotDH::calc_transform(){
     //Reset the transform matrix to the first transform
     trans_mat = link_list.at(0).get_hg();   
 
-    std::cout << "----------LINK 0 -----------" << "\n";
-
-    std::cout << link_list.at(0).get_hg();
-    std::cout << "\n";
     
 
     //Iterate through the links   - start one later
     for (int i = 1; i < n_of_links; i++){
-        std::cout << "----------LINK " << i << "-----------" << "\n";
-
-        //std::cout << link_list.at(i).get_hg();
-        //std::cout << "\n";
-
+       
         trans_mat = trans_mat * link_list.at(i).get_hg();
-
-        std::cout << trans_mat;
-        std::cout << "\n";
-
+                
     }
 }
 

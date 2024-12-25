@@ -226,10 +226,42 @@ void frontend_cntrl::ABB_control_page() {
         robot_model_known = true;
     }
 
-    //Ping button (placeholder)
-    if (ImGui::Button("PING!")) {
-        ABB_rob.ping();
+  
+
+
+
+
+    /*
+        TODO:
+        -BUTTONS TO CREATE MODULES
+        -MODEL VS REPORTED ERROR PLOT
+        -CURR FORCE PLOTTER
+        -Button Control
+        -Angle Chooser
+        -Test chooser
+    */
+
+    //Create the title for the page
+    std::stringstream title_stream;
+    title_stream << "Robot Model: " << robot_name;
+    ImGui::Text(title_stream.str().c_str());
+
+
+    
+    //Setup the headers for each section
+    if (ImGui::CollapsingHeader("Unit Info")) {
+        ImGui::Text("TEST");
     }
+
+
+
+    if (ImGui::CollapsingHeader("PING TEST")) {
+        if (ImGui::Button("PING!")) {
+            ABB_rob.ping();
+        }
+    }
+
+
 
     ImGui::End();
 
@@ -269,5 +301,20 @@ void frontend_cntrl::close_connections() {
     if (ABB_control_page_flag) {
         ABB_rob.close_connection();
     }
+    return;
+}
+
+//Load the robots info into the page
+void frontend_cntrl::load_robot_info() {
+
+    //If the robot is an ABB one
+    if (ABB_control_page_flag) {
+        
+        
+        ABB_rob.get_xyz();
+
+
+    }
+
     return;
 }
