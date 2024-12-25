@@ -260,3 +260,14 @@ void frontend_cntrl::error_page() {
 
 
 }
+
+
+//Close any connections that may be running
+void frontend_cntrl::close_connections() {
+
+    //Assume that ABB robot is connected if ABB page is open
+    if (ABB_control_page_flag) {
+        ABB_rob.close_connection();
+    }
+    return;
+}

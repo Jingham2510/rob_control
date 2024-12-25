@@ -277,6 +277,8 @@ int main(int, char**)
 
  
     
+    //Custom Cleanup
+    gui_cntrl.close_connections();
 
 
     // Cleanup

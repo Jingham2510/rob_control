@@ -60,6 +60,8 @@ public:
 	//Displays in case of an error
 	void error_page();
 
+	//Close any connections that may be running
+	void close_connections();
 		
 
 
