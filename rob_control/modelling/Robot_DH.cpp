@@ -79,7 +79,7 @@ RobotDH::RobotDH(std::string model_name) {
             //Get the link info from the line
             getline(file, curr_line);
 
-            std::cout << curr_line << "\n";
+            //std::cout << curr_line << "\n";
             
             //Split the link info by the delimiter ","
             str_pos = 0;

@@ -126,8 +126,15 @@ private:
 	void load_configs();
 
 
+	//Control page dropdown sections -----
+
 	//Load the robot info
 	void load_robot_info();
+
+	//Load the manual control buttons
+	void load_man_control();
+
+
 
 
 

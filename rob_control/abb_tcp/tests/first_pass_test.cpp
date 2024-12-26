@@ -55,7 +55,7 @@ std::vector<float> xyz_str_to_float(std::string xyz) {
 }
 
 //Calculates the robots position error from the desired error
-std::vector<float> calc_line_err(std::string curr_xyz, float desired_x, float desired_y, float desired_z) {
+std::vector<float> calc_line_err(std::vector<float> curr_xyz, float desired_x, float desired_y, float desired_z) {
 
 
 	std::cout << desired_y << "\n";
@@ -63,7 +63,7 @@ std::vector<float> calc_line_err(std::string curr_xyz, float desired_x, float de
 
 
 	//Create the vector float from the string
-	std::vector<float> curr_xyz_vec = xyz_str_to_float(curr_xyz);
+	std::vector<float> curr_xyz_vec = curr_xyz;
 
 
 
@@ -123,7 +123,7 @@ int first_pass() {
 	for (int i = 0; i <= steps; i++) {
 
 		//Calculate the error from the desired pos
-		move_vector = calc_line_err(client.get_xyz(), DES_X, START_POS[1] + (polarity * i * STEP_RES), DES_Z);		
+		move_vector = calc_line_err(client.req_xyz(), DES_X, START_POS[1] + (polarity * i * STEP_RES), DES_Z);		
 
 		//move_vector = {0, 2, 0};
 

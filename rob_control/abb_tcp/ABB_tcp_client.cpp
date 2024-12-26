@@ -14,7 +14,6 @@ ABB_tcp_client::ABB_tcp_client() {
 //Creates and connects to the ABB http socket
 ABB_tcp_client::ABB_tcp_client(const char *client_ip, int client_port, bool *connect_flag){
 
-
     ip = client_ip;
     port = client_port;
     connected = connect_flag;
@@ -60,6 +59,7 @@ ABB_tcp_client::ABB_tcp_client(const char *client_ip, int client_port, bool *con
             connect_to_ABB();
         }
     }
+
 
 
 }
@@ -108,6 +108,10 @@ void ABB_tcp_client::connect_to_ABB(){
     }
     else{
         std::cout<< "Connected to: " << ip << "\n";
+
+        //Request the robots position
+        curr_pos = req_xyz();
+
     }
 
 }
@@ -211,6 +215,10 @@ int ABB_tcp_client::set_joints(std::vector<float> jnt_angs){
     //Print the response from the server
     std::cout << recieve() << "\n";
 
+
+    //Update robots position
+    curr_pos = req_xyz();
+
     
     return 1;
 }
@@ -239,8 +247,9 @@ std::string ABB_tcp_client::move_tool(std::vector<float> xyz){
     request(cmd);
 
 
-
+    //Update position
     std::string pos = recieve();
+    curr_pos = xyz_str_to_float(pos);
 
     std::string force = recieve();
 
@@ -248,16 +257,22 @@ std::string ABB_tcp_client::move_tool(std::vector<float> xyz){
     //assembled - and formatted
     ret_stream << pos.substr(0, pos.find("]") + 1) << "," << force.substr(0, force.find("]") + 1);
 
+    //Update robots position
+    curr_pos = req_xyz();
     
     return ret_stream.str();
 }
 
-std::string ABB_tcp_client::get_xyz() {
+std::vector<float> ABB_tcp_client::req_xyz() {
 
     //Send the getpos command
     request("GTPS:0");
 
-    return recieve();
+    //save the current position
+    std::vector<float> pos = xyz_str_to_float(recieve());
+
+
+    return pos;
 
 }
 
@@ -289,5 +304,27 @@ std::string ABB_tcp_client::com_vec_to_string(std::vector<float> data){
 
     return stream.str();
 
+}
 
+//Turns the RAPID xyz string to a vector
+std::vector<float> ABB_tcp_client::xyz_str_to_float(std::string xyz) {
+
+    std::vector<float> xyz_vec;
+
+    //Split the string (delimited by ",") - slicing off the front and end square brackets
+    std::stringstream ss(xyz.substr(1, xyz.length()));
+    std::string item;
+    std::vector<std::string> elems;
+    while (std::getline(ss, item, ',')) {
+        elems.push_back(std::move(item));
+        
+    }
+
+    //Turn them to vectors
+    for (int i = 0; i < elems.size(); i++) {
+        xyz_vec.push_back(std::stof(elems[i]));
+    }
+
+
+    return xyz_vec;
 }

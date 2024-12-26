@@ -33,7 +33,7 @@ class ABB_tcp_client{
         std::string move_tool(std::vector<float>);
 
         //Get the robots current xyz pos
-        std::string get_xyz();
+        std::vector<float> req_xyz();
 
         //Get the robots model
         std::string get_model();
@@ -41,6 +41,10 @@ class ABB_tcp_client{
 
         //Closes the connection
         void close_connection();
+
+        //Robots current position
+        std::vector<float> curr_pos;
+
 
     private:
 
@@ -84,6 +88,10 @@ class ABB_tcp_client{
 
         //Helper function to create strings from vectors of floats
         std::string com_vec_to_string(std::vector<float>);
+
+        
+
+        std::vector<float> xyz_str_to_float(std::string xyz);
 
 
 };

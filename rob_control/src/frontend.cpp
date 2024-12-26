@@ -249,17 +249,33 @@ void frontend_cntrl::ABB_control_page() {
 
     
     //Setup the headers for each section
+    
+    //Robot info
     if (ImGui::CollapsingHeader("Unit Info")) {
-        ImGui::Text("TEST");
+        load_robot_info();
+    }
+
+    //Model Robot Info
+    if (ImGui::CollapsingHeader("Model Info")) {
+        ImGui::Text("TODO");
+    }
+
+    //Manual Control Section
+    if (ImGui::CollapsingHeader("Manual Control")) {
+        //Create the manual control section
+        load_man_control();
+
     }
 
 
-
+    //Ping test - PLACEHOLDER
     if (ImGui::CollapsingHeader("PING TEST")) {
         if (ImGui::Button("PING!")) {
             ABB_rob.ping();
         }
     }
+
+    
 
 
 
@@ -310,11 +326,54 @@ void frontend_cntrl::load_robot_info() {
     //If the robot is an ABB one
     if (ABB_control_page_flag) {
         
+        //Position IDs
+        std::vector<std::string> ids = { "X: ", "Y: ", "Z: " };
+        //Generate the text to display
+        std::stringstream disp_text;
+
+ 
+        //Display the currently reported position of the robot
+        for (int i = 0; i < ids.size(); i++) {
+            
+
+            disp_text << ids[i] << ABB_rob.curr_pos[i] << " ";
+
+            ImGui::Text(disp_text.str().c_str());
+            
+            ImGui::SameLine();
+
+            //Clear the string stream
+            disp_text.str("");
+            
+        }
+
+        ImGui::NewLine();
+        //Display the position of the model
         
-        ABB_rob.get_xyz();
 
 
     }
+
+    return;
+}
+
+
+//Load the manual control buttons
+void frontend_cntrl::load_man_control() {
+
+    //Place button which moves the tool up
+    if (ImGui::Button("Up")) {
+        ABB_rob.move_tool({ 0, 0, 10 });
+    }
+
+
+    //Place button which moves the tool up
+    if (ImGui::Button("Down")) {
+        ABB_rob.move_tool({ 0, 0, -10 });
+    }
+
+
+
 
     return;
 }
