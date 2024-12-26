@@ -3,6 +3,7 @@
 
 #include"../abb_tcp/ABB_tcp_client.hpp"
 #include"../modelling/Robot_DH.hpp"
+#include"../abb_tcp/tests/test_manager.hpp"
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
@@ -98,6 +99,8 @@ private:
 	//List of IP presets from the config file
 	std::vector <std::vector<std::string>> ABB_ip_presets;
 
+	//List of valid tests loaded from the test config file
+	std::vector <std::string> test_titles;
 
 	//Pointers so they can modify text inputs
 	//IP to connect to
@@ -119,11 +122,17 @@ private:
 	//Robot placeholders
 	ABB_tcp_client ABB_rob;
 
+	//Test manager
+	test_manager test_mgr;
 
-
-	//Load the configs
+	//Load the configs into the gui
 	void load_ABB_ip_presets();
+
+	//Load the configs from the config text files
 	void load_configs();
+	void load_ip_configs();
+
+
 
 
 	//Control page dropdown sections -----
@@ -133,6 +142,9 @@ private:
 
 	//Load the manual control buttons
 	void load_man_control();
+
+	//Test section - for running eperiments
+	void load_test_section();
 
 
 

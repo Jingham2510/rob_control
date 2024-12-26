@@ -48,16 +48,13 @@
     <ClCompile Include="abb_tcp\ABB_tcp_client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="abb_tcp\tests\latency_test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="abb_tcp\tests\first_pass_test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="modelling\DH_Link.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="modelling\Robot_DH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="abb_tcp\tests\test_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -102,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="modelling\Robot_DH.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="abb_tcp\tests\test_manager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

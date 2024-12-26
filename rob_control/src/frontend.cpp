@@ -26,6 +26,8 @@ frontend_cntrl::frontend_cntrl() {
     //Load config
     load_configs();
 
+     
+
 }
 
 
@@ -54,8 +56,18 @@ void frontend_cntrl::landing_page() {
 
 
 
+
+
+//Wrapper function which calls all the config loaders
 void frontend_cntrl::load_configs()
 {
+    //load ip configs
+    load_ip_configs();
+
+}
+
+
+void frontend_cntrl::load_ip_configs() {
 
     //Open the ip presets file and store the presets
     std::string curr_line;
@@ -103,6 +115,8 @@ void frontend_cntrl::load_configs()
         ABB_ip_presets.push_back({ name, ip, port });
     }
 }
+
+
 
 
 //Creates the ip preset buttons
@@ -211,6 +225,11 @@ void frontend_cntrl::ABB_control_page() {
 
     //Create the robot model if not already done
     if (connected and !robot_model_known) {
+        
+        //Create the robot test manager
+        //Load test manager
+        test_mgr = test_manager(ABB_rob);
+        
         //Get the robot model
         robot_name = ABB_rob.get_model();
          
@@ -265,6 +284,11 @@ void frontend_cntrl::ABB_control_page() {
         //Create the manual control section
         load_man_control();
 
+    }
+
+    //Load the test section
+    if (ImGui::CollapsingHeader("Tests")) {
+        load_test_section();
     }
 
 
@@ -372,6 +396,63 @@ void frontend_cntrl::load_man_control() {
         ABB_rob.move_tool({ 0, 0, -10 });
     }
 
+    ImGui::Text("MORE TODO!");
+
+    return;
+}
+
+//Load the section for running and monitoring tests
+void frontend_cntrl::load_test_section() {
+
+    //Combo/dropdown variables
+    static const char* current_item = NULL;
+
+    //Set the default filepath
+    std::stringstream file_sstream;
+    std::string filepath;
+
+    //Create dropdown with test selection
+    if (ImGui::BeginCombo("##Tests", current_item)) {
+
+
+        //Add the selectable tests
+        for (int i = 0; i < test_mgr.TESTS.size(); i++) {
+            
+            //check if item is selected - this works?
+            bool is_selected = ("test" == test_mgr.TESTS[i]);
+                 
+
+            if (ImGui::Selectable(test_mgr.TESTS[i].c_str(), is_selected)) {
+                //Clear the filepath stream
+                file_sstream.str("");
+                //Set the current item
+                current_item = test_mgr.TESTS[i].c_str();
+                //Update the filepath
+                file_sstream <<  "C:/Users/User/Documents/Results/" << test_mgr.TESTS[i] << "/";
+                filepath = file_sstream.str();
+            }
+
+            if (is_selected) {
+                ImGui::SetItemDefaultFocus();
+            }
+
+
+
+        }
+
+        ImGui::EndCombo();
+    }
+
+
+
+    //Create the filepath box
+    ImGui::InputText("Filepath:", &filepath);
+    ImGui::SameLine();
+    if (ImGui::Button("Run Test")) {
+        std::cout << filepath << "\n";
+    }
+
+    ImGui::NewLine();
 
 
 

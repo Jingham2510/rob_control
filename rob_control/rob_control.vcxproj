@@ -20,8 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="abb_tcp\ABB_tcp_client.cpp" />
-    <ClCompile Include="abb_tcp\tests\first_pass_test.cpp" />
-    <ClCompile Include="abb_tcp\tests\latency_test.cpp" />
+    <ClCompile Include="abb_tcp\tests\test_manager.cpp" />
     <ClCompile Include="modelling\DH_Link.cpp" />
     <ClCompile Include="modelling\Robot_DH.cpp" />
     <ClCompile Include="src\frontend.cpp" />
@@ -37,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="abb_tcp\ABB_tcp_client.hpp" />
+    <ClInclude Include="abb_tcp\tests\test_manager.hpp" />
     <ClInclude Include="imgui\imgui_impl_dx12.h" />
     <ClInclude Include="imgui\imgui_impl_win32.h" />
     <ClInclude Include="imgui\imconfig.h" />
