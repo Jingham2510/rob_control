@@ -32,6 +32,12 @@ public:
 	//Set the output filepath
 	void set_data_path(std::string);
 
+	//Get the output filepaht
+	std::string get_data_path();
+
+	//Report whether a test is running
+	bool test_running();
+
 
 
 private:
@@ -41,6 +47,10 @@ private:
 		POSITIVE = 1,
 		NEGATIVE = -1
 	};
+
+
+	//Flag to indicate if a test is running
+	bool TEST_RUNNING_FLAG = false;
 
 	//The robot that will complete the tests
 	ABB_tcp_client robot;

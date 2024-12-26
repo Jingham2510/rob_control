@@ -16,6 +16,7 @@
 #include<iostream>
 #include<fstream>
 #include<vector>
+#include<thread>
 
 
 
@@ -96,6 +97,8 @@ private:
 	//pointers are private as only the gui should modify them
 	std::vector<bool*> page_flags;
 
+
+
 	//List of IP presets from the config file
 	std::vector <std::vector<std::string>> ABB_ip_presets;
 
@@ -125,6 +128,9 @@ private:
 	//Test manager
 	test_manager test_mgr;
 
+	//Test output filepath
+	std::string data_fp;
+
 	//Load the configs into the gui
 	void load_ABB_ip_presets();
 
@@ -145,7 +151,6 @@ private:
 
 	//Test section - for running eperiments
 	void load_test_section();
-
 
 
 

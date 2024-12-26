@@ -407,9 +407,7 @@ void frontend_cntrl::load_test_section() {
     //Combo/dropdown variables
     static const char* current_item = NULL;
 
-    //Set the default filepath
-    std::stringstream file_sstream;
-    std::string filepath;
+  
 
     //Create dropdown with test selection
     if (ImGui::BeginCombo("##Tests", current_item)) {
@@ -423,17 +421,17 @@ void frontend_cntrl::load_test_section() {
                  
 
             if (ImGui::Selectable(test_mgr.TESTS[i].c_str(), is_selected)) {
-                //Clear the filepath stream
-                file_sstream.str("");
+
                 //Set the current item
                 current_item = test_mgr.TESTS[i].c_str();
-                //Update the filepath
-                file_sstream <<  "C:/Users/User/Documents/Results/" << test_mgr.TESTS[i] << "/";
-                filepath = file_sstream.str();
+
+                data_fp = "C:/Users/User/Documents/Results/" + test_mgr.TESTS[i] + "/";
+                
             }
 
             if (is_selected) {
                 ImGui::SetItemDefaultFocus();
+                             
             }
 
 
@@ -444,17 +442,32 @@ void frontend_cntrl::load_test_section() {
     }
 
 
-
     //Create the filepath box
-    ImGui::InputText("Filepath:", &filepath);
+    ImGui::InputText("Filepath", &data_fp);
     ImGui::SameLine();
-    if (ImGui::Button("Run Test")) {
-        std::cout << filepath << "\n";
+
+    //Only allow test button if test running
+    if (!test_mgr.test_running()) {
+
+        //Run test button
+        if (ImGui::Button("Run Test")) {
+            test_mgr.set_data_path(data_fp);
+
+            //TODO: add run test function for the test manager
+
+        }
     }
 
-    ImGui::NewLine();
+    else{
 
+        ImGui::NewLine();
+        ImGui::Text("TEST RUNNING");
+        
+        //Thread the test so that the gui doesnt freeze
+        std::thread test_thread(&test_manager::first_pass_test,
+                                test_mgr);
 
+    }
 
     return;
 }

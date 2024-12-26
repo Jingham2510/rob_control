@@ -26,10 +26,23 @@ void test_manager::set_data_path(std::string new_path) {
     data_path = new_path;
 }
 
+//Return the current datapath
+std::string test_manager::get_data_path() {
+	return data_path;
+}
+
+//Report the test running status
+bool test_manager::test_running() {
+	return TEST_RUNNING_FLAG;
+}
+
 
 
 //latency test
 void test_manager::latency_test() {
+
+	TEST_RUNNING_FLAG = true;
+
 
 	bool connected = false;
 
@@ -49,12 +62,16 @@ void test_manager::latency_test() {
 
     data_file.close();
 
+	TEST_RUNNING_FLAG = false;
+
     return;
 }
 
 
 //First pass one movement test
 void test_manager::first_pass_test() {
+
+	TEST_RUNNING_FLAG = true;
 
 	std::vector<std::chrono::system_clock::time_point> time_data;
 	//Stores both the force and posiiton data as a string
@@ -79,7 +96,7 @@ void test_manager::first_pass_test() {
 	}
 
 	int steps = abs(dist_to_move * STEP_RES);
-	std::vector<float> move_vector = {0, 2, 0};
+	std::vector<float> move_vector;
 
 	//Connect to the ABB robot
 	//ABB_tcp_client client = ABB_tcp_client("192.168.125.1", 8888);
@@ -118,6 +135,8 @@ void test_manager::first_pass_test() {
 		data_file << i << "," << "PLACEHOLDER" << "," << force_pos_data[i] << "\n";
 	}
 	data_file.close();
+
+	TEST_RUNNING_FLAG = false;
 
 	return;
 }
