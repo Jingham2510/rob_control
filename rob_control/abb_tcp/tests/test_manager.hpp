@@ -30,6 +30,10 @@ public:
 
 
 	//Tests currently available
+	bool LATENCY_TEST_FLAG = false;
+	bool FIRST_PASS_FLAG = false;
+	
+
 	std::vector<std::string> TESTS = { "latency_test", "first_pass_test" };
 
 	//Set the output filepath
@@ -45,6 +49,10 @@ public:
 	void test_selector(std::string);
 
 
+	//Ping 100 times and calculate the latencys
+	void latency_test();
+
+
 
 private:
 
@@ -53,6 +61,17 @@ private:
 		POSITIVE = 1,
 		NEGATIVE = -1
 	};
+
+
+	//Test state controllers
+	bool test_complete;
+	bool file_saved;
+	bool close;
+	int loop_counter;
+
+	//Test storages
+	std::vector<float> storage_1;
+	std::vector<float> storage_2;
 
 
 	//Flag to indicate if a test is running
@@ -68,8 +87,6 @@ private:
 	std::vector<float> calc_line_err(std::vector<float>, float, float, float);
 
 
-	//Ping 100 times and calculate the latencys
-	void latency_test();
 
 	//Do one sweeping movement - proof of concept
 	void first_pass_test();

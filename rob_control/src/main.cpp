@@ -215,6 +215,10 @@ int main(int, char**)
         }
 
 
+        if (gui_cntrl.test_mgr.LATENCY_TEST_FLAG) {
+            gui_cntrl.test_mgr.latency_test();
+        }
+
 
             
 

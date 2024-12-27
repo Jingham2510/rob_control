@@ -37,31 +37,60 @@ bool test_manager::test_running(){
 }
 
 
+/*TODO: At start of each test create new window
+* in window house test info
+* order: create window -> setup test -> move robot -> update window info
+* Might not be interactable? its okay can just be visual
+* */
+
+
 
 //latency test
 void test_manager::latency_test() {
 
+	ImGui::Begin("Latency Test");
+	ImGui::Text("Latency Test");
 
-	bool connected = false;
+	//Create the graph displaying the info
+
+	//Only do the next part of the test when required
+	//Complete one loop at a time
+	if (!test_complete) {
+		//Complete a ping
+		storage_1.push_back((robot.ping()) * pow(10, -6));
+		loop_counter++;
+		if (loop_counter == 99) {
+			test_complete = true;
+		}
+	}
+
+	//Save the file once the test is complete - all in one go
+	if (test_complete && !file_saved) {
+
+		//Save all the data to a text file 
+		std::ofstream data_file(data_path);
+		for (int i = 0; i < storage_1.size(); i++) {
+			data_file << storage_1[i] << "\n";
+		}
+
+		data_file.close();
+		file_saved = true;
+	}
 
 
-    std::vector<float> times;
+	//If the test is complete
+	if (test_complete) {
 
-    //ping 100 times
-    for (int i = 0; i < 100; i++) {
-        times.push_back((robot.ping()) * pow(10, -6));
-    }
+		//Display the close button
+		if (ImGui::Button("Close Page")) {
+			close = true;
+			LATENCY_TEST_FLAG = false;
+			TEST_RUNNING_FLAG = false;
+		}
+	}
 
-    //Save all the data to a text file 
-    std::ofstream data_file(data_path);
-    for (int i = 0; i < times.size(); i++) {
-        data_file << times[i] << "\n";
-    }
-
-    data_file.close();
-
-	TEST_RUNNING_FLAG = false;
-
+	ImGui::End();	
+		
     return;
 }
 
@@ -162,26 +191,31 @@ std::vector<float> test_manager::calc_line_err(std::vector<float> curr_xyz, floa
 //Selects a test (and threads it hopefully)
 void test_manager::test_selector(std::string test_name) {
 
+
 	//One giant if statement to select the test
-	//Thread any test so the GUI doesn't freeze
+	
 	if (test_name == "latency_test"){	
+
+		//Setup the test
+		test_complete = false;
+		file_saved = false;
+		close = false;
+		loop_counter = 0;
+
+		//Prep storage for test data
+		storage_1.clear();
+
 		TEST_RUNNING_FLAG = true;
-		//std::thread test_thread(&test_manager::latency_test, this);
-		latency_test();
+		LATENCY_TEST_FLAG = true;
 	}
 
 	if (test_name == "first_pass_test") {
 		TEST_RUNNING_FLAG = true;
-		//std::thread test_thread(&test_manager::first_pass_test, this);
-		first_pass_test();
-
-		
+		first_pass_test();		
 	}
+
+	
 
 }
 
-/*TODO: At start of test create new window
-* in window house test info
-* order: create window -> setup test -> move robot -> update window info
-* Might not be interactable? its okay can just be visual
-* */
+

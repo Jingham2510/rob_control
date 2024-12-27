@@ -46,6 +46,9 @@ public:
 	//Close window flag
 	bool not_close_window = true;
 
+	//Test manager
+	test_manager test_mgr;
+
 
 	//Constructor
 	frontend_cntrl();
@@ -124,8 +127,7 @@ private:
 	//Robot placeholders
 	ABB_tcp_client ABB_rob;
 
-	//Test manager
-	test_manager test_mgr;
+	
 
 	//Test output filepath
 	std::string data_fp;
