@@ -107,16 +107,16 @@ void test_manager::latency_test() {
 //Live latency test plotting
 void test_manager::latency_plotting(float next_point) {
 
-
+	//Create the rolling plot while the test is happening
 	if (!test_complete) {
 
 		//Setup the buffer
 		static RollingBuffer latency_data;
 		static float t = 0;
-		static float history = 100;
-		latency_data.Span = history;
+		latency_data.Span = 100.0f;
 		//Get the time
 		t += ImGui::GetIO().DeltaTime;
+		
 
 		//Add the point to the buffer
 		latency_data.AddPoint(t, next_point);
@@ -125,13 +125,16 @@ void test_manager::latency_plotting(float next_point) {
 		static ImPlotAxisFlags flags = ImPlotAxisFlags_NoTickLabels;
 
 		//Create the plot
-		if (ImPlot::BeginPlot("##Latency", ImVec2(-1, 150))) {
-			ImPlot::SetupAxes(NULL, NULL, flags, flags);
-			ImPlot::SetupAxisLimits(ImAxis_X1, 0, history, ImGuiCond_Always);
-			ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
+		if (ImPlot::BeginPlot("##Latency")) {
+			ImPlot::SetupAxes("Time","Latency", flags, flags);
+			ImPlot::SetupAxisLimits(ImAxis_X1, 0, 10);
+			ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 20000);
 			ImPlot::PlotLine("Latency (ms)", &latency_data.Data[0].x, &latency_data.Data[0].y, latency_data.Data.size(), 0, 0, 2 * sizeof(float));
 			ImPlot::EndPlot();
 		}
+
+		
+
 	}
 	//If test has stopped running - no need for rolling buffer
 	//Plot static plot
