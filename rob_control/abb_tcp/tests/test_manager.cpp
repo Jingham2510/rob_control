@@ -45,7 +45,7 @@ bool test_manager::test_running(){
 
 
 
-//latency test
+//Latency test
 void test_manager::latency_test() {
 
 	ImGui::Begin("Latency Test");
@@ -79,7 +79,7 @@ void test_manager::latency_test() {
 
 
 	//If the test is complete
-	if (test_complete) {
+	if (test_complete && file_saved) {
 
 		//Display the close button
 		if (ImGui::Button("Close Page")) {
@@ -99,15 +99,18 @@ void test_manager::latency_test() {
 void test_manager::first_pass_test() {
 
 
-	std::vector<std::chrono::system_clock::time_point> time_data;
-	//Stores both the force and posiiton data as a string
-	//This is because we don't need to do any data analysis here
-	std::vector<std::string> force_pos_data;
+	ImGui::Begin("First Pass");
+	ImGui::Text("First Pass Test");
+
+
+	//Store the current force position
 	std::string curr_force_pos;
 
 	//TO BE DETERMINED - filler for now! - be very careful when doing it on the real one...
 	float DES_X = 2200;
 	float DES_Z = 190;
+
+
 	std::vector<float> START_POS = { DES_X, -788, DES_Z };
 	std::vector<float> END_POS = { DES_X, 315, DES_Z };
 	//Steps based on distance and resolution of test
@@ -124,19 +127,19 @@ void test_manager::first_pass_test() {
 	int steps = abs(dist_to_move * STEP_RES);
 	std::vector<float> move_vector;
 
-	//Connect to the ABB robot
-	//ABB_tcp_client client = ABB_tcp_client("192.168.125.1", 8888);
 
-	bool connected = false;
+	if (!TEST_FLAG_1) {
+		//Move the robot to the starting position - checked manually for now
+		robot.set_joints({ -20.01, 58.59, 46.97, 4.81, 43.57, -32.28 });
+		TEST_FLAG_1 = true;
+	}
 
-	//Move the robot to the starting position - checked manually for now
-	robot.set_joints({ -20.01, 58.59, 46.97, 4.81, 43.57, -32.28 });
 
 	//Move the robot and log the data
-	for (int i = 0; i <= steps; i++) {
+	if (TEST_FLAG_1 && !test_complete) {
 
 		//Calculate the error from the desired pos
-		move_vector = calc_line_err(robot.curr_pos, DES_X, START_POS[1] + (polarity * i * STEP_RES), DES_Z);
+		move_vector = calc_line_err(robot.curr_pos, DES_X, START_POS[1] + (polarity * loop_counter * STEP_RES), DES_Z);
 
 		//Move the robot - ensuring that the tool attempts to stay in a straight line
 		curr_force_pos = robot.move_tool(move_vector);
@@ -144,25 +147,48 @@ void test_manager::first_pass_test() {
 		//Place the data in the arrays
 		time_data.push_back(std::chrono::system_clock::now());
 
-		force_pos_data.push_back(curr_force_pos);
+		string_storage.push_back(curr_force_pos);
 
 		std::cout << curr_force_pos << "\n";
+
+		loop_counter++;
+
+		if (loop_counter == (steps - 1)) {
+			test_complete = true;
+		}
+	}
+
+	if (test_complete && !file_saved) {
+
+		//Create the filename
+		std::stringstream filename;
+		filename << data_path << "placeholder" << "_first_pass.txt";
+
+		//Save the data to a logfile
+		std::ofstream data_file(filename.str());
+		for (int i = 0; i < time_data.size(); i++) {
+			//data_file << i << "," << time_data[i] << "," << force_pos_data[i] << "\n";
+			data_file << i << "," << "PLACEHOLDER" << "," << string_storage[i] << "\n";
+		}
+		data_file.close();
+
+		file_saved = true;
+	}
+
+	//Display the test finished bit
+	if (test_complete && file_saved) {
+		if(ImGui::Button("Close page")){
+			close = true;
+			FIRST_PASS_FLAG = false;
+			TEST_RUNNING_FLAG = false;
+		}
 	}
 
 
-	//Create the filename
-	std::stringstream filename;
-	filename << data_path << "placeholder" << "_first_pass.txt";
-
-	//Save the data to a logfile
-	std::ofstream data_file(filename.str());
-	for (int i = 0; i < time_data.size(); i++) {
-		//data_file << i << "," << time_data[i] << "," << force_pos_data[i] << "\n";
-		data_file << i << "," << "PLACEHOLDER" << "," << force_pos_data[i] << "\n";
-	}
-	data_file.close();
 
 	TEST_RUNNING_FLAG = false;
+
+	ImGui::End();
 
 	return;
 }
@@ -205,13 +231,28 @@ void test_manager::test_selector(std::string test_name) {
 		//Prep storage for test data
 		storage_1.clear();
 
+		//Setup the test flags
 		TEST_RUNNING_FLAG = true;
 		LATENCY_TEST_FLAG = true;
 	}
 
 	if (test_name == "first_pass_test") {
+
+		//Setup the test
+		test_complete = false;
+		file_saved = false;
+		close = false;
+		loop_counter = 0;
+
+		//Prep storage for the test data;
+		string_storage.clear();
+		time_data.clear();
+
+		//Setup the test flags
+		TEST_FLAG_1 = false;
+
 		TEST_RUNNING_FLAG = true;
-		first_pass_test();		
+		FIRST_PASS_FLAG = true;
 	}
 
 	

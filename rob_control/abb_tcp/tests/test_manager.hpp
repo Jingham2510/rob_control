@@ -52,6 +52,8 @@ public:
 	//Ping 100 times and calculate the latencys
 	void latency_test();
 
+	//Do one sweeping movement - proof of concept
+	void first_pass_test();
 
 
 private:
@@ -69,9 +71,18 @@ private:
 	bool close;
 	int loop_counter;
 
-	//Test storages
+	//Generic Test storages
 	std::vector<float> storage_1;
 	std::vector<float> storage_2;
+	//String storages
+	std::vector<std::string> string_storage;
+	std::vector<std::chrono::system_clock::time_point> time_data;
+
+
+	//Generic test flags
+	bool TEST_FLAG_1;
+	bool TEST_FLAG_2;
+	bool TEST_FLAG_3;
 
 
 	//Flag to indicate if a test is running
@@ -88,8 +99,6 @@ private:
 
 
 
-	//Do one sweeping movement - proof of concept
-	void first_pass_test();
 
 };
 

@@ -248,7 +248,6 @@ std::string ABB_tcp_client::move_tool(std::vector<float> xyz){
 
     cmd = cmd_stream.str();
 
- 
     request(cmd);
 
 
@@ -262,16 +261,13 @@ std::string ABB_tcp_client::move_tool(std::vector<float> xyz){
     //assembled - and formatted
     ret_stream << pos.substr(0, pos.find("]") + 1) << "," << force.substr(0, force.find("]") + 1);
 
-    //Update robots position
-    curr_pos = req_xyz();
+   
  
     
     return ret_stream.str();
 }
 
-std::vector<float> ABB_tcp_client::req_xyz() {
-
-  
+std::vector<float> ABB_tcp_client::req_xyz() { 
 
     //Send the getpos command
     request("GTPS:0");
@@ -279,8 +275,8 @@ std::vector<float> ABB_tcp_client::req_xyz() {
     //save the current position
     std::vector<float> pos = xyz_str_to_float(recieve());
 
-  
 
+    
 
     return pos;
 

@@ -359,10 +359,12 @@ void frontend_cntrl::load_robot_info() {
 
  
         //Display the currently reported position of the robot
-        for (int i = 0; i < ids.size(); i++) {
-            
+        for (int i = 0; i < ids.size(); i++) {            
 
             disp_text << ids[i] << ABB_rob.curr_pos[i] << " ";
+
+
+            std::cout << "LOADING: " << ABB_rob.curr_pos[i] << "\n";
 
             ImGui::Text(disp_text.str().c_str());
             
@@ -370,12 +372,10 @@ void frontend_cntrl::load_robot_info() {
 
             //Clear the string stream
             disp_text.str("");
-            
         }
 
         ImGui::NewLine();
-        //Display the position of the model
-        
+       
 
 
     }
@@ -427,7 +427,7 @@ void frontend_cntrl::load_test_section() {
                 //Set the current item
                 current_item = test_mgr.TESTS[i].c_str();
 
-                data_fp = "C:/Users/User/Documents/Results/" + test_mgr.TESTS[i] + "/";
+                data_fp = "C:/Users/User/Documents/Results/" + test_mgr.TESTS[i] + "/raw/" ;
                 
             }
 
@@ -463,8 +463,7 @@ void frontend_cntrl::load_test_section() {
     else{
 
         ImGui::NewLine();
-        ImGui::Text("TEST RUNNING");
- 
+        ImGui::Text("TEST RUNNING"); 
 
     }
 

@@ -219,6 +219,10 @@ int main(int, char**)
             gui_cntrl.test_mgr.latency_test();
         }
 
+        if (gui_cntrl.test_mgr.FIRST_PASS_FLAG) {
+            gui_cntrl.test_mgr.first_pass_test();
+        }
+
 
             
 
