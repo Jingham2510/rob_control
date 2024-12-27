@@ -49,6 +49,8 @@ bool test_manager::test_running(){
 //Latency test
 void test_manager::latency_test() {
 
+	float last_ping;
+
 	ImGui::Begin("Latency Test");
 	ImGui::Text("Latency Test");
 
@@ -57,13 +59,17 @@ void test_manager::latency_test() {
 	//Only do the next part of the test when required
 	//Complete one loop at a time
 	if (!test_complete) {
+		last_ping = robot->ping();
 		//Complete a ping
-		storage_1.push_back((robot->ping()) * pow(10, -6));
+		storage_1.push_back(last_ping * pow(10, -6));
 		loop_counter++;
 		if (loop_counter == 99) {
 			test_complete = true;
 		}
+		latency_plotting(last_ping);
 	}
+
+	
 
 	//Save the file once the test is complete - all in one go
 	if (test_complete && !file_saved) {
@@ -82,6 +88,9 @@ void test_manager::latency_test() {
 	//If the test is complete
 	if (test_complete && file_saved) {
 
+		//Display the complete graph - doesnt matter what this variable is 
+		latency_plotting(0);
+
 		//Display the close button
 		if (ImGui::Button("Close Page")) {
 			close = true;
@@ -93,6 +102,57 @@ void test_manager::latency_test() {
 	ImGui::End();	
 		
     return;
+}
+
+//Live latency test plotting
+void test_manager::latency_plotting(float next_point) {
+
+
+	if (!test_complete) {
+
+		//Setup the buffer
+		static RollingBuffer latency_data;
+		static float t = 0;
+		static float history = 100;
+		latency_data.Span = history;
+		//Get the time
+		t += ImGui::GetIO().DeltaTime;
+
+		//Add the point to the buffer
+		latency_data.AddPoint(t, next_point);
+
+		//Determine plot flags
+		static ImPlotAxisFlags flags = ImPlotAxisFlags_NoTickLabels;
+
+		//Create the plot
+		if (ImPlot::BeginPlot("##Latency", ImVec2(-1, 150))) {
+			ImPlot::SetupAxes(NULL, NULL, flags, flags);
+			ImPlot::SetupAxisLimits(ImAxis_X1, 0, history, ImGuiCond_Always);
+			ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
+			ImPlot::PlotLine("Latency (ms)", &latency_data.Data[0].x, &latency_data.Data[0].y, latency_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::EndPlot();
+		}
+	}
+	//If test has stopped running - no need for rolling buffer
+	//Plot static plot
+	else {
+		
+		static float count[100];
+
+		for (int i = 0; i < 100; i++) {
+			count[i] = i;
+		}
+
+
+		if (ImPlot::BeginPlot("##Latency")) {
+			ImPlot::SetupAxes("Iteration", "Latency");
+			ImPlot::SetupAxisLimits(ImAxis_X1, 0, storage_1.size(), ImGuiCond_Always);
+			ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 0.1, ImGuiCond_Always);
+			ImPlot::PlotLine("Latency", count, &storage_1[0], storage_1.size());
+			ImPlot::EndPlot();
+		}
+	}
+
 }
 
 
@@ -192,6 +252,8 @@ void test_manager::first_pass_test() {
 
 	return;
 }
+
+
 
 
 //Calculates the robots position error from the desired error

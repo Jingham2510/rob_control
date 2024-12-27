@@ -8,6 +8,7 @@
 #include<sstream>
 #include<thread>
 #include "imgui.h"
+#include "implot.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
 #include "imgui_stdlib.h"
@@ -65,6 +66,22 @@ private:
 	};
 
 
+	// utility structure for realtime plot - nicked from IMplot demo
+	struct RollingBuffer {
+		float Span;
+		ImVector<ImVec2> Data;
+		RollingBuffer() {
+			Span = 10.0f;
+			Data.reserve(2000);
+		}
+		void AddPoint(float x, float y) {
+			float xmod = fmodf(x, Span);
+			if (!Data.empty() && xmod < Data.back().x)
+				Data.shrink(0);
+			Data.push_back(ImVec2(xmod, y));
+		}
+	};
+
 	//Test state controllers
 	bool test_complete;
 	bool file_saved;
@@ -93,6 +110,9 @@ private:
 
 	//The filepath where the data is stored
 	std::string data_path;
+
+	//Provides live latency plot for the latency test
+	void latency_plotting(float);
 
 	//Calculates the error between desired and current pos
 	std::vector<float> calc_line_err(std::vector<float>, float, float, float);

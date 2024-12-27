@@ -5,6 +5,7 @@
 #include"../modelling/Robot_DH.hpp"
 #include"../abb_tcp/tests/test_manager.hpp"
 #include "imgui.h"
+#include "implot.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
 #include "imgui_stdlib.h"

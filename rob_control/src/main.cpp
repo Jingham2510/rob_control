@@ -9,6 +9,7 @@
 #include "imgui_stdlib.h"
 #include <d3d12.h>
 #include <dxgi1_4.h>
+#include"implot.h"
 #include <tchar.h>
 #include<string>
 #include<iostream>
@@ -130,6 +131,7 @@ int main(int, char**)
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImPlot::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -292,7 +294,9 @@ int main(int, char**)
     // Cleanup
     ImGui_ImplDX12_Shutdown();
     ImGui_ImplWin32_Shutdown();
+    ImPlot::DestroyContext();
     ImGui::DestroyContext();
+
 
     CleanupDeviceD3D();
     ::DestroyWindow(hwnd);
