@@ -230,7 +230,7 @@ void frontend_cntrl::ABB_control_page() {
         
         //Create the robot test manager
         //Load test manager
-        test_mgr = test_manager(ABB_rob);
+        test_mgr = test_manager(&ABB_rob);
         
         //Get the robot model
         robot_name = ABB_rob.get_model();
@@ -296,8 +296,14 @@ void frontend_cntrl::ABB_control_page() {
 
     //Ping test - PLACEHOLDER
     if (ImGui::CollapsingHeader("PING TEST")) {
-        if (ImGui::Button("PING!")) {
-            ABB_rob.ping();
+        
+        if (!test_mgr.test_running()) {
+            if (ImGui::Button("PING!")) {
+                ABB_rob.ping();
+            }
+        }
+        else {
+            ImGui::Text("Test running...");
         }
     }
 
@@ -357,22 +363,24 @@ void frontend_cntrl::load_robot_info() {
         //Generate the text to display
         std::stringstream disp_text;
 
+        //Get the last reported position
+        std::vector<float> curr_pos = ABB_rob.get_last_reported_pos();
+
  
         //Display the currently reported position of the robot
         for (int i = 0; i < ids.size(); i++) {            
 
-            disp_text << ids[i] << ABB_rob.curr_pos[i] << " ";
+            disp_text << ids[i] << curr_pos[i] << " ";
 
 
-            std::cout << "LOADING: " << ABB_rob.curr_pos[i] << "\n";
+            ImGui::Text(disp_text.str().c_str());           
 
-            ImGui::Text(disp_text.str().c_str());
-            
             ImGui::SameLine();
 
             //Clear the string stream
             disp_text.str("");
         }
+
 
         ImGui::NewLine();
        
@@ -446,7 +454,7 @@ void frontend_cntrl::load_test_section() {
 
     //Create the filepath box
     ImGui::InputText("Filepath", &data_fp);
-    ImGui::SameLine();
+ 
 
     //Only allow test button if test running
     if (!test_mgr.test_running()) {
@@ -461,11 +469,8 @@ void frontend_cntrl::load_test_section() {
     }
 
     else{
-
-        ImGui::NewLine();
         ImGui::Text("TEST RUNNING"); 
-
-    }
+     }
 
     return;
 }

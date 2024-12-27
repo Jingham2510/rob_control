@@ -275,12 +275,15 @@ std::vector<float> ABB_tcp_client::req_xyz() {
     //save the current position
     std::vector<float> pos = xyz_str_to_float(recieve());
 
-
-    
-
     return pos;
 
 }
+
+std::vector<float> ABB_tcp_client::get_last_reported_pos() {
+    return curr_pos;
+}
+
+
 
 std::string ABB_tcp_client::get_model() {
     //Send the model request command

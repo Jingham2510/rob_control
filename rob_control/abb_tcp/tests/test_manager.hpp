@@ -24,7 +24,7 @@ class test_manager {
 
 public:
 	//Create a robot test manager
-	test_manager(ABB_tcp_client);
+	test_manager(ABB_tcp_client*);
 	//Blank constructor 
 	test_manager();
 
@@ -89,7 +89,7 @@ private:
 	bool TEST_RUNNING_FLAG = false;
 
 	//The robot that will complete the tests
-	ABB_tcp_client robot;
+	ABB_tcp_client *robot;
 
 	//The filepath where the data is stored
 	std::string data_path;

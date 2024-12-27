@@ -4,9 +4,10 @@
 //Controls the robot to complete tests and saves the appropriate data
 //Essentially a way of storing test scripts in the GUI 
 //ENSURE THAT DATA PATH IS SET BEFORE RUNNING
-test_manager::test_manager(ABB_tcp_client client) {
+test_manager::test_manager(ABB_tcp_client *client) {
 
 	//Set the robot that the tests are performed with
+	//Set to the address of the robot alreayd being used
 	robot = client;
 
 
@@ -57,7 +58,7 @@ void test_manager::latency_test() {
 	//Complete one loop at a time
 	if (!test_complete) {
 		//Complete a ping
-		storage_1.push_back((robot.ping()) * pow(10, -6));
+		storage_1.push_back((robot->ping()) * pow(10, -6));
 		loop_counter++;
 		if (loop_counter == 99) {
 			test_complete = true;
@@ -130,7 +131,7 @@ void test_manager::first_pass_test() {
 
 	if (!TEST_FLAG_1) {
 		//Move the robot to the starting position - checked manually for now
-		robot.set_joints({ -20.01, 58.59, 46.97, 4.81, 43.57, -32.28 });
+		robot->set_joints({ -20.01, 58.59, 46.97, 4.81, 43.57, -32.28 });
 		TEST_FLAG_1 = true;
 	}
 
@@ -138,11 +139,13 @@ void test_manager::first_pass_test() {
 	//Move the robot and log the data
 	if (TEST_FLAG_1 && !test_complete) {
 
+
+
 		//Calculate the error from the desired pos
-		move_vector = calc_line_err(robot.curr_pos, DES_X, START_POS[1] + (polarity * loop_counter * STEP_RES), DES_Z);
+		move_vector = calc_line_err(robot->get_last_reported_pos(), DES_X, START_POS[1] + (polarity * loop_counter * STEP_RES), DES_Z);
 
 		//Move the robot - ensuring that the tool attempts to stay in a straight line
-		curr_force_pos = robot.move_tool(move_vector);
+		curr_force_pos = robot->move_tool(move_vector);
 
 		//Place the data in the arrays
 		time_data.push_back(std::chrono::system_clock::now());
@@ -162,7 +165,7 @@ void test_manager::first_pass_test() {
 
 		//Create the filename
 		std::stringstream filename;
-		filename << data_path << "placeholder" << "_first_pass.txt";
+		filename << "placeholder_" << data_path;
 
 		//Save the data to a logfile
 		std::ofstream data_file(filename.str());
@@ -185,9 +188,6 @@ void test_manager::first_pass_test() {
 	}
 
 
-
-	TEST_RUNNING_FLAG = false;
-
 	ImGui::End();
 
 	return;
@@ -198,14 +198,14 @@ void test_manager::first_pass_test() {
 std::vector<float> test_manager::calc_line_err(std::vector<float> curr_xyz, float desired_x, float desired_y, float desired_z) {
 
     //Create the vector float from the string
-    std::vector<float> curr_xyz_vec = curr_xyz;
+    //std::vector<float> curr_xyz_vec = curr_xyz;
 
     //Create the vector from the differences (invert to ensure the tool moves the correct direction)
-    std::vector<float> xyz_diff = { -(desired_x - curr_xyz_vec[0]), (desired_y - curr_xyz_vec[1]), -(desired_z - curr_xyz_vec[2]) };
+    std::vector<float> xyz_diff = { -(desired_x - curr_xyz[0]), (desired_y - curr_xyz[1]), -(desired_z - curr_xyz[2]) };
 
 
     for (int i = 0; i < xyz_diff.size(); i++) {
-        std::cout << "CURR: " << curr_xyz_vec[i] << " DIFF: " << xyz_diff[i] << "\n";
+        std::cout << "CURR: " << curr_xyz[i] << " DIFF: " << xyz_diff[i] << "\n";
     }
 
     return xyz_diff;

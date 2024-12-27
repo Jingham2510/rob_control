@@ -35,6 +35,9 @@ class ABB_tcp_client{
         //Get the robots current xyz pos
         std::vector<float> req_xyz();
 
+        //Get the last reported pos
+        std::vector<float> get_last_reported_pos();
+
         //Get the robots model
         std::string get_model();
 
@@ -42,8 +45,6 @@ class ABB_tcp_client{
         //Closes the connection
         void close_connection();
 
-        //Robots current position
-        std::vector<float> curr_pos;
 
 
     private:
@@ -71,6 +72,9 @@ class ABB_tcp_client{
         const char *ip;
         //ABB server port
         int port;
+
+        //Robots current position
+        std::vector<float> curr_pos;
 
         //The server struct 
         struct sockaddr_in ABB_server;
