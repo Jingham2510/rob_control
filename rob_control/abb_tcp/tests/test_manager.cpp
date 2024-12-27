@@ -38,14 +38,6 @@ bool test_manager::test_running(){
 }
 
 
-/*TODO: At start of each test create new window
-* in window house test info
-* order: create window -> setup test -> move robot -> update window info
-* Might not be interactable? its okay can just be visual
-* */
-
-
-
 //Latency test
 void test_manager::latency_test() {
 
@@ -224,6 +216,8 @@ void test_manager::first_pass_test() {
 		}
 	}
 
+	force_displacement_plotting(curr_force_pos, move_vector);
+
 	if (test_complete && !file_saved) {
 
 		//Create the filename
@@ -254,6 +248,19 @@ void test_manager::first_pass_test() {
 	ImGui::End();
 
 	return;
+}
+
+void test_manager::force_displacement_plotting(std::string force_pos, std::vector<float> xyz_err) {
+
+	//TODO: -4 plots each contianign a set number of lines
+	//Split xyz pos and 6-axis force and turn into floats
+	//plot xyz position graph
+	//Plot orientation graph (requires a get orientation cmd)
+	//Plot 6-axis force on rolling graph
+	//Plot xyz error
+
+
+
 }
 
 
