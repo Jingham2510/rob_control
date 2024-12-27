@@ -105,7 +105,6 @@ private:
 	//List of valid tests loaded from the test config file
 	std::vector <std::string> test_titles;
 
-	//Pointers so they can modify text inputs
 	//IP to connect to
 	std::string ip;
 	//Port to connect to

@@ -18,7 +18,6 @@ ABB_tcp_client::ABB_tcp_client(const char *client_ip, int client_port, bool *con
     port = client_port;
     connected = connect_flag;
 
- 
 
 
     //Only inisitalise WSA once
@@ -191,6 +190,8 @@ float ABB_tcp_client::ping(){
 //Set the joints to a specific angle
 int ABB_tcp_client::set_joints(std::vector<float> jnt_angs){
 
+    
+
     //The command to send to the server
     std::string cmd;
 
@@ -209,6 +210,8 @@ int ABB_tcp_client::set_joints(std::vector<float> jnt_angs){
     stream << "STJT:[[" << com_vec_to_string(jnt_angs) << "], [9E9,9E9,9E9,9E9,9E9,9E9]]";
 
     cmd = stream.str();
+    
+
     //Send the set joint command to the ABB server
     request(cmd);
 
@@ -219,7 +222,8 @@ int ABB_tcp_client::set_joints(std::vector<float> jnt_angs){
     //Update robots position
     curr_pos = req_xyz();
 
-    
+  
+
     return 1;
 }
 
@@ -244,6 +248,7 @@ std::string ABB_tcp_client::move_tool(std::vector<float> xyz){
 
     cmd = cmd_stream.str();
 
+ 
     request(cmd);
 
 
@@ -259,17 +264,22 @@ std::string ABB_tcp_client::move_tool(std::vector<float> xyz){
 
     //Update robots position
     curr_pos = req_xyz();
+ 
     
     return ret_stream.str();
 }
 
 std::vector<float> ABB_tcp_client::req_xyz() {
 
+  
+
     //Send the getpos command
     request("GTPS:0");
 
     //save the current position
     std::vector<float> pos = xyz_str_to_float(recieve());
+
+  
 
 
     return pos;

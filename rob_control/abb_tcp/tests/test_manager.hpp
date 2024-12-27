@@ -6,6 +6,14 @@
 #include<chrono>
 #include<string>
 #include<sstream>
+#include<thread>
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx12.h"
+#include "imgui_stdlib.h"
+#include <d3d12.h>
+#include <dxgi1_4.h>
+
 
 
 #ifndef TEST_MANAGER
@@ -20,14 +28,9 @@ public:
 	//Blank constructor 
 	test_manager();
 
-	//Ping 100 times and calculate the latencys
-	void latency_test();
-
-	//Do one sweeping movement - proof of concept
-	void first_pass_test();
 
 	//Tests currently available
-	std::vector<std::string> TESTS = { "latency_test", "first_pass test" };
+	std::vector<std::string> TESTS = { "latency_test", "first_pass_test" };
 
 	//Set the output filepath
 	void set_data_path(std::string);
@@ -37,6 +40,9 @@ public:
 
 	//Report whether a test is running
 	bool test_running();
+
+	//Selects a test to run
+	void test_selector(std::string);
 
 
 
@@ -60,6 +66,13 @@ private:
 
 	//Calculates the error between desired and current pos
 	std::vector<float> calc_line_err(std::vector<float>, float, float, float);
+
+
+	//Ping 100 times and calculate the latencys
+	void latency_test();
+
+	//Do one sweeping movement - proof of concept
+	void first_pass_test();
 
 };
 

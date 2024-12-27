@@ -207,6 +207,8 @@ void frontend_cntrl::ABB_control_page() {
     if (!connected) {
         //Attempt to connect to the robot
         ABB_rob = ABB_tcp_client(ip.c_str(), std::stoi(port), &connected);
+        //std::thread rob_thread(ABB_tcp_client(), ip.c_str(), std::stoi(port), &connected);
+
 
     }
 
@@ -451,10 +453,10 @@ void frontend_cntrl::load_test_section() {
 
         //Run test button
         if (ImGui::Button("Run Test")) {
+            //Setup the test manager
             test_mgr.set_data_path(data_fp);
-
-            //TODO: add run test function for the test manager
-
+            //Select the test to run
+            test_mgr.test_selector(current_item);
         }
     }
 
@@ -462,10 +464,7 @@ void frontend_cntrl::load_test_section() {
 
         ImGui::NewLine();
         ImGui::Text("TEST RUNNING");
-        
-        //Thread the test so that the gui doesnt freeze
-        std::thread test_thread(&test_manager::first_pass_test,
-                                test_mgr);
+ 
 
     }
 

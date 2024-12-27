@@ -32,7 +32,7 @@ std::string test_manager::get_data_path() {
 }
 
 //Report the test running status
-bool test_manager::test_running() {
+bool test_manager::test_running(){
 	return TEST_RUNNING_FLAG;
 }
 
@@ -40,8 +40,6 @@ bool test_manager::test_running() {
 
 //latency test
 void test_manager::latency_test() {
-
-	TEST_RUNNING_FLAG = true;
 
 
 	bool connected = false;
@@ -71,7 +69,6 @@ void test_manager::latency_test() {
 //First pass one movement test
 void test_manager::first_pass_test() {
 
-	TEST_RUNNING_FLAG = true;
 
 	std::vector<std::chrono::system_clock::time_point> time_data;
 	//Stores both the force and posiiton data as a string
@@ -160,3 +157,31 @@ std::vector<float> test_manager::calc_line_err(std::vector<float> curr_xyz, floa
 
 
 }
+
+
+//Selects a test (and threads it hopefully)
+void test_manager::test_selector(std::string test_name) {
+
+	//One giant if statement to select the test
+	//Thread any test so the GUI doesn't freeze
+	if (test_name == "latency_test"){	
+		TEST_RUNNING_FLAG = true;
+		//std::thread test_thread(&test_manager::latency_test, this);
+		latency_test();
+	}
+
+	if (test_name == "first_pass_test") {
+		TEST_RUNNING_FLAG = true;
+		//std::thread test_thread(&test_manager::first_pass_test, this);
+		first_pass_test();
+
+		
+	}
+
+}
+
+/*TODO: At start of test create new window
+* in window house test info
+* order: create window -> setup test -> move robot -> update window info
+* Might not be interactable? its okay can just be visual
+* */
