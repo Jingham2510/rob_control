@@ -111,6 +111,12 @@ void ABB_tcp_client::connect_to_ABB(){
         //Request the robots position
         curr_pos = req_xyz();
 
+        //Request the robots orientation
+        //curr_ori = req_ori();
+
+        //Request the current force
+        curr_force = req_force();
+
     }
 
 }
@@ -222,6 +228,12 @@ int ABB_tcp_client::set_joints(std::vector<float> jnt_angs){
     //Update robots position
     curr_pos = req_xyz();
 
+    //Update orientation
+    //curr_ori = req_ori();
+
+    //Update force
+    curr_force = req_force();
+
   
 
     return 1;
@@ -256,13 +268,15 @@ std::string ABB_tcp_client::move_tool(std::vector<float> xyz){
     curr_pos = xyz_str_to_float(pos);
 
     std::string force = recieve();
+    curr_force = xyz_str_to_float(force);
 
   
     //assembled - and formatted
     ret_stream << pos.substr(0, pos.find("]") + 1) << "," << force.substr(0, force.find("]") + 1);
 
    
- 
+    //Update orientation
+    //curr_ori = req_ori();
     
     return ret_stream.str();
 }
@@ -279,8 +293,36 @@ std::vector<float> ABB_tcp_client::req_xyz() {
 
 }
 
+std::vector<float> ABB_tcp_client::req_ori() {
+
+    //Send the get orientation command
+    request("GTOR:0");
+
+    std::vector<float> orientation = xyz_str_to_float(recieve());
+
+    return orientation;
+}
+
+std::vector<float> ABB_tcp_client::req_force() {
+    //Send the get force command
+    request("GTFC:0");
+
+    std::vector<float> force = xyz_str_to_float(recieve());
+
+    return force;
+
+}
+
 std::vector<float> ABB_tcp_client::get_last_reported_pos() {
     return curr_pos;
+}
+
+std::vector<float> ABB_tcp_client::get_last_reported_ori() {
+    return curr_ori;
+}
+
+std::vector<float> ABB_tcp_client::get_last_reported_force() {
+    return curr_force;
 }
 
 
@@ -318,6 +360,8 @@ std::string ABB_tcp_client::com_vec_to_string(std::vector<float> data){
 //Turns the RAPID xyz string to a vector
 std::vector<float> ABB_tcp_client::xyz_str_to_float(std::string xyz) {
 
+     
+
     std::vector<float> xyz_vec;
 
     //Split the string (delimited by ",") - slicing off the front and end square brackets
@@ -325,6 +369,7 @@ std::vector<float> ABB_tcp_client::xyz_str_to_float(std::string xyz) {
     std::string item;
     std::vector<std::string> elems;
     while (std::getline(ss, item, ',')) {
+
         elems.push_back(std::move(item));
         
     }

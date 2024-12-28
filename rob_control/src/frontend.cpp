@@ -359,16 +359,17 @@ void frontend_cntrl::load_robot_info() {
     if (ABB_control_page_flag) {
         
         //Position IDs
-        std::vector<std::string> ids = { "X: ", "Y: ", "Z: " };
+        std::vector<std::string> ids = { "X: ", "Y: ", "Z: ", "Rx: ", "Ry: ", "Rz: "};
         //Generate the text to display
         std::stringstream disp_text;
 
         //Get the last reported position
         std::vector<float> curr_pos = ABB_rob.get_last_reported_pos();
 
+        ImGui::Text("Cartesian Position");
  
         //Display the currently reported position of the robot
-        for (int i = 0; i < ids.size(); i++) {            
+        for (int i = 0; i < ids.size()/2; i++) {            
 
             disp_text << ids[i] << curr_pos[i] << " ";
 
@@ -383,7 +384,52 @@ void frontend_cntrl::load_robot_info() {
 
 
         ImGui::NewLine();
+        
+        ImGui::Separator();
+        //Get the last reported orientation
+        //std::vector<float> curr_ori = ABB_rob.get_last_reported_ori();
+
+        
+        //Display the orientation as well
+        ImGui::Text("Euler Angles");
+        /*
+        for (int i = 0; i < ids.size()/2; i++) {
+
+            disp_text << ids[i] << curr_ori[i] << " ";
+
+            ImGui::Text(disp_text.str().c_str());
+
+            ImGui::SameLine();
+
+            //Clear the string stream
+            disp_text.str("");
+        }
+        */
+
+        ImGui::NewLine();
+
+        ImGui::Separator();
        
+        //Display the current force
+        ImGui::Text("Force");
+
+        std::vector<float> curr_force = ABB_rob.get_last_reported_force();
+        
+        for (int i = 0; i < ids.size(); i++) {
+            
+            disp_text << ids[i] << curr_force[i] << " ";
+
+            ImGui::Text(disp_text.str().c_str());
+
+            ImGui::SameLine();
+
+            //Clear the string stream
+            disp_text.str("");
+
+        }
+
+
+        ImGui::NewLine();  
 
 
     }

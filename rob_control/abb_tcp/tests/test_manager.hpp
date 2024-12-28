@@ -117,7 +117,7 @@ private:
 	//Provides plotting for general force-displacement test
 	//Plots current xyz pos, current xyz error, current 6-axis force
 	// TODO: Added orientation bits
-	void force_displacement_plotting(std::string, std::vector<float>);
+	void force_displacement_plotting(std::vector<float>);
 
 	//Calculates the error between desired and current pos
 	std::vector<float> calc_line_err(std::vector<float>, float, float, float);

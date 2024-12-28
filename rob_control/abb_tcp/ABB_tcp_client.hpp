@@ -35,8 +35,20 @@ class ABB_tcp_client{
         //Get the robots current xyz pos
         std::vector<float> req_xyz();
 
+        //Get the robots current ZYX euler orientation
+        std::vector<float> req_ori();
+
+        //Get the robots currently reported force
+        std::vector<float> req_force();
+
         //Get the last reported pos
         std::vector<float> get_last_reported_pos();
+
+        //Get the last reported orientation
+        std::vector<float> get_last_reported_ori();
+
+        //Get the last reported force
+        std::vector<float> get_last_reported_force();
 
         //Get the robots model
         std::string get_model();
@@ -75,6 +87,12 @@ class ABB_tcp_client{
 
         //Robots current position
         std::vector<float> curr_pos;
+
+        //Robots current orientation
+        std::vector<float> curr_ori;
+
+        //Robots current 6-axis force
+        std::vector<float> curr_force;
 
         //The server struct 
         struct sockaddr_in ABB_server;

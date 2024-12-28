@@ -207,8 +207,7 @@ void test_manager::first_pass_test() {
 
 		string_storage.push_back(curr_force_pos);
 
-		std::cout << curr_force_pos << "\n";
-
+		
 		loop_counter++;
 
 		if (loop_counter == (steps - 1)) {
@@ -216,7 +215,7 @@ void test_manager::first_pass_test() {
 		}
 	}
 
-	force_displacement_plotting(curr_force_pos, move_vector);
+	force_displacement_plotting( move_vector);
 
 	if (test_complete && !file_saved) {
 
@@ -250,14 +249,131 @@ void test_manager::first_pass_test() {
 	return;
 }
 
-void test_manager::force_displacement_plotting(std::string force_pos, std::vector<float> xyz_err) {
+void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
 
 	//TODO: -4 plots each contianign a set number of lines
-	//Split xyz pos and 6-axis force and turn into floats
-	//plot xyz position graph
-	//Plot orientation graph (requires a get orientation cmd)
-	//Plot 6-axis force on rolling graph
-	//Plot xyz error
+	//Plot orientation graph (requires a get orientation cmd) ~ ABB doesnt report it...
+	//Show plot when finished
+
+	//XYZ position buffers
+	static RollingBuffer xpos_data;
+	static RollingBuffer ypos_data;
+	static RollingBuffer zpos_data;
+
+	//6-axis force buffers
+	static RollingBuffer xforce_data;
+	static RollingBuffer yforce_data;
+	static RollingBuffer zforce_data;
+	static RollingBuffer Rxforce_data;
+	static RollingBuffer Ryforce_data;
+	static RollingBuffer Rzforce_data;
+
+
+	//Error buffers
+	static RollingBuffer xerr_data;
+	static RollingBuffer yerr_data;
+	static RollingBuffer zerr_data;
+
+
+
+	if (!test_complete) {
+		
+		//Setup the buffers
+		xpos_data.Span = 100;
+		ypos_data.Span = 100;
+		zpos_data.Span = 100;
+
+		xforce_data.Span = 100;
+		yforce_data.Span = 100;
+		zforce_data.Span = 100;
+		Rxforce_data.Span = 100;
+		Ryforce_data.Span = 100;
+		Rzforce_data.Span = 100;
+
+		xerr_data.Span = 100;
+		yerr_data.Span = 100;
+		zerr_data.Span = 100;
+
+
+		static float t = 0;
+
+		//Get the time
+		t += ImGui::GetIO().DeltaTime;
+
+		//Get the position data
+		std::vector<float> last_pos = robot->get_last_reported_pos();
+
+		//Add the points to the buffer
+		xpos_data.AddPoint(t, last_pos[0]);
+		ypos_data.AddPoint(t, last_pos[1]);
+		zpos_data.AddPoint(t, last_pos[2]);
+
+		//Determine plot flags
+		static ImPlotAxisFlags flags = ImPlotAxisFlags_NoTickLabels;
+
+		//Create the plot
+		if (ImPlot::BeginPlot("Position")) {
+			ImPlot::SetupAxes("Time", "Position", flags, flags);
+			ImPlot::SetupAxisLimits(ImAxis_X1, 0, 100);
+			ImPlot::SetupAxisLimits(ImAxis_Y1, -2500, 2500);
+			ImPlot::PlotLine("X pos", &xpos_data.Data[0].x, &xpos_data.Data[0].y, xpos_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("Y pos", &ypos_data.Data[0].x, &ypos_data.Data[0].y, ypos_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("Z pos", &zpos_data.Data[0].x, &zpos_data.Data[0].y, zpos_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::EndPlot();
+		}
+
+		//Get the force data
+		std::vector<float> last_force = robot->get_last_reported_force();
+
+		//Add the points to the force buffers
+		xforce_data.AddPoint(t, last_force[0]);
+		yforce_data.AddPoint(t, last_force[1]);
+		zforce_data.AddPoint(t, last_force[2]);
+		Rxforce_data.AddPoint(t, last_force[3]);
+		Ryforce_data.AddPoint(t, last_force[4]);
+		Rzforce_data.AddPoint(t, last_force[5]);
+
+		//Plot the 6 axis forces
+		if (ImPlot::BeginPlot("Force")) {
+			ImPlot::SetupAxes("Time", "Force", flags, flags);
+			ImPlot::SetupAxisLimits(ImAxis_X1, 0, 100);
+			ImPlot::SetupAxisLimits(ImAxis_Y1, -10, 10);
+			ImPlot::PlotLine("X", &xforce_data.Data[0].x, &xforce_data.Data[0].y, xforce_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("Y", &yforce_data.Data[0].x, &yforce_data.Data[0].y, yforce_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("Z", &zforce_data.Data[0].x, &zforce_data.Data[0].y, zforce_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("RX", &Rxforce_data.Data[0].x, &Rxforce_data.Data[0].y, Rxforce_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("RY", &Ryforce_data.Data[0].x, &Ryforce_data.Data[0].y, Ryforce_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("RZ", &Rzforce_data.Data[0].x, &Rzforce_data.Data[0].y, Rzforce_data.Data.size(), 0, 0, 2 * sizeof(float));
+
+			ImPlot::EndPlot();
+		}
+
+
+		//Add the points to the error buffers
+		xerr_data.AddPoint(t, xyz_err[0]);
+		yerr_data.AddPoint(t, xyz_err[1]);
+		zerr_data.AddPoint(t, xyz_err[2]);
+
+		//Plot the error data
+		//Create the plot
+		if (ImPlot::BeginPlot("Errors")) {
+			ImPlot::SetupAxes("Time", "Error", flags, flags);
+			ImPlot::SetupAxisLimits(ImAxis_X1, 0, 100);
+			ImPlot::SetupAxisLimits(ImAxis_Y1, -5, 5);
+			ImPlot::PlotLine("X err", &xerr_data.Data[0].x, &xerr_data.Data[0].y, xerr_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("Y err", &yerr_data.Data[0].x, &yerr_data.Data[0].y, yerr_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("Z err", &zerr_data.Data[0].x, &zerr_data.Data[0].y, zerr_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::EndPlot();
+		}
+
+
+
+
+	}
+	else {
+
+	}
+
 
 
 
