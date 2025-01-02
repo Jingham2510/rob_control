@@ -366,6 +366,8 @@ void frontend_cntrl::load_robot_info() {
             ImGui::Text("No test running...");
         }
         
+        ImGui::Separator();
+
         //Position IDs
         std::vector<std::string> ids = { "X: ", "Y: ", "Z: ", "Rx: ", "Ry: ", "Rz: "};
         //Generate the text to display

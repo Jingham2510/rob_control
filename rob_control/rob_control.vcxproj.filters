@@ -95,9 +95,6 @@
     <ClInclude Include="src\frontend.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="misc\date.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="abb_tcp\ABB_tcp_client.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

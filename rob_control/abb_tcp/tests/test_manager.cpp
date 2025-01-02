@@ -155,6 +155,7 @@ void test_manager::latency_plotting(float next_point) {
 void test_manager::first_pass_test() {
 
 
+
 	ImGui::Begin("First Pass");
 	ImGui::Text("First Pass Test");
 
@@ -219,20 +220,23 @@ void test_manager::first_pass_test() {
 
 	if (test_complete && !file_saved) {
 
-		//Create the filename
-		std::stringstream filename;
-		filename << "placeholder_" << data_path;
+	
 
 		//Save the data to a logfile
-		std::ofstream data_file(filename.str());
+		std::ofstream data_file(data_path);
 		for (int i = 0; i < time_data.size(); i++) {
-			//data_file << i << "," << time_data[i] << "," << force_pos_data[i] << "\n";
-			data_file << i << "," << "PLACEHOLDER" << "," << string_storage[i] << "\n";
+			
+			data_file << i << "," << time_data[i] << "," << string_storage[i] << "\n";
+			
+		
+		
 		}
 		data_file.close();
 
 		file_saved = true;
 	}
+
+	
 
 	//Display the test finished bit
 	if (test_complete && file_saved) {
@@ -370,6 +374,7 @@ void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
 
 
 	}
+	//Display the completed test
 	else {
 
 	}
