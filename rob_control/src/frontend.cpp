@@ -357,6 +357,14 @@ void frontend_cntrl::load_robot_info() {
 
     //If the robot is an ABB one
     if (ABB_control_page_flag) {
+
+        //If a test is running
+        if (test_mgr.test_running()) {
+            ImGui::Text("Test running...");
+        }
+        else {
+            ImGui::Text("No test running...");
+        }
         
         //Position IDs
         std::vector<std::string> ids = { "X: ", "Y: ", "Z: ", "Rx: ", "Ry: ", "Rz: "};
