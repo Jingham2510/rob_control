@@ -253,6 +253,8 @@ void test_manager::first_pass_test() {
 	return;
 }
 
+//Generic plotting for force/displacement/xyzerr/
+//TODO: make more generic by adding label and allowing any extra data to be used not just error
 void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
 
 	//TODO: -4 plots each contianign a set number of lines
@@ -277,6 +279,10 @@ void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
 	static RollingBuffer xerr_data;
 	static RollingBuffer yerr_data;
 	static RollingBuffer zerr_data;
+
+
+	//Determine plot flags
+	static ImPlotAxisFlags flags = ImPlotAxisFlags_NoTickLabels;
 
 
 
@@ -311,9 +317,6 @@ void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
 		xpos_data.AddPoint(t, last_pos[0]);
 		ypos_data.AddPoint(t, last_pos[1]);
 		zpos_data.AddPoint(t, last_pos[2]);
-
-		//Determine plot flags
-		static ImPlotAxisFlags flags = ImPlotAxisFlags_NoTickLabels;
 
 		//Create the plot
 		if (ImPlot::BeginPlot("Position")) {
@@ -375,7 +378,26 @@ void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
 
 	}
 	//Display the completed test
+	//For this we only want to display the 6-axis force 
+	//As the data will eventually just get processed
 	else {
+
+
+		//Plot the 6 axis forces
+		if (ImPlot::BeginPlot("Force")) {
+			ImPlot::SetupAxes("Time", "Force", flags, flags);
+			ImPlot::SetupAxisLimits(ImAxis_X1, 0, 100);
+			ImPlot::SetupAxisLimits(ImAxis_Y1, -10, 10);
+			ImPlot::PlotLine("X", &xforce_data.Data[0].x, &xforce_data.Data[0].y, xforce_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("Y", &yforce_data.Data[0].x, &yforce_data.Data[0].y, yforce_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("Z", &zforce_data.Data[0].x, &zforce_data.Data[0].y, zforce_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("RX", &Rxforce_data.Data[0].x, &Rxforce_data.Data[0].y, Rxforce_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("RY", &Ryforce_data.Data[0].x, &Ryforce_data.Data[0].y, Ryforce_data.Data.size(), 0, 0, 2 * sizeof(float));
+			ImPlot::PlotLine("RZ", &Rzforce_data.Data[0].x, &Rzforce_data.Data[0].y, Rzforce_data.Data.size(), 0, 0, 2 * sizeof(float));
+
+			ImPlot::EndPlot();
+		}
+
 
 	}
 
