@@ -69,6 +69,8 @@ class RobotDH{
         //Calculates the jacobian
         MatrixXf get_jacobian();
 
+        bool valid_model;
+
     private:
 
         const std::vector<std::string> VALID_MODELS = {"IRB 6400R-200/2.8"};

@@ -227,25 +227,32 @@ void frontend_cntrl::ABB_control_page() {
 
     //Create the robot model if not already done
     if (connected and !robot_model_known) {
-        
+
         //Create the robot test manager
         //Load test manager
         test_mgr = test_manager(&ABB_rob);
-        
+
         //Get the robot model
         robot_name = ABB_rob.get_model();
-         
+
         //Create the mathematical model of the robot
         rob_model = RobotDH(robot_name);
 
-        std::vector<float> model_pos = rob_model.get_pos();
 
-              
-        for (int i = 0; i < model_pos.size(); i++) {
-            std::cout << model_pos[i] << "\n";
+        if (rob_model.valid_model) {}
+
+            std::vector<float> model_pos = rob_model.get_pos();
+
+
+            for (int i = 0; i < model_pos.size(); i++) {
+                std::cout << model_pos[i] << "\n";
+            }
+            
         }
-        robot_model_known = true;
-    }
+    //Still mark as known - it is known just as invalid
+    robot_model_known = true;
+
+   
 
   
 
@@ -256,10 +263,8 @@ void frontend_cntrl::ABB_control_page() {
         TODO:
         -BUTTONS TO CREATE MODULES
         -MODEL VS REPORTED ERROR PLOT
-        -CURR FORCE PLOTTER
         -Button Control
         -Angle Chooser
-        -Test chooser
     */
 
     //Create the title for the page
@@ -278,7 +283,19 @@ void frontend_cntrl::ABB_control_page() {
 
     //Model Robot Info
     if (ImGui::CollapsingHeader("Model Info")) {
-        ImGui::Text("TODO");
+        
+        if (rob_model.valid_model) {
+            ImGui::Text("TODO");
+        }
+
+
+        else {
+            ImGui::Text("Robot Model not known!");
+        }
+
+
+
+
     }
 
     //Manual Control Section
@@ -453,13 +470,13 @@ void frontend_cntrl::load_man_control() {
 
     //Place button which moves the tool up
     if (ImGui::Button("Up")) {
-        ABB_rob.move_tool({ 0, 0, 10 });
+        ABB_rob.move_tool({ 0, 0, -10 });
     }
-
+    
 
     //Place button which moves the tool up
     if (ImGui::Button("Down")) {
-        ABB_rob.move_tool({ 0, 0, -10 });
+        ABB_rob.move_tool({ 0, 0, 10 });
     }
 
     ImGui::Text("MORE TODO!");

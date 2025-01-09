@@ -114,6 +114,9 @@ void ABB_tcp_client::connect_to_ABB(){
         //Request the robots orientation
         //curr_ori = req_ori();
 
+        //Request the robots joint angles
+        curr_jnt_angs = req_jnt_angs();
+
         //Request the current force
         curr_force = req_force();
 
@@ -231,6 +234,9 @@ int ABB_tcp_client::set_joints(std::vector<float> jnt_angs){
     //Update orientation
     //curr_ori = req_ori();
 
+    //Request the robots joint angles
+    curr_jnt_angs = req_jnt_angs();
+
     //Update force
     curr_force = req_force();
 
@@ -267,8 +273,12 @@ std::string ABB_tcp_client::move_tool(std::vector<float> xyz){
     std::string pos = recieve();
     curr_pos = xyz_str_to_float(pos);
 
+    //Update force
     std::string force = recieve();
     curr_force = xyz_str_to_float(force);
+
+    //Request the robots joint angles
+    curr_jnt_angs = req_jnt_angs();
 
   
     //assembled - and formatted
@@ -303,6 +313,20 @@ std::vector<float> ABB_tcp_client::req_ori() {
     return orientation;
 }
 
+
+std::vector<float> ABB_tcp_client::req_jnt_angs() {
+
+    //Send the get joint angles command
+    request("GTJA:0");
+
+    std::vector<float> joint_angs = xyz_str_to_float(recieve());
+
+    return joint_angs;
+
+
+}
+
+
 std::vector<float> ABB_tcp_client::req_force() {
     //Send the get force command
     request("GTFC:0");
@@ -319,6 +343,10 @@ std::vector<float> ABB_tcp_client::get_last_reported_pos() {
 
 std::vector<float> ABB_tcp_client::get_last_reported_ori() {
     return curr_ori;
+}
+
+std::vector<float> ABB_tcp_client::get_last_reported_jnt_angs() {
+    return curr_jnt_angs;
 }
 
 std::vector<float> ABB_tcp_client::get_last_reported_force() {

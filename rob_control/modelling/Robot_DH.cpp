@@ -35,7 +35,7 @@ RobotDH::RobotDH(std::vector<DHLink> links, std::vector<std::string> offsets){
 //Constructor when a model is provided
 RobotDH::RobotDH(std::string model_name) {
 
-    bool valid_model = false;
+    valid_model = false;
     int model_pos;
 
     //See if the model is valid

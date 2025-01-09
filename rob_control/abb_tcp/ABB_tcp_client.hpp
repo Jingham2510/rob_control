@@ -38,6 +38,9 @@ class ABB_tcp_client{
         //Get the robots current ZYX euler orientation
         std::vector<float> req_ori();
 
+        //Get the robots joint angles
+        std::vector<float> req_jnt_angs();
+
         //Get the robots currently reported force
         std::vector<float> req_force();
 
@@ -47,8 +50,13 @@ class ABB_tcp_client{
         //Get the last reported orientation
         std::vector<float> get_last_reported_ori();
 
+        //Get the last reported set of joint angles
+        std::vector<float>get_last_reported_jnt_angs();
+
+
         //Get the last reported force
         std::vector<float> get_last_reported_force();
+
 
         //Get the robots model
         std::string get_model();
@@ -93,6 +101,9 @@ class ABB_tcp_client{
 
         //Robots current 6-axis force
         std::vector<float> curr_force;
+
+        //Robots current joint angles
+        std::vector<float> curr_jnt_angs;
 
         //The server struct 
         struct sockaddr_in ABB_server;
