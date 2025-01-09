@@ -463,14 +463,11 @@ void frontend_cntrl::load_robot_info() {
         //Display the joint angles
         ImGui::Text("Joint Angles");
         
-        if (ImGui::Button("angles")) {
-            std::vector<float> test = ABB_rob.get_last_reported_jnt_angs();
-            for (int i = 0; i < test.size(); i++) {
-                std::cout << test[i] << "\n";
-            }
+        std::vector<float> jnt_angs = ABB_rob.get_last_reported_jnt_angs();
 
-
-        }
+        std::stringstream angs_text;
+        angs_text << "J1: " << jnt_angs[0] << " | J2: " << jnt_angs[1] << " | J3: " << jnt_angs[2] << " | J4: " << jnt_angs[3] << " | J5:  " << jnt_angs[4] << " | J6: " << jnt_angs[5];
+        ImGui::Text(angs_text.str().c_str());
 
     }
 
