@@ -432,6 +432,7 @@ void frontend_cntrl::load_robot_info() {
             disp_text.str("");
         }
         */
+        ImGui::Text("CURRENTLY BROKEN");
 
         ImGui::NewLine();
 
@@ -458,6 +459,18 @@ void frontend_cntrl::load_robot_info() {
 
         ImGui::NewLine();  
 
+        ImGui::Separator();
+        //Display the joint angles
+        ImGui::Text("Joint Angles");
+        
+        if (ImGui::Button("angles")) {
+            std::vector<float> test = ABB_rob.get_last_reported_jnt_angs();
+            for (int i = 0; i < test.size(); i++) {
+                std::cout << test[i] << "\n";
+            }
+
+
+        }
 
     }
 
