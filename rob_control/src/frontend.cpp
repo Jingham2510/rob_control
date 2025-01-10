@@ -238,101 +238,131 @@ void frontend_cntrl::ABB_control_page() {
         //Create the mathematical model of the robot
         rob_model = RobotDH(robot_name);
 
-
-        if (rob_model.valid_model) {}
-
-            std::vector<float> model_pos = rob_model.get_pos();
-
-
-            for (int i = 0; i < model_pos.size(); i++) {
-                std::cout << model_pos[i] << "\n";
-            }
-            
-        }
-    //Still mark as known - it is known just as invalid
-    robot_model_known = true;
-
-   
-
-  
-
-
-
-
-    /*
-        TODO:
-        -BUTTONS TO CREATE MODULES
-        -MODEL VS REPORTED ERROR PLOT
-        -Button Control
-        -Angle Chooser
-    */
-
-    //Create the title for the page
-    std::stringstream title_stream;
-    title_stream << "Robot Model: " << robot_name;
-    ImGui::Text(title_stream.str().c_str());
-
-
-    
-    //Setup the headers for each section
-    
-    //Robot info
-    if (ImGui::CollapsingHeader("Unit Info")) {
-        load_robot_info();
-    }
-
-    //Model Robot Info
-    if (ImGui::CollapsingHeader("Model Info")) {
-        
+        //If the model is valid 
         if (rob_model.valid_model) {
-            ImGui::Text("TODO");
+
+            //Update the models joint angles with the real robots joints to 
+            //NEEDS TO BE IMPLEMENTED
+            //rob_model.update_joints(ABB_rob.get_last_reported_jnt_angs());
+
+
+
+        }
+        //Still mark as known - it is known just as invalid
+        robot_model_known = true;
+    }
+
+
+
+
+
+
+
+
+        /*
+            TODO:
+            -BUTTONS TO CREATE MODULES
+            -MODEL VS REPORTED ERROR PLOT
+            -Button Control
+            -Angle Chooser
+        */
+
+        //Create the title for the page
+        std::stringstream title_stream;
+        title_stream << "Robot Model: " << robot_name;
+        ImGui::Text(title_stream.str().c_str());
+
+
+
+        //Setup the headers for each section
+
+        //Robot info
+        if (ImGui::CollapsingHeader("Unit Info")) {
+            load_robot_info();
+        }
+
+        //Model Robot Info
+        if (ImGui::CollapsingHeader("Model Info")) {
+
+            //TODO : MOVE TO SEPERATE FUNCTION
+
+            if (rob_model.valid_model) {
+                
+                std::vector<std::string> cart_cords = { "X: ", " Y: ", " Z: " };
+                
+                std::vector<float> pos = rob_model.get_pos();
+
+                std::stringstream disp_text;
+
+                //Display the models position - for verification
+                ImGui::Text("Model Pos");
+
+                for (int i = 0; i < pos.size(); i++) {
+
+                    disp_text << cart_cords[i] << pos[i];
+
+                    ImGui::Text(disp_text.str().c_str());
+
+                    ImGui::SameLine();
+
+                    disp_text.str("");
+                }
+
+                ImGui::NewLine();
+
+                
+
+
+
+
+            }
+
+
+            else {
+                ImGui::Text("Robot Model not known!");
+            }
+
+
+
+
+        }
+
+        //Manual Control Section
+        if (ImGui::CollapsingHeader("Manual Control")) {
+            //Create the manual control section
+            load_man_control();
+
+        }
+
+        //Load the test section
+        if (ImGui::CollapsingHeader("Tests")) {
+            load_test_section();
         }
 
 
-        else {
-            ImGui::Text("Robot Model not known!");
-        }
+        //Ping test - PLACEHOLDER
+        if (ImGui::CollapsingHeader("PING TEST")) {
 
-
-
-
-    }
-
-    //Manual Control Section
-    if (ImGui::CollapsingHeader("Manual Control")) {
-        //Create the manual control section
-        load_man_control();
-
-    }
-
-    //Load the test section
-    if (ImGui::CollapsingHeader("Tests")) {
-        load_test_section();
-    }
-
-
-    //Ping test - PLACEHOLDER
-    if (ImGui::CollapsingHeader("PING TEST")) {
-        
-        if (!test_mgr.test_running()) {
-            if (ImGui::Button("PING!")) {
-                ABB_rob.ping();
+            if (!test_mgr.test_running()) {
+                if (ImGui::Button("PING!")) {
+                    ABB_rob.ping();
+                }
+            }
+            else {
+                ImGui::Text("Test running...");
             }
         }
-        else {
-            ImGui::Text("Test running...");
-        }
-    }
-
-    
 
 
 
-    ImGui::End();
+
+
+        ImGui::End();
 
 
 
 }
+
 
 
 //Create an error box that takes the user back to the previous page 
