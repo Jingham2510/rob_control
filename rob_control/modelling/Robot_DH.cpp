@@ -8,7 +8,7 @@ RobotDH::RobotDH() {
 }
 
 
-RobotDH::RobotDH(std::vector<DHLink> links, std::vector<std::string> offsets){
+RobotDH::RobotDH(std::vector<DHLink> links, std::vector<std::string> offsets, std::vector<int> invs){
     
 
     n_of_links = links.size();
@@ -23,6 +23,8 @@ RobotDH::RobotDH(std::vector<DHLink> links, std::vector<std::string> offsets){
     link_list = links;
 
     offset_config = offsets;
+
+    inv_vec = invs;
    
    //Update the coupled offsets
     update_link_offsets();
@@ -51,7 +53,7 @@ RobotDH::RobotDH(std::string model_name) {
     //Check that the model is valid
     if (valid_model) {        
 
-        std::cout << "Valid model: " << model_pos << "\n";
+        //std::cout << "Valid model: " << model_pos << "\n";
         
         //Load the models info
         std::ifstream file("models/" + MODEL_FILENAMES[model_pos]);
@@ -106,8 +108,23 @@ RobotDH::RobotDH(std::string model_name) {
             offset_config.push_back(token);
             curr_line.erase(0, str_pos + delimiter.length());
         }
+        
+        
+        //Get the inverter config
+        getline(file, curr_line);
+        str_pos = 0;
+        while ((str_pos = curr_line.find(delimiter)) != std::string::npos) {
+            token = curr_line.substr(0, str_pos);
+            inv_vec.push_back(std::atoi(token.c_str()));
+            curr_line.erase(0, str_pos + delimiter.length());            
+        }
+
+
+        
         //Close the file
         file.close();
+
+
 
 
         //Update the links and positions 

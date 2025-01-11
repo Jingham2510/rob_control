@@ -21,7 +21,7 @@ class RobotDH{
         RobotDH();
 
         //Constructor
-        RobotDH(std::vector<DHLink>, std::vector<std::string>);
+        RobotDH(std::vector<DHLink>, std::vector<std::string>, std::vector<int>);
 
         //Alternative constructor when the model is known
         RobotDH(std::string);
@@ -82,6 +82,10 @@ class RobotDH{
         //couplde offsets (when the offsets are tied to other joints)
         std::vector<std::string> offset_config;
         std::vector<float> coupled_offsets;
+
+        //Vector which holds whether angles have to be inverted
+        // 1 = invert
+        std::vector<int> inv_vec;
 
         //Transformation matrix
         Matrix4f trans_mat;
