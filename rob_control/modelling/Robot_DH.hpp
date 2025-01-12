@@ -34,6 +34,7 @@ class RobotDH{
             //Copy all the stuff across without calculating it again
             this->link_list = other.link_list;
             this->offset_config = other.offset_config;
+            this->inv_vec = other.inv_vec;
 
             this->coupled_offsets = other.coupled_offsets;
             this->trans_mat = other.trans_mat;
@@ -41,7 +42,7 @@ class RobotDH{
             this->orient_mat = other.orient_mat;
             this->n_of_links = other.n_of_links;
 
-
+            this->valid_model = other.valid_model;
             return *this;
         }
 
@@ -69,13 +70,18 @@ class RobotDH{
         //Calculates the jacobian
         MatrixXf get_jacobian();
 
-        bool valid_model;
+        //Gets whether the model is valid
+        bool is_valid();
+
+        
 
     private:
 
         const std::vector<std::string> VALID_MODELS = {"IRB 6400R-200/2.8"};
         const std::vector<std::string> MODEL_FILENAMES = {"IRB_6400.txt"};
 
+        //Represnts whether this object is working with a valid model
+        bool valid_model;
 
         //Contains the links representing the robot
         std::vector<DHLink> link_list;

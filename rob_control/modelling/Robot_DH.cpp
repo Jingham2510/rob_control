@@ -171,6 +171,39 @@ Matrix4f RobotDH::get_trans(){
 }
 
 
+//Updates the models joints with a set of provided joint angles
+void RobotDH::update_joints(std::vector<float> joint_angs) {
+
+    //Check that their are the correct number of joint angles
+    if (joint_angs.size() != n_of_links) {
+        std::cout << "DEBUG: incorrect no of angles!";
+        return;
+    }
+
+    
+    //Update the thetas
+    for (int i = 0; i < n_of_links; i++) {
+
+        std::cout << "link " << i << " : " << link_list[i].get_theta() << "\n";
+        std::cout << "inp " << i << " : " << joint_angs[i] << "\n";
+        std::cout << "inverse? " << inv_vec[i] << "\n";
+
+        if (inv_vec[i] == 1) {
+            link_list[i].set_theta(-joint_angs[i]);
+        }
+        else {
+            link_list[i].set_theta(joint_angs[i]);
+        }
+
+    }
+
+    //Update the offsets
+    update_link_offsets();
+
+    //Recalculate new position
+    update_pos_orient();
+}
+
 //Updates the poisiton vector and orient based on the transformation matrix
 void RobotDH::update_pos_orient(){
     //Calculate the transform matrix
@@ -320,6 +353,12 @@ MatrixXf RobotDH::get_jacobian(){
 
         return J;
 
+}
+
+//Returns whether this object has an associated  text model 
+bool RobotDH::is_valid(){
+
+    return valid_model;
 }
 
 

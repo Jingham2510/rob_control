@@ -15,8 +15,12 @@ class DHLink{
     public:
         //Constructor
         DHLink (float,float,float,float, float);
-        //Update the joint angle
-        void set_theta(float, float);
+
+        //Set the joint angle
+        void set_theta(float);
+
+        //Update the joint angle and offset
+        void set_theta_and_off(float, float);
         //Update the offset
         void set_off(float);
         //Get the current homogeneous transformation matrix

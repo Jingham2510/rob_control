@@ -207,7 +207,7 @@ void frontend_cntrl::ABB_control_page() {
     if (!connected) {
         //Attempt to connect to the robot
         ABB_rob = ABB_tcp_client(ip.c_str(), std::stoi(port), &connected);
-        //std::thread rob_thread(ABB_tcp_client(), ip.c_str(), std::stoi(port), &connected);
+        
 
 
     }
@@ -239,26 +239,14 @@ void frontend_cntrl::ABB_control_page() {
         rob_model = RobotDH(robot_name);
 
         //If the model is valid 
-        if (rob_model.valid_model) {
-
+        if (rob_model.is_valid()) {
             //Update the models joint angles with the real robots joints to 
-            //NEEDS TO BE IMPLEMENTED
-            //rob_model.update_joints(ABB_rob.get_last_reported_jnt_angs());
-
-
-
-        }
+            rob_model.update_joints(ABB_rob.get_last_reported_jnt_angs());
+            std::cout << "Joints calced";
+         }
         //Still mark as known - it is known just as invalid
         robot_model_known = true;
     }
-
-
-
-
-
-
-
-
         /*
             TODO:
             -BUTTONS TO CREATE MODULES
@@ -286,7 +274,7 @@ void frontend_cntrl::ABB_control_page() {
 
             //TODO : MOVE TO SEPERATE FUNCTION
 
-            if (rob_model.valid_model) {
+            if (rob_model.is_valid()) {
                 
                 std::vector<std::string> cart_cords = { "X: ", " Y: ", " Z: " };
                 
@@ -309,8 +297,6 @@ void frontend_cntrl::ABB_control_page() {
                 }
 
                 ImGui::NewLine();
-
-                
 
 
 

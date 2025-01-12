@@ -30,8 +30,20 @@ void DHLink::update_hg(){
     return;
 }
 
+
+//Update the joint angle(
+void DHLink::set_theta(float new_theta) {
+    theta = new_theta;
+
+    //Dont update the HG matrix
+    //Should only be done when the offsets are correct
+
+    return;
+}
+
+
 //Update the joint angle of the link
-void DHLink::set_theta(float new_theta, float theta_off){
+void DHLink::set_theta_and_off(float new_theta, float theta_off){
     theta = new_theta;
     set_off(theta_off);
     update_hg();
