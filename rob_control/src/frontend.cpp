@@ -517,7 +517,7 @@ void frontend_cntrl::load_test_section() {
     //Combo/dropdown variables
     static const char* current_item = NULL;
 
-  
+ 
 
     //Create dropdown with test selection
     if (ImGui::BeginCombo("##Tests", current_item)) {
@@ -536,16 +536,12 @@ void frontend_cntrl::load_test_section() {
                 current_item = test_mgr.TESTS[i].c_str();
 
                 data_fp = "C:/Users/User/Documents/Results/" + test_mgr.TESTS[i] + "/raw/" ;
-                
+
             }
 
             if (is_selected) {
-                ImGui::SetItemDefaultFocus();
-                             
+                ImGui::SetItemDefaultFocus();              
             }
-
-
-
         }
 
         ImGui::EndCombo();
@@ -558,6 +554,7 @@ void frontend_cntrl::load_test_section() {
 
     //Only allow test button if test running
     if (!test_mgr.test_running()) {
+
 
         //Run test button
         if (ImGui::Button("Run Test")) {

@@ -225,6 +225,10 @@ int main(int, char**)
             gui_cntrl.test_mgr.first_pass_test();
         }
 
+        if (gui_cntrl.test_mgr.TRI_POLY_PASS_FLAG) {
+            gui_cntrl.test_mgr.tri_poly_test(100);
+        }
+
 
             
 

@@ -34,9 +34,10 @@ public:
 	//Tests currently available
 	bool LATENCY_TEST_FLAG = false;
 	bool FIRST_PASS_FLAG = false;
+	bool TRI_POLY_PASS_FLAG = false;
 	
 
-	std::vector<std::string> TESTS = { "latency_test", "first_pass_test" };
+	std::vector<std::string> TESTS = { "latency_test", "first_pass_test", "tri_poly_test"};
 
 	//Set the output filepath
 	void set_data_path(std::string);
@@ -56,6 +57,9 @@ public:
 
 	//Do one sweeping movement - proof of concept
 	void first_pass_test();
+
+	//Triangle Polygon Test (Draws a triangle)
+	void tri_poly_test(int);
 
 
 private:
@@ -131,7 +135,7 @@ private:
 	//The current vector that is stepped along
 	std::vector<float> seq_curr_mov_vec;
 	//The direction  of the movement on each axis
-	std::vector<int> seq_curr_xyz_dir = {1, 1, 1};
+	std::vector<pos_neg> seq_curr_xyz_dir = {POSITIVE, POSITIVE, POSITIVE};
 
 
 	//Moves to every coordinate given in the vector

@@ -216,21 +216,15 @@ void test_manager::first_pass_test() {
 		}
 	}
 
-	force_displacement_plotting( move_vector);
+	force_displacement_plotting(move_vector);
 
 	if (test_complete && !file_saved) {
-
-	
-
 		//Save the data to a logfile
 		std::ofstream data_file(data_path);
 		for (int i = 0; i < time_data.size(); i++) {
 			
 			data_file << i << "," << time_data[i] << "," << string_storage[i] << "\n";
-			
-		
-		
-		}
+			}
 		data_file.close();
 
 		file_saved = true;
@@ -256,13 +250,13 @@ void test_manager::first_pass_test() {
 
 //Moves to every coordinate given in the vector
 //at a rate/speed determined by the step size
-void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertexes, const float STEP_SIZE) {
+void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertexes, const float NO_OF_STEPS) {
 
 	//The current force and position
 	std::string curr_force_pos;
 
 	//Move to the starting point (which is assumed as the first vertex)
-	if (!TEST_FLAG_1) {
+	if (!TEST_FLAG_2) {
 
 		//Move to above the starting point as to not disturb soil prematurely
 		robot->set_pos({ vertexes[0][0], vertexes[0][1], vertexes[0][2] + 500 });
@@ -271,7 +265,7 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 		robot->set_pos({ vertexes[0][0], vertexes[0][1], vertexes[0][2] });
 
 		//Ensure the flag is set so it doesn't move back
-		TEST_FLAG_1 = true;
+		TEST_FLAG_2 = true;
 	}
 	
 
@@ -279,15 +273,13 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 	
 	//For each vertex (alreayd at starting point so start at 1)
 	//Cant be a for loop - needs to be deconstructed into an if that runs multiple times
-	if(TEST_FLAG_1 && !test_complete){
-
+	if(TEST_FLAG_2 && !test_complete){
 
 		//Fresh loop - calculate difference, direction and vectors for the stepsize
 		if (loop_counter == 0) {
 
-
 			//Calc difference in positions 
-			std::vector<float> diff = { vertexes[spare_counter][0] - vertexes[spare_counter - 1][0],
+			std::vector<float> diff = {vertexes[spare_counter][0] - vertexes[spare_counter - 1][0],
 									   vertexes[spare_counter][1] - vertexes[spare_counter - 1][1],
 									   vertexes[spare_counter][2] - vertexes[spare_counter - 1][2]
 			};
@@ -297,41 +289,117 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 			//Identfiy the directions that are required to be moved in each axis
 			for (int i = 0; i < 3; i++) {
 				if (vertexes[spare_counter][i] > vertexes[spare_counter - 1][i]) {
-					seq_curr_xyz_dir[i] = -1;
+					seq_curr_xyz_dir[i] = POSITIVE;
 				}
 				else {
-					seq_curr_xyz_dir[i] = 1;
+					seq_curr_xyz_dir[i] = NEGATIVE;
 				}
 			}
 
 			//Determine vector based on number of steps between each vertex
+			//EQ is as follows - set direction * diff/no_of_steps
+			seq_curr_mov_vec = { seq_curr_xyz_dir[0] * diff[0] / NO_OF_STEPS, seq_curr_xyz_dir[1] * diff[1] / NO_OF_STEPS, seq_curr_xyz_dir[2] * diff[2] / NO_OF_STEPS };
 
+			//std::cout << seq_curr_mov_vec[0] << " " << seq_curr_mov_vec[1] << " " << seq_curr_mov_vec[2];
 
 		}
 
+		std::vector<float> move_vector;
 
 
 		//For the number of steps required - make the steps
-		
-			//Make the step (based on line error)
+		if (loop_counter <= NO_OF_STEPS) {
 
-			//save the data
+			//Calcualte the desired XYZ positions
+			float DES_X = vertexes[spare_counter - 1][0] + (seq_curr_mov_vec[0] * loop_counter);
+			float DES_Y = vertexes[spare_counter - 1][1] + (seq_curr_mov_vec[1] * loop_counter);
+			float DES_Z = vertexes[spare_counter - 1][2] + (seq_curr_mov_vec[2] * loop_counter);
 
+			//std::cout << "X: " << DES_X << " Y: " << DES_Y << " Z: " << DES_Z << "\n";
+
+			//Calculate the error from the desired pos
+			move_vector = calc_line_err(robot->get_last_reported_pos(), DES_X, DES_Y, DES_Z);
+
+			//Move the robot - ensuring that the tool attempts to stay in a straight line
+			curr_force_pos = robot->move_tool(move_vector);
+			
+			//save the time data
+			time_data.push_back(std::chrono::system_clock::now());
+			
+			//Save the force and position data
+			string_storage.push_back(curr_force_pos);
 
 			//Update loop counter
+			loop_counter++;
 
 			//Check whether all the steps have been done (and then reset the loop counter and increase the spare_counter)
+			if (loop_counter == NO_OF_STEPS) {
+				loop_counter = 0;
+				spare_counter++;
+			}
+		
+		}
 
 		//Do the plot
+		force_displacement_plotting(move_vector);
 
-	//Save all the data
+		//Check if spare counter has reached the limit
+		if (spare_counter == vertexes.size()) {
+			test_complete = true;
+		}
 
-	//Display test finished dialogue
+	}
+		
+	//This function doesn't save the data nor end the test
 
+	//This is because this is intended to be used inside 
+	//another function which basically acts as a controller
+
+
+}
+
+//A test that creates a triangle polygon
+void test_manager::tri_poly_test(int NO_OF_STEPS) {
+
+	ImGui::Begin("Tri-Poly Pass");
+	ImGui::Text("Tri-Poly Pass Test");
+
+	//Define the three vertexes
+	std::vector<float> P1 = {2469, 367, 276};
+	std::vector<float> P2 = {2466, -777, 275};
+	std::vector<float> P3 = {1722, -364, 166};
+
+	if (!test_complete) {
+		//call the sequential move function (recursively?)
+		//Give P1 again to complete the triangle
+		sequential_vertex_move({ P1, P2, P3, P1}, NO_OF_STEPS);
+	}
+	
+	
+	if(test_complete && !file_saved) {
+		//Save the data to a logfile
+		std::ofstream data_file(data_path);
+		for (int i = 0; i < time_data.size(); i++) {
+
+			data_file << i << "," << time_data[i] << "," << string_storage[i] << "\n";
+		}
+		data_file.close();
+
+		file_saved = true;
 	}
 
 
+	//Display the test finished bit
+	if (test_complete && file_saved) {
+		if (ImGui::Button("Close page")) {
+			close = true;
+			TRI_POLY_PASS_FLAG = false;
+			TEST_RUNNING_FLAG = false;
+		}
+	}
 
+
+	ImGui::End();
 
 }
 
@@ -483,12 +551,7 @@ void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
 			ImPlot::EndPlot();
 		}
 
-
 	}
-
-
-
-
 }
 
 
@@ -553,6 +616,30 @@ void test_manager::test_selector(std::string test_name) {
 
 		TEST_RUNNING_FLAG = true;
 		FIRST_PASS_FLAG = true;
+	}
+
+	if (test_name == "tri_poly_test") {
+
+		//Setup the test
+		test_complete = false;
+		file_saved = false;
+		close = false;
+		loop_counter = 0;
+		spare_counter = 1;
+
+		//Prep storage for the test data
+		string_storage.clear();
+		time_data.clear();
+
+		//Setup the test flags
+		//Setup the test flags
+		TEST_FLAG_1 = false;
+		TEST_FLAG_2 = false;
+
+		TEST_RUNNING_FLAG = true;
+		TRI_POLY_PASS_FLAG = true;
+
+
 	}
 
 	
