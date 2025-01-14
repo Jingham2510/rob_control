@@ -232,7 +232,7 @@ int ABB_tcp_client::set_joints(std::vector<float> jnt_angs){
     curr_pos = req_xyz();
 
     //Update orientation
-    //curr_ori = req_ori();
+    curr_ori = req_ori();
 
     //Request the robots joint angles
     curr_jnt_angs = req_jnt_angs();
@@ -286,9 +286,49 @@ std::string ABB_tcp_client::move_tool(std::vector<float> xyz){
 
    
     //Update orientation
-    //curr_ori = req_ori();
+    curr_ori = req_ori();
     
     return ret_stream.str();
+}
+
+//Set the robots position by specifying the XYZ coordinates
+//The robot will keep the rotaiton orientiation it was originally at
+void ABB_tcp_client::set_pos(std::vector<float> xyz) {
+
+    //The commmand and the command constructor
+    std::string cmd;
+    std::stringstream cmd_stream;
+    std::stringstream ret_stream;
+    std::string ret;
+
+
+    //Check the xyz count is correct
+    if (xyz.size() != 3) {
+        std::cout << "ERR: Incorrect number of coords supplied" << "\n";
+    }
+
+    //Create the command and request it 
+    cmd_stream << "MVTO:[" << com_vec_to_string(xyz) << "]";
+
+    cmd = cmd_stream.str();
+
+    request(cmd);
+
+    //Wait to recieve the response to say it is done
+    if(recieve() == "MVTO OK");
+
+    //Update position
+    curr_pos = req_xyz();
+
+    //Update force
+    curr_force = req_force();
+
+    //Request the robots joint angles
+    curr_jnt_angs = req_jnt_angs();
+
+
+    return;
+
 }
 
 std::vector<float> ABB_tcp_client::req_xyz() { 

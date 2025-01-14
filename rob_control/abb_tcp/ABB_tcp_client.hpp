@@ -32,6 +32,9 @@ class ABB_tcp_client{
         //Move the tool relative to it's current position
         std::string move_tool(std::vector<float>);
 
+        //Set the robots position - blocking
+        void set_pos(std::vector<float>);
+
         //Get the robots current xyz pos
         std::vector<float> req_xyz();
 

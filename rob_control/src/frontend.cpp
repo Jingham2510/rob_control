@@ -327,11 +327,11 @@ void frontend_cntrl::ABB_control_page() {
 
 
         //Ping test - PLACEHOLDER
-        if (ImGui::CollapsingHeader("PING TEST")) {
+        if (ImGui::CollapsingHeader("TEST FUNC")) {
 
             if (!test_mgr.test_running()) {
-                if (ImGui::Button("PING!")) {
-                    ABB_rob.ping();
+                if (ImGui::Button("TEST!")) {
+                    ABB_rob.set_pos({2443,-852,123});
                 }
             }
             else {
