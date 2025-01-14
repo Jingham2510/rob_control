@@ -451,8 +451,6 @@ void frontend_cntrl::load_robot_info() {
             disp_text.str("");
         }
         
-        ImGui::Text("CURRENTLY BROKEN");
-
         ImGui::NewLine();
 
         ImGui::Separator();
