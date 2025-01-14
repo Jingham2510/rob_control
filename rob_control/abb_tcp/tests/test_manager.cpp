@@ -253,6 +253,47 @@ void test_manager::first_pass_test() {
 	return;
 }
 
+
+//Moves to every coordinate given in the vector
+//at a rate/speed determined by the step size
+void sequential_vertex_move(std::vector<float> vertexes, const float STEP_SIZE) {
+
+	//The current force and position
+	std::string curr_force_pos;
+
+	//Move to above the starting point
+	
+
+
+	//For each vertex (alreayd at starting point so start at 1)
+	for (int i = 1; i < vertexes.size(); i++) {
+
+		//Direction vector calculation
+
+		//Determine number of steps required
+
+		//For the number of steps required - make the steps
+
+			//Make the step (based on line error)
+
+			//save the data
+
+		//Do the plot
+
+	//Save all the data
+
+	//Display test finished dialogue
+
+	}
+
+
+
+
+}
+
+
+
+
 //Generic plotting for force/displacement/xyzerr/
 //TODO: make more generic by adding label and allowing any extra data to be used not just error
 void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {

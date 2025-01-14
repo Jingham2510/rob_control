@@ -429,13 +429,16 @@ void frontend_cntrl::load_robot_info() {
         ImGui::NewLine();
         
         ImGui::Separator();
-        //Get the last reported orientation
-        //std::vector<float> curr_ori = ABB_rob.get_last_reported_ori();
 
-        
         //Display the orientation as well
         ImGui::Text("Euler Angles");
-        /*
+
+        
+        //Get the last reported orientation
+        std::vector<float> curr_ori = ABB_rob.get_last_reported_ori();
+
+        
+
         for (int i = 0; i < ids.size()/2; i++) {
 
             disp_text << ids[i] << curr_ori[i] << " ";
@@ -447,7 +450,7 @@ void frontend_cntrl::load_robot_info() {
             //Clear the string stream
             disp_text.str("");
         }
-        */
+        
         ImGui::Text("CURRENTLY BROKEN");
 
         ImGui::NewLine();

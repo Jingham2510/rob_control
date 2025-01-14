@@ -112,7 +112,7 @@ void ABB_tcp_client::connect_to_ABB(){
         curr_pos = req_xyz();
 
         //Request the robots orientation
-        //curr_ori = req_ori();
+        curr_ori = req_ori();
 
         //Request the robots joint angles
         curr_jnt_angs = req_jnt_angs();

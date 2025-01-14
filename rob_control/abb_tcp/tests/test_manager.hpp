@@ -124,6 +124,10 @@ private:
 	std::vector<float> calc_line_err(std::vector<float>, float, float, float);
 
 
+	//Moves to every coordinate given in the vector
+	//at a rate/speed determined by the step size
+	void sequential_vertex_move(std::vector<float>, float);
+
 
 
 };
