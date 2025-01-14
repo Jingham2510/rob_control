@@ -89,6 +89,8 @@ private:
 	bool close;
 	int loop_counter;
 
+	int spare_counter;
+
 	//Generic Test storages
 	std::vector<float> storage_1;
 	std::vector<float> storage_2;
@@ -124,9 +126,17 @@ private:
 	std::vector<float> calc_line_err(std::vector<float>, float, float, float);
 
 
+
+	//Sequential vertex control variables
+	//The current vector that is stepped along
+	std::vector<float> seq_curr_mov_vec;
+	//The direction  of the movement on each axis
+	std::vector<int> seq_curr_xyz_dir = {1, 1, 1};
+
+
 	//Moves to every coordinate given in the vector
 	//at a rate/speed determined by the step size
-	void sequential_vertex_move(std::vector<float>, float);
+	void sequential_vertex_move(std::vector<std::vector<float>>, float);
 
 
 

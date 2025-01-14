@@ -256,27 +256,71 @@ void test_manager::first_pass_test() {
 
 //Moves to every coordinate given in the vector
 //at a rate/speed determined by the step size
-void sequential_vertex_move(std::vector<float> vertexes, const float STEP_SIZE) {
+void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertexes, const float STEP_SIZE) {
 
 	//The current force and position
 	std::string curr_force_pos;
 
-	//Move to above the starting point
+	//Move to the starting point (which is assumed as the first vertex)
+	if (!TEST_FLAG_1) {
+
+		//Move to above the starting point as to not disturb soil prematurely
+		robot->set_pos({ vertexes[0][0], vertexes[0][1], vertexes[0][2] + 500 });
+
+		//Move down into the soil
+		robot->set_pos({ vertexes[0][0], vertexes[0][1], vertexes[0][2] });
+
+		//Ensure the flag is set so it doesn't move back
+		TEST_FLAG_1 = true;
+	}
 	
 
 
+	
 	//For each vertex (alreayd at starting point so start at 1)
-	for (int i = 1; i < vertexes.size(); i++) {
+	//Cant be a for loop - needs to be deconstructed into an if that runs multiple times
+	if(TEST_FLAG_1 && !test_complete){
 
-		//Direction vector calculation
 
-		//Determine number of steps required
+		//Fresh loop - calculate difference, direction and vectors for the stepsize
+		if (loop_counter == 0) {
+
+
+			//Calc difference in positions 
+			std::vector<float> diff = { vertexes[spare_counter][0] - vertexes[spare_counter - 1][0],
+									   vertexes[spare_counter][1] - vertexes[spare_counter - 1][1],
+									   vertexes[spare_counter][2] - vertexes[spare_counter - 1][2]
+			};
+
+
+			//XYZ - only 3 cartesian coordinate axes
+			//Identfiy the directions that are required to be moved in each axis
+			for (int i = 0; i < 3; i++) {
+				if (vertexes[spare_counter][i] > vertexes[spare_counter - 1][i]) {
+					seq_curr_xyz_dir[i] = -1;
+				}
+				else {
+					seq_curr_xyz_dir[i] = 1;
+				}
+			}
+
+			//Determine vector based on number of steps between each vertex
+
+
+		}
+
+
 
 		//For the number of steps required - make the steps
-
+		
 			//Make the step (based on line error)
 
 			//save the data
+
+
+			//Update loop counter
+
+			//Check whether all the steps have been done (and then reset the loop counter and increase the spare_counter)
 
 		//Do the plot
 
@@ -511,6 +555,7 @@ void test_manager::test_selector(std::string test_name) {
 		FIRST_PASS_FLAG = true;
 	}
 
+	
 	
 
 }
