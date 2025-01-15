@@ -250,6 +250,7 @@ void test_manager::first_pass_test() {
 
 //Moves to every coordinate given in the vector
 //at a rate/speed determined by the step size
+//Utilises TEST_FLAG_2 as it is designed to be used in another test
 void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertexes, const float NO_OF_STEPS) {
 
 	//The current force and position
@@ -278,32 +279,46 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 		//Fresh loop - calculate difference, direction and vectors for the stepsize
 		if (loop_counter == 0) {
 
-			//Calc difference in positions 
-			std::vector<float> diff = {vertexes[spare_counter][0] - vertexes[spare_counter - 1][0],
-									   vertexes[spare_counter][1] - vertexes[spare_counter - 1][1],
-									   vertexes[spare_counter][2] - vertexes[spare_counter - 1][2]
+
+
+			//Calc difference in positions (alternatively based on point to point in the shape)
+			std::vector<float> diff = {abs(vertexes[spare_counter][0] - vertexes[spare_counter - 1][0]),
+									   abs(vertexes[spare_counter][1] - vertexes[spare_counter - 1][1]),
+									   abs(vertexes[spare_counter][2] - vertexes[spare_counter - 1][2])
 			};
+
 
 
 			//XYZ - only 3 cartesian coordinate axes
 			//Identfiy the directions that are required to be moved in each axis
 			for (int i = 0; i < 3; i++) {
-				if (vertexes[spare_counter][i] > vertexes[spare_counter - 1][i]) {
+
+				//if target_pos > last target pos
+				if (vertexes[spare_counter][i] >= vertexes[spare_counter - 1][i]) {
 					seq_curr_xyz_dir[i] = POSITIVE;
 				}
 				else {
 					seq_curr_xyz_dir[i] = NEGATIVE;
 				}
 			}
+		
+			
+
+
+			//Print new target
+			std::cout << "NEW TARGET: " << " X: " << vertexes[spare_counter][0] << " Y: " << vertexes[spare_counter][1] << " Z: " << vertexes[spare_counter][2] << "\n";
+
+
 
 			//Determine vector based on number of steps between each vertex
 			//EQ is as follows - set direction * diff/no_of_steps
-			seq_curr_mov_vec = { seq_curr_xyz_dir[0] * diff[0] / NO_OF_STEPS, seq_curr_xyz_dir[1] * diff[1] / NO_OF_STEPS, seq_curr_xyz_dir[2] * diff[2] / NO_OF_STEPS };
+			seq_curr_mov_vec = { seq_curr_xyz_dir[0] * (diff[0]/NO_OF_STEPS), seq_curr_xyz_dir[1] * (diff[1]/NO_OF_STEPS), seq_curr_xyz_dir[2] * (diff[2] /NO_OF_STEPS)};
 
-			//std::cout << seq_curr_mov_vec[0] << " " << seq_curr_mov_vec[1] << " " << seq_curr_mov_vec[2];
+			std::cout << "STEP VEC: " << seq_curr_mov_vec[0] << " Y: " << seq_curr_mov_vec[1] << " Z: " << seq_curr_mov_vec[2] << "\n";
 
 		}
 
+		//Stuff for movement
 		std::vector<float> move_vector;
 
 
@@ -315,9 +330,15 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 			float DES_Y = vertexes[spare_counter - 1][1] + (seq_curr_mov_vec[1] * loop_counter);
 			float DES_Z = vertexes[spare_counter - 1][2] + (seq_curr_mov_vec[2] * loop_counter);
 
-			//std::cout << "X: " << DES_X << " Y: " << DES_Y << " Z: " << DES_Z << "\n";
+
+
+
+
+
+			std::cout << "DES X: " << DES_X << " DES Y: " << DES_Y << " DES Z: " << DES_Z << "\n";
 
 			//Calculate the error from the desired pos
+			//Generate the movement vector
 			move_vector = calc_line_err(robot->get_last_reported_pos(), DES_X, DES_Y, DES_Z);
 
 			//Move the robot - ensuring that the tool attempts to stay in a straight line
@@ -330,14 +351,22 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 			string_storage.push_back(curr_force_pos);
 
 			//Update loop counter
-			loop_counter++;
+			loop_counter = loop_counter + 1;
 
 			//Check whether all the steps have been done (and then reset the loop counter and increase the spare_counter)
 			if (loop_counter == NO_OF_STEPS) {
 				loop_counter = 0;
-				spare_counter++;
-			}
-		
+				spare_counter = spare_counter + 1;
+
+
+				//Check position
+				std::vector<float> curr_pos = robot->get_last_reported_pos();
+				std::cout << "ENDPOS: " << "X: " << curr_pos[0] << " Y: " << curr_pos[1] << " Z: " << curr_pos[2] << "\n";
+
+			}		
+
+
+
 		}
 
 		//Do the plot
@@ -349,6 +378,7 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 		}
 
 	}
+
 		
 	//This function doesn't save the data nor end the test
 
@@ -365,9 +395,9 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 	ImGui::Text("Tri-Poly Pass Test");
 
 	//Define the three vertexes
-	std::vector<float> P1 = {2469, 367, 276};
-	std::vector<float> P2 = {2466, -777, 275};
-	std::vector<float> P3 = {1722, -364, 166};
+	std::vector<float> P1 = {2469, 367, 275};
+	std::vector<float> P2 = {2469, -777, 275};
+	std::vector<float> P3 = {1722, -350, 275};
 
 	if (!test_complete) {
 		//call the sequential move function (recursively?)
@@ -563,13 +593,27 @@ std::vector<float> test_manager::calc_line_err(std::vector<float> curr_xyz, floa
     //Create the vector float from the string
     //std::vector<float> curr_xyz_vec = curr_xyz;
 
+
+	//Check the direction of the movement vectors
+	float x_mov, y_mov, z_mov;
+
+	//Based on tool orientation
+	x_mov =  -(desired_x - curr_xyz[0]);
+
+	y_mov = desired_y - curr_xyz[1];
+
+	z_mov = -(desired_z - curr_xyz[2]);
+
+
+
+
     //Create the vector from the differences (invert to ensure the tool moves the correct direction)
-    std::vector<float> xyz_diff = { -(desired_x - curr_xyz[0]), (desired_y - curr_xyz[1]), -(desired_z - curr_xyz[2]) };
+    std::vector<float> xyz_diff = {x_mov, y_mov, z_mov};
 
 
-    for (int i = 0; i < xyz_diff.size(); i++) {
-        std::cout << "CURR: " << curr_xyz[i] << " DIFF: " << xyz_diff[i] << "\n";
-    }
+    //for (int i = 0; i < xyz_diff.size(); i++) {
+    //    std::cout << " CURR: " << curr_xyz[i] << " DIFF: " << xyz_diff[i] << "\n";
+    //}
 
     return xyz_diff;
 

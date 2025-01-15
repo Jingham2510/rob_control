@@ -184,9 +184,9 @@ void RobotDH::update_joints(std::vector<float> joint_angs) {
     //Update the thetas
     for (int i = 0; i < n_of_links; i++) {
 
-        std::cout << "link " << i << " : " << link_list[i].get_theta() << "\n";
-        std::cout << "inp " << i << " : " << joint_angs[i] << "\n";
-        std::cout << "inverse? " << inv_vec[i] << "\n";
+        //std::cout << "link " << i << " : " << link_list[i].get_theta() << "\n";
+        //std::cout << "inp " << i << " : " << joint_angs[i] << "\n";
+        //std::cout << "inverse? " << inv_vec[i] << "\n";
 
         if (inv_vec[i] == 1) {
             link_list[i].set_theta(-joint_angs[i]);

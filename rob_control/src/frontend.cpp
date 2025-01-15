@@ -242,7 +242,7 @@ void frontend_cntrl::ABB_control_page() {
         if (rob_model.is_valid()) {
             //Update the models joint angles with the real robots joints to 
             rob_model.update_joints(ABB_rob.get_last_reported_jnt_angs());
-            std::cout << "Joints calced";
+
          }
         //Still mark as known - it is known just as invalid
         robot_model_known = true;
@@ -504,6 +504,16 @@ void frontend_cntrl::load_man_control() {
     //Place button which moves the tool up
     if (ImGui::Button("Down")) {
         ABB_rob.move_tool({ 0, 0, 10 });
+    }
+
+
+
+    if (ImGui::Button("Y++")) {
+        ABB_rob.move_tool({ 0, 10, 0 });
+    }
+
+    if (ImGui::Button("X++")) {
+        ABB_rob.move_tool({ 10, 0, 0 });
     }
 
     ImGui::Text("MORE TODO!");
