@@ -335,7 +335,7 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 
 
 
-			std::cout << "DES X: " << DES_X << " DES Y: " << DES_Y << " DES Z: " << DES_Z << "\n";
+			//std::cout << "DES X: " << DES_X << " DES Y: " << DES_Y << " DES Z: " << DES_Z << "\n";
 
 			//Calculate the error from the desired pos
 			//Generate the movement vector
@@ -421,6 +421,9 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 
 	//Display the test finished bit
 	if (test_complete && file_saved) {
+
+		force_displacement_plotting({});
+
 		if (ImGui::Button("Close page")) {
 			close = true;
 			TRI_POLY_PASS_FLAG = false;
