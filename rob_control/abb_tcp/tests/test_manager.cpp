@@ -53,7 +53,7 @@ void test_manager::latency_test() {
 	if (!test_complete) {
 		last_ping = robot->ping();
 		//Complete a ping
-		storage_1.push_back(last_ping * pow(10, -6));
+		storage_3.push_back(last_ping * pow(10, -6));
 		loop_counter++;
 		if (loop_counter == 99) {
 			test_complete = true;
@@ -69,7 +69,7 @@ void test_manager::latency_test() {
 		//Save all the data to a text file 
 		std::ofstream data_file(data_path);
 		for (int i = 0; i < storage_1.size(); i++) {
-			data_file << storage_1[i] << "\n";
+			data_file << storage_3[i] << "\n";
 		}
 
 		data_file.close();
@@ -143,7 +143,7 @@ void test_manager::latency_plotting(float next_point) {
 			ImPlot::SetupAxes("Iteration", "Latency");
 			ImPlot::SetupAxisLimits(ImAxis_X1, 0, storage_1.size(), ImGuiCond_Always);
 			ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 0.1, ImGuiCond_Always);
-			ImPlot::PlotLine("Latency", count, &storage_1[0], storage_1.size());
+			ImPlot::PlotLine("Latency", count, &storage_3[0], storage_3.size());
 			ImPlot::EndPlot();
 		}
 	}
@@ -164,12 +164,12 @@ void test_manager::first_pass_test() {
 	std::string curr_force_pos;
 
 	//TO BE DETERMINED - filler for now! - be very careful when doing it on the real one...
-	float DES_X = 2200;
-	float DES_Z = 190;
+	float DES_X = 2305;
+	float DES_Z = 1788;
 
 
-	std::vector<float> START_POS = { DES_X, -788, DES_Z };
-	std::vector<float> END_POS = { DES_X, 315, DES_Z };
+	std::vector<float> START_POS = { DES_X, 517, DES_Z };
+	std::vector<float> END_POS = { DES_X, -528, DES_Z };
 	//Steps based on distance and resolution of test
 	int STEP_RES = 1;
 	int dist_to_move = START_POS[1] - END_POS[1];
@@ -187,7 +187,7 @@ void test_manager::first_pass_test() {
 
 	if (!TEST_FLAG_1) {
 		//Move the robot to the starting position - checked manually for now
-		robot->set_joints({ -20.01, 58.59, 46.97, 4.81, 43.57, -32.28 });
+		robot->set_joints({ 12.63, 21.58, 7.54, -2.21, -4.37, 14.43 });
 		TEST_FLAG_1 = true;
 	}
 
@@ -195,18 +195,21 @@ void test_manager::first_pass_test() {
 	//Move the robot and log the data
 	if (TEST_FLAG_1 && !test_complete) {
 
+	
 
 
 		//Calculate the error from the desired pos
 		move_vector = calc_line_err(robot->get_last_reported_pos(), DES_X, START_POS[1] + (polarity * loop_counter * STEP_RES), DES_Z);
 
 		//Move the robot - ensuring that the tool attempts to stay in a straight line
-		curr_force_pos = robot->move_tool(move_vector);
+		robot->move_tool(move_vector);
 
 		//Place the data in the arrays
 		time_data.push_back(std::chrono::system_clock::now());
 
-		string_storage.push_back(curr_force_pos);
+
+		storage_1.push_back(robot->get_last_reported_pos());
+		storage_2.push_back(robot->get_last_reported_force());
 
 		
 		loop_counter++;
@@ -223,7 +226,10 @@ void test_manager::first_pass_test() {
 		std::ofstream data_file(data_path);
 		for (int i = 0; i < time_data.size(); i++) {
 			
-			data_file << i << "," << time_data[i] << "," << string_storage[i] << "\n";
+			data_file << i << "," << time_data[i] << "," << 
+				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
+				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "," << storage_2[i][6] << "]"	<<
+				"\n";
 			}
 		data_file.close();
 
@@ -342,13 +348,14 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 			move_vector = calc_line_err(robot->get_last_reported_pos(), DES_X, DES_Y, DES_Z);
 
 			//Move the robot - ensuring that the tool attempts to stay in a straight line
-			curr_force_pos = robot->move_tool(move_vector);
+			robot->move_tool(move_vector);
 			
 			//save the time data
 			time_data.push_back(std::chrono::system_clock::now());
 			
 			//Save the force and position data
-			string_storage.push_back(curr_force_pos);
+			storage_1.push_back(robot->get_last_reported_pos());
+			storage_2.push_back(robot->get_last_reported_force());
 
 			//Update loop counter
 			loop_counter = loop_counter + 1;
@@ -361,7 +368,7 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 
 				//Check position
 				std::vector<float> curr_pos = robot->get_last_reported_pos();
-				std::cout << "ENDPOS: " << "X: " << curr_pos[0] << " Y: " << curr_pos[1] << " Z: " << curr_pos[2] << "\n";
+				//std::cout << "ENDPOS: " << "X: " << curr_pos[0] << " Y: " << curr_pos[1] << " Z: " << curr_pos[2] << "\n";
 
 			}		
 
@@ -411,8 +418,12 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 		std::ofstream data_file(data_path);
 		for (int i = 0; i < time_data.size(); i++) {
 
-			data_file << i << "," << time_data[i] << "," << string_storage[i] << "\n";
+			data_file << i << "," << time_data[i] << "," <<
+				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
+				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "," << storage_2[i][6] << "]" <<
+				"\n";
 		}
+		
 		data_file.close();
 
 		file_saved = true;
@@ -655,7 +666,8 @@ void test_manager::test_selector(std::string test_name) {
 		loop_counter = 0;
 
 		//Prep storage for the test data;
-		string_storage.clear();
+		storage_1.clear();
+		storage_2.clear();
 		time_data.clear();
 
 		//Setup the test flags
@@ -675,7 +687,8 @@ void test_manager::test_selector(std::string test_name) {
 		spare_counter = 1;
 
 		//Prep storage for the test data
-		string_storage.clear();
+		storage_1.clear();
+		storage_2.clear();
 		time_data.clear();
 
 		//Setup the test flags

@@ -96,8 +96,9 @@ private:
 	int spare_counter;
 
 	//Generic Test storages
-	std::vector<float> storage_1;
-	std::vector<float> storage_2;
+	std::vector<std::vector<float>> storage_1;
+	std::vector<std::vector<float>> storage_2;
+	std::vector<float> storage_3;
 	//String storages
 	std::vector<std::string> string_storage;
 	std::vector<std::chrono::system_clock::time_point> time_data;

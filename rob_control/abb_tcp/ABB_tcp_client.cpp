@@ -248,7 +248,7 @@ int ABB_tcp_client::set_joints(std::vector<float> jnt_angs){
 
 
 //Move the tool relative to its current position
-std::string ABB_tcp_client::move_tool(std::vector<float> xyz){
+void ABB_tcp_client::move_tool(std::vector<float> xyz){
 
     //The commmand and the command constructor
     std::string cmd;
@@ -268,27 +268,23 @@ std::string ABB_tcp_client::move_tool(std::vector<float> xyz){
 
     request(cmd);
 
+    recieve();
 
-    //Update position
-    std::string pos = recieve();
-    curr_pos = xyz_str_to_float(pos);
+    //Request the robots position
+    curr_pos = req_xyz();
 
-    //Update force
-    std::string force = recieve();
-    curr_force = xyz_str_to_float(force);
+
+    //Request the robots orientation
+    curr_ori = req_ori();
+
+    //Request the current force
+    curr_force = req_force();
 
     //Request the robots joint angles
     curr_jnt_angs = req_jnt_angs();
 
-  
-    //assembled - and formatted
-    ret_stream << pos.substr(0, pos.find("]") + 1) << "," << force.substr(0, force.find("]") + 1);
-
-   
-    //Update orientation
-    curr_ori = req_ori();
     
-    return ret_stream.str();
+    return;
 }
 
 //Set the robots position by specifying the XYZ coordinates
