@@ -155,13 +155,9 @@ void test_manager::latency_plotting(float next_point) {
 void test_manager::first_pass_test() {
 
 
-
 	ImGui::Begin("First Pass");
 	ImGui::Text("First Pass Test");
 
-
-	//Store the current force position
-	std::string curr_force_pos;
 
 	//TO BE DETERMINED - filler for now! - be very careful when doing it on the real one...
 	float DES_X = 2305;
@@ -171,71 +167,30 @@ void test_manager::first_pass_test() {
 	std::vector<float> START_POS = { DES_X, 517, DES_Z };
 	std::vector<float> END_POS = { DES_X, -528, DES_Z };
 	//Steps based on distance and resolution of test
-	int STEP_RES = 1;
-	int dist_to_move = START_POS[1] - END_POS[1];
-	enum pos_neg polarity = POSITIVE;
+	int NO_OF_STEPS = 100;
 
-	//Ensure that the direction is correct
-	if (START_POS[1] > END_POS[1]) {
-		dist_to_move = -dist_to_move;
-		polarity = NEGATIVE;
+	if (!test_complete) {
+		//call the sequential move function (recursively?)
+		//Give P1 again to complete the triangle
+		sequential_vertex_move({START_POS, END_POS}, NO_OF_STEPS);
 	}
 
-	int steps = abs(dist_to_move * STEP_RES);
-	std::vector<float> move_vector;
-
-
-	if (!TEST_FLAG_1) {
-		//Move the robot to the starting position - checked manually for now
-		robot->set_joints({ 12.63, 21.58, 7.54, -2.21, -4.37, 14.43 });
-		TEST_FLAG_1 = true;
-	}
-
-
-	//Move the robot and log the data
-	if (TEST_FLAG_1 && !test_complete) {
-
-	
-
-
-		//Calculate the error from the desired pos
-		move_vector = calc_line_err(robot->get_last_reported_pos(), DES_X, START_POS[1] + (polarity * loop_counter * STEP_RES), DES_Z);
-
-		//Move the robot - ensuring that the tool attempts to stay in a straight line
-		robot->move_tool(move_vector);
-
-		//Place the data in the arrays
-		time_data.push_back(std::chrono::system_clock::now());
-
-
-		storage_1.push_back(robot->get_last_reported_pos());
-		storage_2.push_back(robot->get_last_reported_force());
-
-		
-		loop_counter++;
-
-		if (loop_counter == (steps - 1)) {
-			test_complete = true;
-		}
-	}
-
-	force_displacement_plotting(move_vector);
 
 	if (test_complete && !file_saved) {
 		//Save the data to a logfile
 		std::ofstream data_file(data_path);
 		for (int i = 0; i < time_data.size(); i++) {
-			
-			data_file << i << "," << time_data[i] << "," << 
+
+			data_file << i << "," << time_data[i] << "," <<
 				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
-				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "," << storage_2[i][6] << "]"	<<
+				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "]" <<
 				"\n";
-			}
+		}
+
 		data_file.close();
 
 		file_saved = true;
 	}
-
 	
 
 	//Display the test finished bit
@@ -420,7 +375,7 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 
 			data_file << i << "," << time_data[i] << "," <<
 				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
-				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "," << storage_2[i][6] << "]" <<
+				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "]" <<
 				"\n";
 		}
 		
@@ -664,6 +619,7 @@ void test_manager::test_selector(std::string test_name) {
 		file_saved = false;
 		close = false;
 		loop_counter = 0;
+		spare_counter = 1;
 
 		//Prep storage for the test data;
 		storage_1.clear();
@@ -672,6 +628,7 @@ void test_manager::test_selector(std::string test_name) {
 
 		//Setup the test flags
 		TEST_FLAG_1 = false;
+		TEST_FLAG_2 = false;
 
 		TEST_RUNNING_FLAG = true;
 		FIRST_PASS_FLAG = true;
