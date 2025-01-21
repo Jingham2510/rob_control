@@ -196,6 +196,8 @@ void test_manager::first_pass_test() {
 	//Display the test finished bit
 	if (test_complete && file_saved) {
 		if(ImGui::Button("Close page")){
+			//Do the plot
+			force_displacement_plotting({});
 			close = true;
 			FIRST_PASS_FLAG = false;
 			TEST_RUNNING_FLAG = false;
