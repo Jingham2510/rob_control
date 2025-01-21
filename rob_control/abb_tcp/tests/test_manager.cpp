@@ -221,7 +221,7 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 	if (!TEST_FLAG_2) {
 
 		//Move to above the starting point as to not disturb soil prematurely
-		robot->set_pos({ vertexes[0][0], vertexes[0][1], vertexes[0][2] + 500 });
+		robot->set_pos({ vertexes[0][0], vertexes[0][1], vertexes[0][2] });
 
 		//Move down into the soil
 		robot->set_pos({ vertexes[0][0], vertexes[0][1], vertexes[0][2] });
