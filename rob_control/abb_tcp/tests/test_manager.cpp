@@ -160,12 +160,12 @@ void test_manager::first_pass_test() {
 
 
 	//TO BE DETERMINED - filler for now! - be very careful when doing it on the real one...
-	float DES_X = 2305;
-	float DES_Z = 1788;
+	float DES_X = 2342;
+	float DES_Z = 350;
 
 
-	std::vector<float> START_POS = { DES_X, 517, DES_Z };
-	std::vector<float> END_POS = { DES_X, -528, DES_Z };
+	std::vector<float> START_POS = { DES_X, -1256, DES_Z };
+	std::vector<float> END_POS = { DES_X, -1700, DES_Z };
 	//Steps based on distance and resolution of test
 	int NO_OF_STEPS = 100;
 

@@ -108,17 +108,8 @@ void ABB_tcp_client::connect_to_ABB(){
     else{
         std::cout<< "Connected to: " << ip << "\n";
 
-        //Request the robots position
-        curr_pos = req_xyz();
-
-        //Request the robots orientation
-        curr_ori = req_ori();
-
-        //Request the robots joint angles
-        curr_jnt_angs = req_jnt_angs();
-
-        //Request the current force
-        curr_force = req_force();
+        //Update the robots info
+        update_rob_info();
 
     }
 
@@ -199,11 +190,6 @@ float ABB_tcp_client::ping(){
 //Set the joints to a specific angle
 int ABB_tcp_client::set_joints(std::vector<float> jnt_angs){
 
-    
-
-    //The command to send to the server
-    std::string cmd;
-
     //The string stream to create the command
     std::stringstream stream;
 
@@ -213,75 +199,86 @@ int ABB_tcp_client::set_joints(std::vector<float> jnt_angs){
         return -1;
     }
 
-
     //A bit hacky but creates the set joint command with the correct format
     //No need to turn external axes the robot is set
     stream << "STJT:[[" << com_vec_to_string(jnt_angs) << "], [9E9,9E9,9E9,9E9,9E9,9E9]]";
 
-    cmd = stream.str();
-    
 
     //Send the set joint command to the ABB server
-    request(cmd);
+    request(stream.str());
 
     //Print the response from the server
     std::cout << recieve() << "\n";
 
 
-    //Update robots position
-    curr_pos = req_xyz();
-
-    //Update orientation
-    curr_ori = req_ori();
-
-    //Request the robots joint angles
-    curr_jnt_angs = req_jnt_angs();
-
-    //Update force
-    curr_force = req_force();
+    update_rob_info();
 
   
 
     return 1;
 }
 
+//Set the tools orientation without moving the robots arm 
+//specified in quartenions
+void ABB_tcp_client::set_ori(std::vector<float> des_ori) {
+
+    //Create the cmd string setup
+    std::stringstream cmd;
+    float quart_check = 0;
+
+    //Check there are the right number of entries
+    if (des_ori.size() != 4) {
+        std::cout << "ERR: INVALID ORIENTATION - SIZE" << "\n";
+        return;
+
+    }
+
+    //Check that the quartenions are valid (i.e. they all square to add to 1)
+    for (int i = 0; i < des_ori.size(); i++) {
+        quart_check = quart_check + pow(des_ori[i], 2);
+    }
+    if (quart_check != 1) {
+        std::cout << "ERR: INVALID ORIENTATION - VALUE != 1" << "\n";
+        return;
+    }
+
+    //Send the request
+    cmd << "[" << com_vec_to_string(des_ori) << "]";
+
+
+    //Wait for the okay message
+    //blocking
+    recieve();
+
+    //Update the robots position force etc
+    update_rob_info();
+
+    return;
+
+}
 
 
 //Move the tool relative to its current position
 void ABB_tcp_client::move_tool(std::vector<float> xyz){
 
     //The commmand and the command constructor
-    std::string cmd;
     std::stringstream cmd_stream;
-    std::stringstream ret_stream;
-    std::string ret;
 
 
     //Check the xyz count is correct
     if(xyz.size() != 3){
         std::cout << "ERR: Incorrect number of coords supplied" << "\n";
+        return;
     }
 
     cmd_stream << "MVTL:[" << com_vec_to_string(xyz) << "]";
 
-    cmd = cmd_stream.str();
+    request(cmd_stream.str());
 
-    request(cmd);
-
+    //Wait for response post move
     recieve();
 
-    //Request the robots position
-    curr_pos = req_xyz();
-
-
-    //Request the robots orientation
-    curr_ori = req_ori();
-
-    //Request the current force
-    curr_force = req_force();
-
-    //Request the robots joint angles
-    curr_jnt_angs = req_jnt_angs();
+    update_rob_info();
 
     
     return;
@@ -291,36 +288,26 @@ void ABB_tcp_client::move_tool(std::vector<float> xyz){
 //The robot will keep the rotaiton orientiation it was originally at
 void ABB_tcp_client::set_pos(std::vector<float> xyz) {
 
-    //The commmand and the command constructor
-    std::string cmd;
+    //The commmand constructor
     std::stringstream cmd_stream;
-    std::stringstream ret_stream;
-    std::string ret;
+
 
 
     //Check the xyz count is correct
     if (xyz.size() != 3) {
         std::cout << "ERR: Incorrect number of coords supplied" << "\n";
+        return;
     }
 
     //Create the command and request it 
     cmd_stream << "MVTO:[" << com_vec_to_string(xyz) << "]";
 
-    cmd = cmd_stream.str();
-
-    request(cmd);
+    request(cmd_stream.str());
 
     //Wait to recieve the response to say it is done
     if(recieve() == "MVTO OK");
 
-    //Update position
-    curr_pos = req_xyz();
-
-    //Update force
-    curr_force = req_force();
-
-    //Request the robots joint angles
-    curr_jnt_angs = req_jnt_angs();
+    update_rob_info();
 
 
     return;
@@ -400,6 +387,28 @@ std::string ABB_tcp_client::get_model() {
 
     return model;
 }
+
+
+//Updates all of the roobt info via request
+void ABB_tcp_client::update_rob_info() {
+
+    //Update position
+    curr_pos = req_xyz();
+
+    //Update force
+    curr_force = req_force();
+
+
+    //Request the robots orientation
+    curr_ori = req_ori();
+
+    //Request the robots joint angles
+    curr_jnt_angs = req_jnt_angs();
+
+    return;
+
+}
+
 
 //Takes in a vector of floats then returns it as a string - comma seperated
 std::string ABB_tcp_client::com_vec_to_string(std::vector<float> data){

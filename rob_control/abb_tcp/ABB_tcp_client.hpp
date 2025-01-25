@@ -35,6 +35,9 @@ class ABB_tcp_client{
         //Set the robots position - blocking
         void set_pos(std::vector<float>);
 
+        //Set the robots tool orientation - blocking
+        void set_ori(std::vector<float>);
+
         //Get the robots current xyz pos
         std::vector<float> req_xyz();
 
@@ -122,11 +125,15 @@ class ABB_tcp_client{
         //Recieve a string of bytes
         std::string recieve();    
 
+
+        //Function which updates the robots position info
+        void update_rob_info();
+
+
         //Helper function to create strings from vectors of floats
         std::string com_vec_to_string(std::vector<float>);
-
         
-
+        //Helper function - converts xyz strings to floats
         std::vector<float> xyz_str_to_float(std::string xyz);
 
 
