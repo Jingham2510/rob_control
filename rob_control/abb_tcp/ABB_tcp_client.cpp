@@ -237,13 +237,18 @@ void ABB_tcp_client::set_ori(std::vector<float> des_ori) {
     for (int i = 0; i < des_ori.size(); i++) {
         quart_check = quart_check + pow(des_ori[i], 2);
     }
-    if (quart_check != 1) {
+
+    std::cout << quart_check << "\n";
+
+    if (!(quart_check > 0.99 and quart_check < 1.01)) {
         std::cout << "ERR: INVALID ORIENTATION - VALUE != 1" << "\n";
         return;
     }
 
     //Send the request
-    cmd << "[" << com_vec_to_string(des_ori) << "]";
+    cmd << "STOR:[" << com_vec_to_string(des_ori) << "]";
+
+    request(cmd.str());
 
 
     //Wait for the okay message

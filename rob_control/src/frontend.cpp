@@ -331,7 +331,7 @@ void frontend_cntrl::ABB_control_page() {
 
             if (!test_mgr.test_running()) {
                 if (ImGui::Button("TEST!")) {
-                    ABB_rob.set_ori({1,0,0,0});
+                    ABB_rob.set_ori({0.02443,-0.70660,0.70658,0.02939});
                 }
             }
             else {
