@@ -330,18 +330,12 @@ void frontend_cntrl::ABB_control_page() {
         if (ImGui::CollapsingHeader("TEST FUNC")) {
 
             if (!test_mgr.test_running()) {
-                if (ImGui::Button("TEST!")) {
-                    ABB_rob.set_ori({0.02443,-0.70660,0.70658,0.02939});
-                }
+
             }
             else {
                 ImGui::Text("Test running...");
             }
         }
-
-
-
-
 
         ImGui::End();
 
@@ -506,8 +500,6 @@ void frontend_cntrl::load_man_control() {
         ABB_rob.move_tool({ 0, 0, 10 });
     }
 
-
-
     if (ImGui::Button("Y++")) {
         ABB_rob.move_tool({ 0, 10, 0 });
     }
@@ -524,11 +516,26 @@ void frontend_cntrl::load_man_control() {
 //Load the section for running and monitoring tests
 void frontend_cntrl::load_test_section() {
 
+
+    //Test setup
+    ImGui::Text("Test Setup");
+
+    //Weight calibration button - to be implemented
+    ImGui::Text("Weight cali to be implemented");
+
+
+    //Setup orientation button (straight down)
+    if (ImGui::Button("Point TCP Down")) {
+        ABB_rob.set_ori({ 0.02443,-0.70660,0.70658,0.02939 });
+    }    
+
+
+    ImGui::Separator();
+
+
     //Combo/dropdown variables
+    
     static const char* current_item = NULL;
-
- 
-
     //Create dropdown with test selection
     if (ImGui::BeginCombo("##Tests", current_item)) {
 
