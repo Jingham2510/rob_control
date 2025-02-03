@@ -359,9 +359,9 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 	ImGui::Text("Tri-Poly Pass Test");
 
 	//Define the three vertexes
-	std::vector<float> P1 = {-342, 2300, 1300};
-	std::vector<float> P2 = {150, 2700, 1300};
-	std::vector<float> P3 = {600, 2300, 1300};
+	std::vector<float> P1 = {-342, 2300, 184};
+	std::vector<float> P2 = {150, 2700, 184};
+	std::vector<float> P3 = {600, 2300, 184};
 
 	if (!test_complete) {
 		//call the sequential move function (recursively?)
@@ -569,11 +569,11 @@ std::vector<float> test_manager::calc_line_err(std::vector<float> curr_xyz, floa
 	float x_mov, y_mov, z_mov;
 
 	//Based on tool orientation
-	x_mov =  -(desired_x - curr_xyz[0]);
+	x_mov =  (desired_x - curr_xyz[0]);
 
 	y_mov = desired_y - curr_xyz[1];
 
-	z_mov = -(desired_z - curr_xyz[2]);
+	z_mov = (desired_z - curr_xyz[2]);
 
 
 
@@ -582,9 +582,9 @@ std::vector<float> test_manager::calc_line_err(std::vector<float> curr_xyz, floa
     std::vector<float> xyz_diff = {x_mov, y_mov, z_mov};
 
 
-    //for (int i = 0; i < xyz_diff.size(); i++) {
-    //    std::cout << " CURR: " << curr_xyz[i] << " DIFF: " << xyz_diff[i] << "\n";
-    //}
+    for (int i = 0; i < xyz_diff.size(); i++) {
+        std::cout << " CURR: " << curr_xyz[i] << " DIFF: " << xyz_diff[i] << "\n";
+    }
 
     return xyz_diff;
 
