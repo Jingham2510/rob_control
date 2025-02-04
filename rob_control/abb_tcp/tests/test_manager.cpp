@@ -161,7 +161,7 @@ void test_manager::first_pass_test() {
 
 	//TO BE DETERMINED - filler for now! - be very careful when doing it on the real one...
 	float DES_X = 10;
-	float DES_Z = 184;
+	float DES_Z = 340;
 
 
 	std::vector<float> START_POS = { DES_X, 1680, DES_Z };
@@ -359,9 +359,9 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 	ImGui::Text("Tri-Poly Pass Test");
 
 	//Define the three vertexes
-	std::vector<float> P1 = {-342, 2300, 184};
-	std::vector<float> P2 = {150, 2700, 184};
-	std::vector<float> P3 = {600, 2300, 184};
+	std::vector<float> P1 = {-342, 2300, 340};
+	std::vector<float> P2 = {150, 2700, 340};
+	std::vector<float> P3 = {600, 2300, 340};
 
 	if (!test_complete) {
 		//call the sequential move function (recursively?)
