@@ -229,6 +229,10 @@ int main(int, char**)
             gui_cntrl.test_mgr.tri_poly_test(100);
         }
 
+        if (gui_cntrl.test_mgr.CIRCLE_PASS_FLAG) {
+            gui_cntrl.test_mgr.circle_test(250);
+        }
+
 
             
 

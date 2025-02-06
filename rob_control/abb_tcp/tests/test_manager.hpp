@@ -35,9 +35,10 @@ public:
 	bool LATENCY_TEST_FLAG = false;
 	bool FIRST_PASS_FLAG = false;
 	bool TRI_POLY_PASS_FLAG = false;
+	bool CIRCLE_PASS_FLAG = false;
 	
 
-	std::vector<std::string> TESTS = { "latency_test", "first_pass_test", "tri_poly_test"};
+	std::vector<std::string> TESTS = { "latency_test", "first_pass_test", "tri_poly_test", "circle_test"};
 
 	//Set the output filepath
 	void set_data_path(std::string);
@@ -51,7 +52,6 @@ public:
 	//Selects a test to run
 	void test_selector(std::string);
 
-
 	//Ping 100 times and calculate the latencys
 	void latency_test();
 
@@ -60,6 +60,9 @@ public:
 
 	//Triangle Polygon Test (Draws a triangle)
 	void tri_poly_test(int);
+
+	//Circular test (Draws a circle)
+	void circle_test(int);
 
 
 private:
@@ -98,7 +101,8 @@ private:
 	//Generic Test storages
 	std::vector<std::vector<float>> storage_1;
 	std::vector<std::vector<float>> storage_2;
-	std::vector<float> storage_3;
+	std::vector<float> float_storage;
+	std::vector<std::vector<float>> test_trajectory;
 	//String storages
 	std::vector<std::string> string_storage;
 	std::vector<std::chrono::system_clock::time_point> time_data;

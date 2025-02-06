@@ -53,7 +53,7 @@ void test_manager::latency_test() {
 	if (!test_complete) {
 		last_ping = robot->ping();
 		//Complete a ping
-		storage_3.push_back(last_ping * pow(10, -6));
+		float_storage.push_back(last_ping * pow(10, -6));
 		loop_counter++;
 		if (loop_counter == 99) {
 			test_complete = true;
@@ -68,8 +68,8 @@ void test_manager::latency_test() {
 
 		//Save all the data to a text file 
 		std::ofstream data_file(data_path);
-		for (int i = 0; i < storage_1.size(); i++) {
-			data_file << storage_3[i] << "\n";
+		for (int i = 0; i < float_storage.size(); i++) {
+			data_file << float_storage[i] << "\n";
 		}
 
 		data_file.close();
@@ -141,9 +141,9 @@ void test_manager::latency_plotting(float next_point) {
 
 		if (ImPlot::BeginPlot("##Latency")) {
 			ImPlot::SetupAxes("Iteration", "Latency");
-			ImPlot::SetupAxisLimits(ImAxis_X1, 0, storage_1.size(), ImGuiCond_Always);
+			ImPlot::SetupAxisLimits(ImAxis_X1, 0, float_storage.size(), ImGuiCond_Always);
 			ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 0.1, ImGuiCond_Always);
-			ImPlot::PlotLine("Latency", count, &storage_3[0], storage_3.size());
+			ImPlot::PlotLine("Latency", count, &float_storage[0], float_storage.size());
 			ImPlot::EndPlot();
 		}
 	}
@@ -160,12 +160,12 @@ void test_manager::first_pass_test() {
 
 
 	//TO BE DETERMINED - filler for now! - be very careful when doing it on the real one...
-	float DES_X = 10;
-	float DES_Z = 340;
+	float DES_X = 262;
+	float DES_Z = 286;
 
 
-	std::vector<float> START_POS = { DES_X, 1680, DES_Z };
-	std::vector<float> END_POS = { DES_X, 2250, DES_Z };
+	std::vector<float> START_POS = { DES_X, 1650, DES_Z };
+	std::vector<float> END_POS = { DES_X, 2750, DES_Z };
 	//Steps based on distance and resolution of test
 	int NO_OF_STEPS = 100;
 
@@ -359,9 +359,9 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 	ImGui::Text("Tri-Poly Pass Test");
 
 	//Define the three vertexes
-	std::vector<float> P1 = {-342, 2300, 340};
-	std::vector<float> P2 = {150, 2700, 340};
-	std::vector<float> P3 = {600, 2300, 340};
+	std::vector<float> P1 = {209, 1787, 286};
+	std::vector<float> P2 = {-108, 2167, 286};
+	std::vector<float> P3 = {693, 2631, 286};
 
 	if (!test_complete) {
 		//call the sequential move function (recursively?)
@@ -402,9 +402,72 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 
 	ImGui::End();
 
+	return;
+
 }
 
 
+//Draws a circle around a predefined spot, for a given radius
+void test_manager::circle_test(int radius) {
+
+	//Create the window
+	ImGui::Begin("Circle Pass");
+	ImGui::Text("Circle Pass Test - Radius: " + radius);
+
+	//Define the centre point - needs to ve verified
+	std::vector<float> centre = {75, 2400, 286};
+
+	//Check if test storage 3 is empty
+	//If so create all the points to be visited by the circle
+	if (test_trajectory.empty()) {
+		for (int i = 0; i <= 360; i++) {
+			test_trajectory.push_back({ centre[0] + float((sin(i*(3.184/180)) * radius)) , centre[1] + float(cos(i*(3.184 / 180)) * radius), centre[2] });
+		}
+	}
+
+
+	//Movement "loop"
+	if (!test_complete) {
+		//call the sequential move function (recursively?)
+		sequential_vertex_move(test_trajectory, 1);
+	}
+
+
+
+	if (test_complete && !file_saved) {
+		//Save the data to a logfile
+		std::ofstream data_file(data_path);
+		for (int i = 0; i < time_data.size(); i++) {
+
+			data_file << i << "," << time_data[i] << "," <<
+				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
+				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "]" <<
+				"\n";
+		}
+
+		data_file.close();
+
+		file_saved = true;
+	}
+
+
+	//Display the test finished bit
+	if (test_complete && file_saved) {
+
+		force_displacement_plotting({});
+
+		if (ImGui::Button("Close page")) {
+			close = true;
+			CIRCLE_PASS_FLAG = false;
+			TEST_RUNNING_FLAG = false;
+		}
+	}
+
+
+	ImGui::End();
+
+	return;
+}
 
 
 //Generic plotting for force/displacement/xyzerr/
@@ -607,7 +670,7 @@ void test_manager::test_selector(std::string test_name) {
 		loop_counter = 0;
 
 		//Prep storage for test data
-		storage_1.clear();
+		float_storage.clear();
 
 		//Setup the test flags
 		TEST_RUNNING_FLAG = true;
@@ -651,13 +714,38 @@ void test_manager::test_selector(std::string test_name) {
 		time_data.clear();
 
 		//Setup the test flags
-		//Setup the test flags
+
 		TEST_FLAG_1 = false;
 		TEST_FLAG_2 = false;
 
 		TEST_RUNNING_FLAG = true;
 		TRI_POLY_PASS_FLAG = true;
 
+	}
+
+	if (test_name == "circle_test") {
+
+		//Setup the test
+		test_complete = false;
+		file_saved = false;
+		close = false;
+		loop_counter = 0;
+		spare_counter = 1;
+
+		//Prep storage for the test data
+		storage_1.clear();
+		storage_2.clear();
+		test_trajectory.clear();
+
+		time_data.clear();
+
+		//Setup the test flags
+
+		TEST_FLAG_1 = false;
+		TEST_FLAG_2 = false;
+
+		TEST_RUNNING_FLAG = true;
+		CIRCLE_PASS_FLAG = true;
 
 	}
 
