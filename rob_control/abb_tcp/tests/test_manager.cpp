@@ -408,19 +408,19 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 
 
 //Draws a circle around a predefined spot, for a given radius
-void test_manager::circle_test(int radius) {
+void test_manager::circle_test(int radius, int N) {
 
 	//Create the window
 	ImGui::Begin("Circle Pass");
 	ImGui::Text("Circle Pass Test - Radius: " + radius);
 
 	//Define the centre point - needs to ve verified
-	std::vector<float> centre = {75, 2400, 286};
+	std::vector<float> centre = {280, 2220, 286};
 
 	//Check if test storage 3 is empty
 	//If so create all the points to be visited by the circle
 	if (test_trajectory.empty()) {
-		for (int i = 0; i <= 360; i++) {
+		for (int i = 0; i <= 360*N; i++) {
 			test_trajectory.push_back({ centre[0] + float((sin(i*(3.184/180)) * radius)) , centre[1] + float(cos(i*(3.184 / 180)) * radius), centre[2] });
 		}
 	}
@@ -479,7 +479,7 @@ void test_manager::spiral_test(float start_r, float stop_r, int N) {
 	ImGui::Text("Spiral Pass Test");
 
 	//Define the centre point - needs to ve verified
-	std::vector<float> centre = { 75, 2400, 286 };
+	std::vector<float> centre = { 280, 2220, 286 };
 
 	//Check if test storage 3 is empty
 	//If so create all the points to be visited by the circle

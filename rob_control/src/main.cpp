@@ -230,11 +230,11 @@ int main(int, char**)
         }
 
         if (gui_cntrl.test_mgr.CIRCLE_PASS_FLAG) {
-            gui_cntrl.test_mgr.circle_test(250);
+            gui_cntrl.test_mgr.circle_test(300, 5);
         }
 
         if (gui_cntrl.test_mgr.SPIRAL_PASS_FLAG) {
-            gui_cntrl.test_mgr.spiral_test(100, 300, 5);
+            gui_cntrl.test_mgr.spiral_test(100, 350, 5);
         }
 
 

@@ -63,7 +63,7 @@ public:
 	void tri_poly_test(int);
 
 	//Circular test (Draws a circle)
-	void circle_test(int);
+	void circle_test(int, int);
 
 	//Spiral Test
 	void spiral_test(float, float, int);
