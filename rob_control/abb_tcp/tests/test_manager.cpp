@@ -470,6 +470,89 @@ void test_manager::circle_test(int radius) {
 }
 
 
+//Spiral test
+//Draws a spiral starting and stopping for given radius (with N number of circles)
+void test_manager::spiral_test(float start_r, float stop_r, int N) {
+
+	//Create the window
+	ImGui::Begin("Spiral Pass");
+	ImGui::Text("Spiral Pass Test");
+
+	//Define the centre point - needs to ve verified
+	std::vector<float> centre = { 75, 2400, 286 };
+
+	//Check if test storage 3 is empty
+	//If so create all the points to be visited by the circle
+	if (test_trajectory.empty()) {
+
+		double curr_r = start_r;
+
+		for (float i = 0; i <= 360*N; i++) {
+			//Calculate the next point
+			test_trajectory.push_back({ centre[0] + float((sin(i * (3.184 / 180)) * curr_r)) , centre[1] + float(cos(i * (3.184 / 180)) * curr_r), centre[2] });
+
+			//Calculate the radius of the spiral
+			//starting radius + percentage completion of the drawing
+			if (start_r <= stop_r) {
+				curr_r = start_r + (abs(stop_r - start_r) * (i / (360 * N)));
+			}
+			else {
+				curr_r = start_r - (abs(stop_r - start_r) * (i / (360 * N)));
+			}
+			
+
+		}
+
+
+		
+
+
+	}
+
+	//Movement "loop"
+	if (!test_complete) {
+		//call the sequential move function (recursively?)
+		sequential_vertex_move(test_trajectory, 1);
+	}
+
+
+	if (test_complete && !file_saved) {
+		//Save the data to a logfile
+		std::ofstream data_file(data_path);
+		for (int i = 0; i < time_data.size(); i++) {
+
+			data_file << i << "," << time_data[i] << "," <<
+				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
+				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "]" <<
+				"\n";
+		}
+
+		data_file.close();
+
+		file_saved = true;
+	}
+
+
+	//Display the test finished bit
+	if (test_complete && file_saved) {
+
+		force_displacement_plotting({});
+
+		if (ImGui::Button("Close page")) {
+			close = true;
+			SPIRAL_PASS_FLAG = false;
+			TEST_RUNNING_FLAG = false;
+		}
+	}
+
+
+	ImGui::End();
+
+	return;
+
+}
+
+
 //Generic plotting for force/displacement/xyzerr/
 //TODO: make more generic by adding label and allowing any extra data to be used not just error
 void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
@@ -746,6 +829,32 @@ void test_manager::test_selector(std::string test_name) {
 
 		TEST_RUNNING_FLAG = true;
 		CIRCLE_PASS_FLAG = true;
+
+	}
+
+	if (test_name == "spiral_test") {
+
+		//Setup the test
+		test_complete = false;
+		file_saved = false;
+		close = false;
+		loop_counter = 0;
+		spare_counter = 1;
+
+		//Prep storage for the test data
+		storage_1.clear();
+		storage_2.clear();
+		test_trajectory.clear();
+
+		time_data.clear();
+
+		//Setup the test flags
+
+		TEST_FLAG_1 = false;
+		TEST_FLAG_2 = false;
+
+		TEST_RUNNING_FLAG = true;
+		SPIRAL_PASS_FLAG = true;
 
 	}
 

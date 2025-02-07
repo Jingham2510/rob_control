@@ -233,6 +233,10 @@ int main(int, char**)
             gui_cntrl.test_mgr.circle_test(250);
         }
 
+        if (gui_cntrl.test_mgr.SPIRAL_PASS_FLAG) {
+            gui_cntrl.test_mgr.spiral_test(100, 300, 5);
+        }
+
 
             
 
