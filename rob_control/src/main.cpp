@@ -237,6 +237,10 @@ int main(int, char**)
             gui_cntrl.test_mgr.spiral_test(100, 350, 5);
         }
 
+        if (gui_cntrl.test_mgr.POINT_LOAD_FLAG) {
+            gui_cntrl.test_mgr.point_test(5);
+        }
+
 
             
 

@@ -37,9 +37,10 @@ public:
 	bool TRI_POLY_PASS_FLAG = false;
 	bool CIRCLE_PASS_FLAG = false;
 	bool SPIRAL_PASS_FLAG = false;
+	bool POINT_LOAD_FLAG = false;
 	
 
-	std::vector<std::string> TESTS = { "latency_test", "first_pass_test", "tri_poly_test", "circle_test", "spiral_test"};
+	std::vector<std::string> TESTS = { "latency_test", "first_pass_test", "tri_poly_test", "circle_test", "spiral_test", "point_test"};
 
 	//Set the output filepath
 	void set_data_path(std::string);
@@ -67,6 +68,9 @@ public:
 
 	//Spiral Test
 	void spiral_test(float, float, int);
+
+	//Point test - all predetermined
+	void point_test(int);
 
 
 private:

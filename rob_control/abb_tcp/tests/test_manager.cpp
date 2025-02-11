@@ -501,10 +501,7 @@ void test_manager::spiral_test(float start_r, float stop_r, int N) {
 			}
 			
 
-		}
-
-
-		
+		}	
 
 
 	}
@@ -541,6 +538,73 @@ void test_manager::spiral_test(float start_r, float stop_r, int N) {
 		if (ImGui::Button("Close page")) {
 			close = true;
 			SPIRAL_PASS_FLAG = false;
+			TEST_RUNNING_FLAG = false;
+		}
+	}
+
+
+	ImGui::End();
+
+	return;
+
+}
+
+
+//APplies force in one particular point N times
+void test_manager::point_test(int N) {
+
+	//Create the window
+	ImGui::Begin("Point Test");
+	ImGui::Text("Point Test");
+
+	//Define the starting point
+	std::vector<float> start_point = { 280, 2220, 350 };
+
+	//Define the point to load
+	std::vector<float> load_point = { 280, 2220, 250 };
+
+
+	//Create the trajectory
+	if (test_trajectory.empty()) {
+		for (int i = 0; i < N; i++) {
+			test_trajectory.push_back(start_point);
+			test_trajectory.push_back(load_point);
+		}
+	}
+
+	//Loading Loop
+	//Movement "loop"
+	if (!test_complete) {
+		//call the sequential move function (recursively?)
+		sequential_vertex_move(test_trajectory, 25);
+	}
+
+
+	if (test_complete && !file_saved) {
+		//Save the data to a logfile
+		std::ofstream data_file(data_path);
+		for (int i = 0; i < time_data.size(); i++) {
+
+			data_file << i << "," << time_data[i] << "," <<
+				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
+				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "]" <<
+				"\n";
+		}
+
+		data_file.close();
+
+		file_saved = true;
+	}
+
+
+	//Display the test finished bit
+	if (test_complete && file_saved) {
+
+		force_displacement_plotting({});
+
+		if (ImGui::Button("Close page")) {
+			close = true;
+			POINT_LOAD_FLAG = false;
 			TEST_RUNNING_FLAG = false;
 		}
 	}
@@ -855,6 +919,32 @@ void test_manager::test_selector(std::string test_name) {
 
 		TEST_RUNNING_FLAG = true;
 		SPIRAL_PASS_FLAG = true;
+
+	}
+
+	if (test_name == "point_test") {
+
+		//Setup the test
+		test_complete = false;
+		file_saved = false;
+		close = false;
+		loop_counter = 0;
+		spare_counter = 1;
+
+		//Prep storage for the test data
+		storage_1.clear();
+		storage_2.clear();
+		test_trajectory.clear();
+
+		time_data.clear();
+
+		//Setup the test flags
+
+		TEST_FLAG_1 = false;
+		TEST_FLAG_2 = false;
+
+		TEST_RUNNING_FLAG = true;
+		POINT_LOAD_FLAG = true;
 
 	}
 
