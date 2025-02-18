@@ -50,6 +50,9 @@ class ABB_tcp_client{
         //Get the robots currently reported force
         std::vector<float> req_force();
 
+        //Get if the robot is moving
+        bool req_rob_mov();
+
         //Get the last reported pos
         std::vector<float> get_last_reported_pos();
 
@@ -86,6 +89,9 @@ class ABB_tcp_client{
         bool wsa_flag = false;
         bool sock_flag = false;
 
+
+        //State flags
+        bool not_moving_flag = true;
 
 
 

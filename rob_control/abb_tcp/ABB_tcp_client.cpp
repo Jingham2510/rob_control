@@ -159,7 +159,11 @@ std::string ABB_tcp_client::recieve(){
     }
 
     //Convert the c-string to a c++ string - and strip the garbage
-    return response.substr(0, response.find("!"));
+    response = response.substr(0, response.find("!"));
+
+    //std::cout << response << "\n";
+
+    return response;
 }
 
 //Connection test
@@ -276,13 +280,17 @@ void ABB_tcp_client::move_tool(std::vector<float> xyz){
         return;
     }
 
+    std::cout << "MOVE TL REQ" << "\n";
+
+    //Send move commands
     cmd_stream << "MVTL:[" << com_vec_to_string(xyz) << "]";
 
     request(cmd_stream.str());
 
-    //Wait for response post move
+    //Wait until move is done
     recieve();
 
+    //request robot info
     update_rob_info();
 
     
@@ -311,6 +319,8 @@ void ABB_tcp_client::set_pos(std::vector<float> xyz) {
 
     //Wait to recieve the response to say it is done
     if(recieve() == "MVTO OK");
+
+
 
     update_rob_info();
 
@@ -365,6 +375,19 @@ std::vector<float> ABB_tcp_client::req_force() {
 
 }
 
+
+bool ABB_tcp_client::req_rob_mov() {
+
+    //Send the request moving state command
+    request("MVST:0");
+
+    std::istringstream(recieve()) >> not_moving_flag;
+
+    return not_moving_flag;
+
+
+}
+
 std::vector<float> ABB_tcp_client::get_last_reported_pos() {
     return curr_pos;
 }
@@ -410,6 +433,11 @@ void ABB_tcp_client::update_rob_info() {
     //Request the robots joint angles
     curr_jnt_angs = req_jnt_angs();
 
+
+    //Request the robots motion sate
+    not_moving_flag = req_rob_mov();
+
+
     return;
 
 }
@@ -439,6 +467,7 @@ std::string ABB_tcp_client::com_vec_to_string(std::vector<float> data){
 std::vector<float> ABB_tcp_client::xyz_str_to_float(std::string xyz) {
 
      
+    //std::cout << xyz << "\n";
 
     std::vector<float> xyz_vec;
 

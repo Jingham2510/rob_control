@@ -269,7 +269,7 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 
 
 			//Print new target
-			std::cout << "NEW TARGET: " << " X: " << vertexes[spare_counter][0] << " Y: " << vertexes[spare_counter][1] << " Z: " << vertexes[spare_counter][2] << "\n";
+			//std::cout << "NEW TARGET: " << " X: " << vertexes[spare_counter][0] << " Y: " << vertexes[spare_counter][1] << " Z: " << vertexes[spare_counter][2] << "\n";
 
 
 
@@ -277,7 +277,7 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 			//EQ is as follows - set direction * diff/no_of_steps
 			seq_curr_mov_vec = { seq_curr_xyz_dir[0] * (diff[0]/NO_OF_STEPS), seq_curr_xyz_dir[1] * (diff[1]/NO_OF_STEPS), seq_curr_xyz_dir[2] * (diff[2] /NO_OF_STEPS)};
 
-			std::cout << "STEP VEC: " << seq_curr_mov_vec[0] << " Y: " << seq_curr_mov_vec[1] << " Z: " << seq_curr_mov_vec[2] << "\n";
+			//std::cout << "STEP VEC: " << seq_curr_mov_vec[0] << " Y: " << seq_curr_mov_vec[1] << " Z: " << seq_curr_mov_vec[2] << "\n";
 
 		}
 
@@ -792,9 +792,6 @@ std::vector<float> test_manager::calc_line_err(std::vector<float> curr_xyz, floa
     std::vector<float> xyz_diff = {x_mov, y_mov, z_mov};
 
 
-    for (int i = 0; i < xyz_diff.size(); i++) {
-        std::cout << " CURR: " << curr_xyz[i] << " DIFF: " << xyz_diff[i] << "\n";
-    }
 
     return xyz_diff;
 

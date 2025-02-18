@@ -328,13 +328,17 @@ void frontend_cntrl::ABB_control_page() {
 
         //Ping test - PLACEHOLDER
         if (ImGui::CollapsingHeader("TEST FUNC")) {
+          
 
-            if (!test_mgr.test_running()) {
-
-            }
-            else {
-                ImGui::Text("Test running...");
-            }
+            if (ImGui::Button("Test")) {
+                if (ABB_rob.req_rob_mov() == true) {
+                    std::cout << "NOT MOVING";
+                }
+                else {
+                    std::cout << "MOVING";
+                }
+            }            
+           
         }
 
         ImGui::End();
