@@ -348,6 +348,9 @@ void ABB_tcp_client::add_to_traj_queue(std::vector<float> xyz) {
 
     request(cmd_stream.str());
 
+    //Wait to make sure that its okay
+    recieve();
+
 
     return;
 }
@@ -355,6 +358,10 @@ void ABB_tcp_client::add_to_traj_queue(std::vector<float> xyz) {
 //Start the trajectory queue
 void ABB_tcp_client::traj_go() {
     request("TJGO:1");
+
+    //Wait to recieve confirmation
+    recieve();
+
 }
 //Stop the trajectory queue
 void ABB_tcp_client::traj_stop() {
@@ -367,7 +374,8 @@ bool ABB_tcp_client::traj_queue_empty() {
     //Turn recieved string into boolean
     bool empty = true;
 
-    if (recieve() == "FALSE") {
+
+    if (recieve() == "0") {
         empty = false;
     }   
 
@@ -430,6 +438,8 @@ bool ABB_tcp_client::req_rob_mov() {
 
     std::istringstream(recieve()) >> not_moving_flag;
 
+    std::cout << not_moving_flag << "\n";
+
     return not_moving_flag;
 
 
@@ -451,6 +461,11 @@ std::vector<float> ABB_tcp_client::get_last_reported_force() {
     return curr_force;
 }
 
+bool ABB_tcp_client::rob_not_moving() {
+
+
+    return not_moving_flag;
+}
 
 
 std::string ABB_tcp_client::get_model() {

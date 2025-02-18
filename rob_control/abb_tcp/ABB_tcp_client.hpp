@@ -65,6 +65,11 @@ class ABB_tcp_client{
 
         //Get if the robot is moving
         bool req_rob_mov();
+        bool rob_not_moving();
+
+
+        //Function which updates the robots position info
+        void update_rob_info();
 
         //Get the last reported pos
         std::vector<float> get_last_reported_pos();
@@ -145,8 +150,6 @@ class ABB_tcp_client{
         std::string recieve();    
 
 
-        //Function which updates the robots position info
-        void update_rob_info();
 
 
         //Helper function to create strings from vectors of floats

@@ -99,8 +99,10 @@ private:
 	};
 
 	//Test state controllers
+	bool traj_sent;
 	bool test_complete;
 	bool file_saved;
+
 	bool close;
 	int loop_counter;
 

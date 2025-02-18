@@ -166,14 +166,54 @@ void test_manager::first_pass_test() {
 
 	std::vector<float> START_POS = { DES_X, 1650, DES_Z };
 	std::vector<float> END_POS = { DES_X, 2750, DES_Z };
-	//Steps based on distance and resolution of test
-	int NO_OF_STEPS = 100;
+	
+	//Add to the robots trajectory queue
+	if (!traj_sent) {
+		//Setup the trajectory queue
+		robot->add_to_traj_queue(END_POS);
+		robot->add_to_traj_queue(START_POS);
+		traj_sent = true;
 
-	if (!test_complete) {
-		//call the sequential move function (recursively?)
-		//Give P1 again to complete the triangle
-		sequential_vertex_move({START_POS, END_POS}, NO_OF_STEPS);
+		robot->set_pos(START_POS);
+
+		//Start the trajectory
+		robot->traj_go();
+
+		//Wait until the robot is moving to start reading
+		while (robot->req_rob_mov()) {
+		
+		}
+
+
 	}
+
+	//While the trajectory is being completed
+	if (!test_complete) {
+
+		
+
+		//Update the robot data
+		robot->update_rob_info();
+
+		//save the time data
+		time_data.push_back(std::chrono::system_clock::now());
+
+		//Save the force and position data
+		storage_1.push_back(robot->get_last_reported_pos());
+		storage_2.push_back(robot->get_last_reported_force());
+
+		//Check if the test is complete
+		if (robot->rob_not_moving() and robot->traj_queue_empty()) {
+			std::cout << robot->rob_not_moving() << "\n";
+			test_complete = true;
+		}
+
+		//Do the plot
+		//force_displacement_plotting({});
+
+	}
+
+
 
 
 	if (test_complete && !file_saved) {
@@ -195,9 +235,13 @@ void test_manager::first_pass_test() {
 
 	//Display the test finished bit
 	if (test_complete && file_saved) {
+
+
+		
+
 		if(ImGui::Button("Close page")){
 			//Do the plot
-			force_displacement_plotting({});
+			//force_displacement_plotting({});
 			close = true;
 			FIRST_PASS_FLAG = false;
 			TEST_RUNNING_FLAG = false;
@@ -829,6 +873,7 @@ void test_manager::test_selector(std::string test_name) {
 	if (test_name == "first_pass_test") {
 
 		//Setup the test
+		traj_sent = false;
 		test_complete = false;
 		file_saved = false;
 		close = false;
