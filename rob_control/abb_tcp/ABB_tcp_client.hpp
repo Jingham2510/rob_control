@@ -48,6 +48,9 @@ class ABB_tcp_client{
         //Stop the trajecotry
         void traj_stop();
 
+        //Check whether the trajectory queue is empty
+        bool traj_queue_empty();
+
         //Get the robots current xyz pos
         std::vector<float> req_xyz();
 

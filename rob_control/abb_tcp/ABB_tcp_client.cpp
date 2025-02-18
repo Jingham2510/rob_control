@@ -361,6 +361,18 @@ void ABB_tcp_client::traj_stop() {
     request("TJST:0");
 }
 
+bool ABB_tcp_client::traj_queue_empty() {
+    request("TJQE:?");
+
+    //Turn recieved string into boolean
+    bool empty = true;
+
+    if (recieve() == "FALSE") {
+        empty = false;
+    }   
+
+    return empty;
+}
 
 
 
