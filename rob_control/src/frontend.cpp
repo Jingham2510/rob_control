@@ -298,18 +298,11 @@ void frontend_cntrl::ABB_control_page() {
 
                 ImGui::NewLine();
 
-
-
-
             }
-
 
             else {
                 ImGui::Text("Robot Model not known!");
             }
-
-
-
 
         }
 
@@ -331,7 +324,8 @@ void frontend_cntrl::ABB_control_page() {
           
 
             if (ImGui::Button("Test")) {
-                ABB_rob.add_to_traj_queue({1, 2, 3});
+                ABB_rob.add_to_traj_queue({1000, 2230, 360});
+                ABB_rob.traj_go();
             }            
            
         }

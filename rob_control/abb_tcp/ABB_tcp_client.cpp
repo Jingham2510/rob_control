@@ -352,6 +352,16 @@ void ABB_tcp_client::add_to_traj_queue(std::vector<float> xyz) {
     return;
 }
 
+//Start the trajectory queue
+void ABB_tcp_client::traj_go() {
+    request("TJGO:1");
+}
+//Stop the trajectory queue
+void ABB_tcp_client::traj_stop() {
+    request("TJST:0");
+}
+
+
 
 
 std::vector<float> ABB_tcp_client::req_xyz() { 

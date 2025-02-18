@@ -42,6 +42,12 @@ class ABB_tcp_client{
         //Add to the trajectory queue on the robot
         void add_to_traj_queue(std::vector<float>);
 
+        //Start the trajecotry queue
+        void traj_go();
+
+        //Stop the trajecotry
+        void traj_stop();
+
         //Get the robots current xyz pos
         std::vector<float> req_xyz();
 
