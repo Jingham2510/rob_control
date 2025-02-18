@@ -130,6 +130,9 @@ int ABB_tcp_client::request(std::string request){
     //Convert string to old C type for winsock compatibility
     const char *req = request.data();
 
+
+    std::cout << "REQ - " << request << "\n";
+
     //Attempt to send the request
     if(send(sock, req, strlen(req), 0) < 0){
 
@@ -161,7 +164,7 @@ std::string ABB_tcp_client::recieve(){
     //Convert the c-string to a c++ string - and strip the garbage
     response = response.substr(0, response.find("!"));
 
-    //std::cout << response << "\n";
+    std::cout << "RESP - " << response << "\n";
 
     return response;
 }

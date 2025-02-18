@@ -161,11 +161,11 @@ void test_manager::first_pass_test() {
 
 	//TO BE DETERMINED - filler for now! - be very careful when doing it on the real one...
 	float DES_X = 262;
-	float DES_Z = 286;
+	float DES_Z = 220;
 
 
 	std::vector<float> START_POS = { DES_X, 1650, DES_Z };
-	std::vector<float> END_POS = { DES_X, 2750, DES_Z };
+	std::vector<float> END_POS = { DES_X, 2725, DES_Z };
 	
 	//Add to the robots trajectory queue
 	if (!traj_sent) {
@@ -181,7 +181,7 @@ void test_manager::first_pass_test() {
 
 		//Wait until the robot is moving to start reading
 		while (robot->req_rob_mov()) {
-		
+			std::cout << "STUCK" << "\n";
 		}
 
 
