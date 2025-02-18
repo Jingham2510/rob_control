@@ -38,6 +38,10 @@ class ABB_tcp_client{
         //Set the robots tool orientation - blocking
         void set_ori(std::vector<float>);
 
+
+        //Add to the trajectory queue on the robot
+        void add_to_traj_queue(std::vector<float>);
+
         //Get the robots current xyz pos
         std::vector<float> req_xyz();
 

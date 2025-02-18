@@ -329,6 +329,31 @@ void ABB_tcp_client::set_pos(std::vector<float> xyz) {
 
 }
 
+//Add to the trajectory queue of the robot
+void ABB_tcp_client::add_to_traj_queue(std::vector<float> xyz) {
+
+    //The commmand constructor
+    std::stringstream cmd_stream;
+
+
+
+    //Check the xyz count is correct
+    if (xyz.size() != 3) {
+        std::cout << "ERR: Incorrect number of coords supplied" << "\n";
+        return;
+    }
+
+    //Create the command and request it 
+    cmd_stream << "TQAD:[" << com_vec_to_string(xyz) << "]";
+
+    request(cmd_stream.str());
+
+
+    return;
+}
+
+
+
 std::vector<float> ABB_tcp_client::req_xyz() { 
 
     //Send the getpos command

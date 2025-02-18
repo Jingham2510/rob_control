@@ -331,12 +331,7 @@ void frontend_cntrl::ABB_control_page() {
           
 
             if (ImGui::Button("Test")) {
-                if (ABB_rob.req_rob_mov() == true) {
-                    std::cout << "NOT MOVING";
-                }
-                else {
-                    std::cout << "MOVING";
-                }
+                ABB_rob.add_to_traj_queue({1, 2, 3});
             }            
            
         }
