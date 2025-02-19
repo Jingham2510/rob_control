@@ -387,14 +387,34 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 	ImGui::Text("Tri-Poly Pass Test");
 
 	//Define the three vertexes
-	std::vector<float> P1 = {209, 1787, 286};
-	std::vector<float> P2 = {-108, 2167, 286};
-	std::vector<float> P3 = {693, 2631, 286};
+	std::vector<float> P1 = { 209, 1787, 286 };
+	std::vector<float> P2 = { -108, 2167, 286 };
+	std::vector<float> P3 = { 693, 2631, 286 };
+
+
+	if (!traj_sent) {
+
+		robot->add_to_traj_queue(P1);
+		robot->add_to_traj_queue(P2);
+		robot->add_to_traj_queue(P3);
+		robot->add_to_traj_queue(P1);
+
+		robot->set_pos({ P1[0], P1[1], P1[2] + 150 });
+
+		//Start the trajectory
+		robot->traj_go();
+
+		//Wait until the robot is moving to start reading
+		while (robot->req_rob_mov()) {
+			std::cout << "STUCK" << "\n";
+		}
+
+		traj_sent = true;
+	}
+
 
 	if (!test_complete) {
-		//call the sequential move function (recursively?)
-		//Give P1 again to complete the triangle
-		sequential_vertex_move({ P1, P2, P3, P1}, NO_OF_STEPS);
+		robot->update_rob_info();
 	}
 	
 	
@@ -907,6 +927,7 @@ void test_manager::test_selector(std::string test_name) {
 	if (test_name == "tri_poly_test") {
 
 		//Setup the test
+		traj_sent = true;
 		test_complete = false;
 		file_saved = false;
 		close = false;
