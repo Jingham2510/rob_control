@@ -161,11 +161,12 @@ void test_manager::first_pass_test() {
 
 	//TO BE DETERMINED - filler for now! - be very careful when doing it on the real one...
 	float DES_X = 262;
-	float DES_Z = 220;
+	float DES_Z = 175;
 
 
 	std::vector<float> START_POS = { DES_X, 1650, DES_Z };
-	std::vector<float> END_POS = { DES_X, 2725, DES_Z };
+	std::vector<float> END_POS = { DES_X, 2550, DES_Z };
+
 	
 	//Add to the robots trajectory queue
 	if (!traj_sent) {
@@ -190,27 +191,7 @@ void test_manager::first_pass_test() {
 	//While the trajectory is being completed
 	if (!test_complete) {
 
-		
-
-		//Update the robot data
-		robot->update_rob_info();
-
-		//save the time data
-		time_data.push_back(std::chrono::system_clock::now());
-
-		//Save the force and position data
-		storage_1.push_back(robot->get_last_reported_pos());
-		storage_2.push_back(robot->get_last_reported_force());
-
-		//Check if the test is complete
-		if (robot->rob_not_moving() and robot->traj_queue_empty()) {
-			std::cout << robot->rob_not_moving() << "\n";
-			test_complete = true;
-		}
-
-		//Do the plot
-		//force_displacement_plotting({});
-
+		log_traj_data();
 	}
 
 
@@ -236,8 +217,6 @@ void test_manager::first_pass_test() {
 	//Display the test finished bit
 	if (test_complete && file_saved) {
 
-
-		
 
 		if(ImGui::Button("Close page")){
 			//Do the plot
@@ -528,17 +507,17 @@ void test_manager::spiral_test(float start_r, float stop_r, int N) {
 	ImGui::Text("Spiral Pass Test");
 
 	//Define the centre point - needs to ve verified
-	std::vector<float> centre = { 280, 2220, 286 };
+	std::vector<float> centre = { 280, 2220, 175 };
 
 	//Check if test storage 3 is empty
 	//If so create all the points to be visited by the circle
-	if (test_trajectory.empty()) {
+	if (!traj_sent) {
 
 		double curr_r = start_r;
 
 		for (float i = 0; i <= 360*N; i++) {
 			//Calculate the next point
-			test_trajectory.push_back({ centre[0] + float((sin(i * (3.184 / 180)) * curr_r)) , centre[1] + float(cos(i * (3.184 / 180)) * curr_r), centre[2] });
+			robot->add_to_traj_queue({ centre[0] + float((sin(i * (3.184 / 180)) * curr_r)) , centre[1] + float(cos(i * (3.184 / 180)) * curr_r), centre[2] });
 
 			//Calculate the radius of the spiral
 			//starting radius + percentage completion of the drawing
@@ -548,17 +527,26 @@ void test_manager::spiral_test(float start_r, float stop_r, int N) {
 			else {
 				curr_r = start_r - (abs(stop_r - start_r) * (i / (360 * N)));
 			}
-			
 
-		}	
+		}
 
+		traj_sent = true;
 
+		//Move the robot to aboive the centre point
+		robot->set_pos({ centre[0], centre[1], centre[2] + 100 });
+
+		//Start the trajectory
+		robot->traj_go();
+
+		//Wait until the robot is moving to start reading
+		while (robot->req_rob_mov()) {
+			std::cout << "STUCK" << "\n";
+		}
 	}
 
 	//Movement "loop"
 	if (!test_complete) {
-		//call the sequential move function (recursively?)
-		sequential_vertex_move(test_trajectory, 1);
+		log_traj_data();
 	}
 
 
@@ -665,6 +653,28 @@ void test_manager::point_test(int N) {
 
 }
 
+//Logs the trajectory data
+void test_manager::log_traj_data() {
+	//Update the robot data
+	robot->update_rob_info();
+
+	//save the time data
+	time_data.push_back(std::chrono::system_clock::now());
+
+	//Save the force and position data
+	storage_1.push_back(robot->get_last_reported_pos());
+	storage_2.push_back(robot->get_last_reported_force());
+
+	//Check if the test is complete
+	if (robot->traj_done()) {
+		std::cout << robot->rob_not_moving() << "\n";
+		test_complete = true;
+	}
+
+	//Do the plot
+	//force_displacement_plotting({});
+}
+
 
 //Generic plotting for force/displacement/xyzerr/
 //TODO: make more generic by adding label and allowing any extra data to be used not just error
@@ -689,9 +699,9 @@ void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
 
 
 	//Error buffers
-	static RollingBuffer xerr_data;
-	static RollingBuffer yerr_data;
-	static RollingBuffer zerr_data;
+	///static RollingBuffer xerr_data;
+	///static RollingBuffer yerr_data;
+	///static RollingBuffer zerr_data;
 
 
 	//Determine plot flags
@@ -713,9 +723,9 @@ void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
 		Ryforce_data.Span = 100;
 		Rzforce_data.Span = 100;
 
-		xerr_data.Span = 100;
-		yerr_data.Span = 100;
-		zerr_data.Span = 100;
+		///xerr_data.Span = 100;
+		///yerr_data.Span = 100;
+		//zerr_data.Span = 100;
 
 
 		static float t = 0;
@@ -768,7 +778,7 @@ void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
 			ImPlot::EndPlot();
 		}
 
-
+		/*
 		//Add the points to the error buffers
 		xerr_data.AddPoint(t, xyz_err[0]);
 		yerr_data.AddPoint(t, xyz_err[1]);
@@ -785,6 +795,7 @@ void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
 			ImPlot::PlotLine("Z err", &zerr_data.Data[0].x, &zerr_data.Data[0].y, zerr_data.Data.size(), 0, 0, 2 * sizeof(float));
 			ImPlot::EndPlot();
 		}
+		*/
 
 
 
@@ -946,6 +957,7 @@ void test_manager::test_selector(std::string test_name) {
 	if (test_name == "spiral_test") {
 
 		//Setup the test
+		traj_sent = false;
 		test_complete = false;
 		file_saved = false;
 		close = false;

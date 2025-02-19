@@ -153,6 +153,10 @@ private:
 	std::vector<pos_neg> seq_curr_xyz_dir = {POSITIVE, POSITIVE, POSITIVE};
 
 
+	//Logs the required data when trajectories are being run
+	void log_traj_data();
+
+
 	//Moves to every coordinate given in the vector
 	//at a rate/speed determined by the step size
 	void sequential_vertex_move(std::vector<std::vector<float>>, float);

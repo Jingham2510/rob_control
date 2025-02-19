@@ -152,6 +152,8 @@ std::string ABB_tcp_client::recieve(){
     int recv_err;
     std::string response;
 
+    
+
     //Attempt to read a reply from the socket
     if ((recv_err = recv(sock, buff, 2000, 0)) == SOCKET_ERROR){
         std::cout << "Err: socket read - " << WSAGetLastError() << "\n";
@@ -371,18 +373,18 @@ void ABB_tcp_client::traj_stop() {
     request("TJST:0");
 }
 
-bool ABB_tcp_client::traj_queue_empty() {
-    request("TJQE:?");
+bool ABB_tcp_client::traj_done() {
+    request("TJDN:?");
 
     //Turn recieved string into boolean
-    bool empty = true;
+    bool done = false;
 
 
-    if (recieve() == "0") {
-        empty = false;
+    if (recieve() == "TRUE") {
+        done = true;
     }   
 
-    return empty;
+    return done;
 }
 
 
