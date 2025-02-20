@@ -590,7 +590,7 @@ void test_manager::spiral_test(float start_r, float stop_r, int N) {
 	//Display the test finished bit
 	if (test_complete && file_saved) {
 
-		force_displacement_plotting({});
+		//force_displacement_plotting({});
 
 		if (ImGui::Button("Close page")) {
 			close = true;

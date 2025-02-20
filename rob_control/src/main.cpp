@@ -234,7 +234,7 @@ int main(int, char**)
         }
 
         if (gui_cntrl.test_mgr.SPIRAL_PASS_FLAG) {
-            gui_cntrl.test_mgr.spiral_test(100, 350, 5);
+            gui_cntrl.test_mgr.spiral_test(100, 350, 1);
         }
 
         if (gui_cntrl.test_mgr.POINT_LOAD_FLAG) {
