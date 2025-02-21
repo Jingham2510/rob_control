@@ -387,9 +387,9 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 	ImGui::Text("Tri-Poly Pass Test");
 
 	//Define the three vertexes
-	std::vector<float> P1 = { 209, 1787, 286 };
-	std::vector<float> P2 = { -108, 2167, 286 };
-	std::vector<float> P3 = { 693, 2631, 286 };
+	std::vector<float> P1 = { 209, 1787, 165 };
+	std::vector<float> P2 = { -108, 2167, 165 };
+	std::vector<float> P3 = { 680, 2600, 165 };
 
 
 	if (!traj_sent) {
@@ -399,7 +399,7 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 		robot->add_to_traj_queue(P3);
 		robot->add_to_traj_queue(P1);
 
-		robot->set_pos({ P1[0], P1[1], P1[2] + 150 });
+		robot->set_pos({ P1[0], P1[1], P1[2] + 50 });
 
 		//Start the trajectory
 		robot->traj_go();
@@ -414,7 +414,7 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 
 
 	if (!test_complete) {
-		robot->update_rob_info();
+		log_traj_data();
 	}
 	
 	
@@ -438,7 +438,7 @@ void test_manager::tri_poly_test(int NO_OF_STEPS) {
 	//Display the test finished bit
 	if (test_complete && file_saved) {
 
-		force_displacement_plotting({});
+		//force_displacement_plotting({});
 
 		if (ImGui::Button("Close page")) {
 			close = true;
@@ -463,21 +463,36 @@ void test_manager::circle_test(int radius, int N) {
 	ImGui::Text("Circle Pass Test - Radius: " + radius);
 
 	//Define the centre point - needs to ve verified
-	std::vector<float> centre = {280, 2220, 286};
+	std::vector<float> centre = { 200, 2160, 165 };
 
 	//Check if test storage 3 is empty
 	//If so create all the points to be visited by the circle
-	if (test_trajectory.empty()) {
+	if (!traj_sent) {
 		for (int i = 0; i <= 360*N; i++) {
-			test_trajectory.push_back({ centre[0] + float((sin(i*(3.184/180)) * radius)) , centre[1] + float(cos(i*(3.184 / 180)) * radius), centre[2] });
+			robot->add_to_traj_queue({ centre[0] + float((sin(i*(3.184/180)) * radius)) , centre[1] + float(cos(i*(3.184 / 180)) * radius), centre[2] });
 		}
+
+		traj_sent = true;
+
+		//Move the robot to aboive the centre point
+		robot->set_pos({ centre[0], centre[1], centre[2] + 50 });
+
+		//Start the trajectory
+		robot->traj_go();
+
+		//Wait until the robot is moving to start reading
+		while (robot->req_rob_mov()) {
+			std::cout << "STUCK" << "\n";
+		}
+
+
+
 	}
 
 
 	//Movement "loop"
 	if (!test_complete) {
-		//call the sequential move function (recursively?)
-		sequential_vertex_move(test_trajectory, 1);
+		log_traj_data();
 	}
 
 
@@ -502,7 +517,7 @@ void test_manager::circle_test(int radius, int N) {
 	//Display the test finished bit
 	if (test_complete && file_saved) {
 
-		force_displacement_plotting({});
+		//force_displacement_plotting({});
 
 		if (ImGui::Button("Close page")) {
 			close = true;
@@ -527,7 +542,7 @@ void test_manager::spiral_test(float start_r, float stop_r, int N) {
 	ImGui::Text("Spiral Pass Test");
 
 	//Define the centre point - needs to ve verified
-	std::vector<float> centre = { 280, 2220, 175 };
+	std::vector<float> centre = { 200, 2160, 165 };
 
 	//Check if test storage 3 is empty
 	//If so create all the points to be visited by the circle
@@ -927,7 +942,7 @@ void test_manager::test_selector(std::string test_name) {
 	if (test_name == "tri_poly_test") {
 
 		//Setup the test
-		traj_sent = true;
+		traj_sent = false;
 		test_complete = false;
 		file_saved = false;
 		close = false;
@@ -952,6 +967,7 @@ void test_manager::test_selector(std::string test_name) {
 	if (test_name == "circle_test") {
 
 		//Setup the test
+		traj_sent = false;
 		test_complete = false;
 		file_saved = false;
 		close = false;
@@ -1005,6 +1021,7 @@ void test_manager::test_selector(std::string test_name) {
 	if (test_name == "point_test") {
 
 		//Setup the test
+		traj_sent = false;
 		test_complete = false;
 		file_saved = false;
 		close = false;
