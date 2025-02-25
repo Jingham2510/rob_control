@@ -642,10 +642,10 @@ void test_manager::test_selector(std::string test_name) {
 		gen_test_title = "Point loading";
 
 		//Define the starting point
-		std::vector<float> start_point = { 280, 2220, 350 };
+		std::vector<float> start_point = { 280, 2220, 265 };
 
 		//Define the point to load
-		std::vector<float> load_point = { 280, 2220, 250 };
+		std::vector<float> load_point = { 280, 2220, 165 };
 
 		int N = 5;
 	
