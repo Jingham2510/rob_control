@@ -216,30 +216,16 @@ int main(int, char**)
             gui_cntrl.error_page();
         }
 
+        
 
         if (gui_cntrl.test_mgr.LATENCY_TEST_FLAG) {
             gui_cntrl.test_mgr.latency_test();
         }
 
-        if (gui_cntrl.test_mgr.FIRST_PASS_FLAG) {
-            gui_cntrl.test_mgr.first_pass_test();
+        else if (gui_cntrl.test_mgr.test_running()) {
+            gui_cntrl.test_mgr.gen_test();
         }
 
-        if (gui_cntrl.test_mgr.TRI_POLY_PASS_FLAG) {
-            gui_cntrl.test_mgr.tri_poly_test(100);
-        }
-
-        if (gui_cntrl.test_mgr.CIRCLE_PASS_FLAG) {
-            gui_cntrl.test_mgr.circle_test(350, 5);
-        }
-
-        if (gui_cntrl.test_mgr.SPIRAL_PASS_FLAG) {
-            gui_cntrl.test_mgr.spiral_test(100, 350, 5);
-        }
-
-        if (gui_cntrl.test_mgr.POINT_LOAD_FLAG) {
-            gui_cntrl.test_mgr.point_test(5);
-        }
 
 
             

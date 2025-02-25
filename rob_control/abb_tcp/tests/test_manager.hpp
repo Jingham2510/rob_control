@@ -31,15 +31,6 @@ public:
 	test_manager();
 
 
-	//Tests currently available
-	bool LATENCY_TEST_FLAG = false;
-	bool FIRST_PASS_FLAG = false;
-	bool TRI_POLY_PASS_FLAG = false;
-	bool CIRCLE_PASS_FLAG = false;
-	bool SPIRAL_PASS_FLAG = false;
-	bool POINT_LOAD_FLAG = false;
-	
-
 	std::vector<std::string> TESTS = { "latency_test", "first_pass_test", "tri_poly_test", "circle_test", "spiral_test", "point_test"};
 
 	//Set the output filepath
@@ -57,21 +48,16 @@ public:
 	//Ping 100 times and calculate the latencys
 	void latency_test();
 
-	//Do one sweeping movement - proof of concept
-	void first_pass_test();
 
-	//Triangle Polygon Test (Draws a triangle)
-	void tri_poly_test(int);
 
-	//Circular test (Draws a circle)
-	void circle_test(int, int);
+	//Generic test wrapper
+	//Takes a title and a list of trajectory points
+	void gen_test();
 
-	//Spiral Test
-	void spiral_test(float, float, int);
+	std::string gen_test_title;
+	std::vector<std::vector<float>> gen_trajectory;
 
-	//Point test - all predetermined
-	void point_test(int);
-
+	bool LATENCY_TEST_FLAG = false;
 
 private:
 
@@ -127,6 +113,7 @@ private:
 	//Flag to indicate if a test is running
 	bool TEST_RUNNING_FLAG = false;
 
+
 	//The robot that will complete the tests
 	ABB_tcp_client *robot;
 
@@ -137,9 +124,9 @@ private:
 	void latency_plotting(float);
 
 	//Provides plotting for general force-displacement test
-	//Plots current xyz pos, current xyz error, current 6-axis force
-	// TODO: Added orientation bits
-	void force_displacement_plotting(std::vector<float>);
+	//Plots current xyz pos, current 6-axis force
+
+	void force_displacement_plotting();
 
 	//Calculates the error between desired and current pos
 	std::vector<float> calc_line_err(std::vector<float>, float, float, float);

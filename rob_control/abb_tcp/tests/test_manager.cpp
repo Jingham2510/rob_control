@@ -151,93 +151,6 @@ void test_manager::latency_plotting(float next_point) {
 }
 
 
-//First pass one movement test
-void test_manager::first_pass_test() {
-
-
-	ImGui::Begin("First Pass");
-	ImGui::Text("First Pass Test");
-
-
-	//TO BE DETERMINED - filler for now! - be very careful when doing it on the real one...
-	float DES_X = 262;
-	float DES_Z = 175;
-
-
-	std::vector<float> START_POS = { DES_X, 1650, DES_Z };
-	std::vector<float> END_POS = { DES_X, 2550, DES_Z };
-
-	
-	//Add to the robots trajectory queue
-	if (!traj_sent) {
-		//Setup the trajectory queue
-		robot->add_to_traj_queue(END_POS);
-		robot->add_to_traj_queue(START_POS);
-		traj_sent = true;
-
-		robot->set_pos(START_POS);
-
-		//Start the trajectory
-		robot->traj_go();
-
-		//Wait until the robot is moving to start reading
-		while (robot->req_rob_mov()) {
-			std::cout << "STUCK" << "\n";
-		}
-
-
-	}
-
-	//While the trajectory is being completed
-	if (!test_complete) {
-
-		log_traj_data();
-	}
-
-
-
-
-	if (test_complete && !file_saved) {
-		//Save the data to a logfile
-		std::ofstream data_file(data_path);
-		for (int i = 0; i < time_data.size(); i++) {
-
-			data_file << i << "," << time_data[i] << "," <<
-				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
-				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "]" <<
-				"\n";
-		}
-
-		data_file.close();
-
-		file_saved = true;
-	}
-	
-
-	//Display the test finished bit
-	if (test_complete && file_saved) {
-
-
-		if(ImGui::Button("Close page")){
-			//Do the plot
-			//force_displacement_plotting({});
-			close = true;
-			FIRST_PASS_FLAG = false;
-			TEST_RUNNING_FLAG = false;
-		}
-	}
-
-
-	ImGui::End();
-
-	return;
-}
-
-
-
-
-
-
 
 //Moves to every coordinate given in the vector
 //at a rate/speed determined by the step size
@@ -259,10 +172,6 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 		//Ensure the flag is set so it doesn't move back
 		TEST_FLAG_2 = true;
 	}
-	
-
-
-	
 	//For each vertex (alreayd at starting point so start at 1)
 	//Cant be a for loop - needs to be deconstructed into an if that runs multiple times
 	if(TEST_FLAG_2 && !test_complete){
@@ -292,14 +201,8 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 					seq_curr_xyz_dir[i] = NEGATIVE;
 				}
 			}
-		
-			
-
-
 			//Print new target
 			//std::cout << "NEW TARGET: " << " X: " << vertexes[spare_counter][0] << " Y: " << vertexes[spare_counter][1] << " Z: " << vertexes[spare_counter][2] << "\n";
-
-
 
 			//Determine vector based on number of steps between each vertex
 			//EQ is as follows - set direction * diff/no_of_steps
@@ -320,11 +223,6 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 			float DES_X = vertexes[spare_counter - 1][0] + (seq_curr_mov_vec[0] * loop_counter);
 			float DES_Y = vertexes[spare_counter - 1][1] + (seq_curr_mov_vec[1] * loop_counter);
 			float DES_Z = vertexes[spare_counter - 1][2] + (seq_curr_mov_vec[2] * loop_counter);
-
-
-
-
-
 
 			//std::cout << "DES X: " << DES_X << " DES Y: " << DES_Y << " DES Z: " << DES_Z << "\n";
 
@@ -356,13 +254,10 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 				//std::cout << "ENDPOS: " << "X: " << curr_pos[0] << " Y: " << curr_pos[1] << " Z: " << curr_pos[2] << "\n";
 
 			}		
-
-
-
 		}
 
 		//Do the plot
-		force_displacement_plotting(move_vector);
+		force_displacement_plotting();
 
 		//Check if spare counter has reached the limit
 		if (spare_counter == vertexes.size()) {
@@ -380,195 +275,25 @@ void test_manager::sequential_vertex_move(std::vector<std::vector<float>> vertex
 
 }
 
-//A test that creates a triangle polygon
-void test_manager::tri_poly_test(int NO_OF_STEPS) {
-
-	ImGui::Begin("Tri-Poly Pass");
-	ImGui::Text("Tri-Poly Pass Test");
-
-	//Define the three vertexes
-	std::vector<float> P1 = { 209, 1787, 165 };
-	std::vector<float> P2 = { -108, 2167, 165 };
-	std::vector<float> P3 = { 680, 2600, 165 };
 
 
-	if (!traj_sent) {
-
-		robot->add_to_traj_queue(P1);
-		robot->add_to_traj_queue(P2);
-		robot->add_to_traj_queue(P3);
-		robot->add_to_traj_queue(P1);
-
-		robot->set_pos({ P1[0], P1[1], P1[2] + 50 });
-
-		//Start the trajectory
-		robot->traj_go();
-
-		//Wait until the robot is moving to start reading
-		while (robot->req_rob_mov()) {
-			std::cout << "STUCK" << "\n";
-		}
-
-		traj_sent = true;
-	}
-
-
-	if (!test_complete) {
-		log_traj_data();
-	}
+void test_manager::gen_test() {
 	
-	
-	if(test_complete && !file_saved) {
-		//Save the data to a logfile
-		std::ofstream data_file(data_path);
-		for (int i = 0; i < time_data.size(); i++) {
-
-			data_file << i << "," << time_data[i] << "," <<
-				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
-				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "]" <<
-				"\n";
-		}
-		
-		data_file.close();
-
-		file_saved = true;
-	}
-
-
-	//Display the test finished bit
-	if (test_complete && file_saved) {
-
-		//force_displacement_plotting({});
-
-		if (ImGui::Button("Close page")) {
-			close = true;
-			TRI_POLY_PASS_FLAG = false;
-			TEST_RUNNING_FLAG = false;
-		}
-	}
-
-
-	ImGui::End();
-
-	return;
-
-}
-
-
-//Draws a circle around a predefined spot, for a given radius
-void test_manager::circle_test(int radius, int N) {
-
 	//Create the window
-	ImGui::Begin("Circle Pass");
-	ImGui::Text("Circle Pass Test - Radius: " + radius);
+	ImGui::Begin(gen_test_title.c_str());
+	ImGui::Text(gen_test_title.c_str());
 
-	//Define the centre point - needs to ve verified
-	std::vector<float> centre = { 200, 2160, 165 };
-
-	//Check if test storage 3 is empty
-	//If so create all the points to be visited by the circle
+	//Setup the test
 	if (!traj_sent) {
-		for (int i = 0; i <= 360*N; i++) {
-			robot->add_to_traj_queue({ centre[0] + float((sin(i*(3.184/180)) * radius)) , centre[1] + float(cos(i*(3.184 / 180)) * radius), centre[2] });
+		//Send the trajectory
+		for (int i = 0; i < gen_trajectory.size(); i++) {
+			robot->add_to_traj_queue(gen_trajectory[i]);
 		}
 
 		traj_sent = true;
 
-		//Move the robot to aboive the centre point
-		robot->set_pos({ centre[0], centre[1], centre[2] + 50 });
-
-		//Start the trajectory
-		robot->traj_go();
-
-		//Wait until the robot is moving to start reading
-		while (robot->req_rob_mov()) {
-			std::cout << "STUCK" << "\n";
-		}
-
-
-
-	}
-
-
-	//Movement "loop"
-	if (!test_complete) {
-		log_traj_data();
-	}
-
-
-
-	if (test_complete && !file_saved) {
-		//Save the data to a logfile
-		std::ofstream data_file(data_path);
-		for (int i = 0; i < time_data.size(); i++) {
-
-			data_file << i << "," << time_data[i] << "," <<
-				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
-				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "]" <<
-				"\n";
-		}
-
-		data_file.close();
-
-		file_saved = true;
-	}
-
-
-	//Display the test finished bit
-	if (test_complete && file_saved) {
-
-		//force_displacement_plotting({});
-
-		if (ImGui::Button("Close page")) {
-			close = true;
-			CIRCLE_PASS_FLAG = false;
-			TEST_RUNNING_FLAG = false;
-		}
-	}
-
-
-	ImGui::End();
-
-	return;
-}
-
-
-//Spiral test
-//Draws a spiral starting and stopping for given radius (with N number of circles)
-void test_manager::spiral_test(float start_r, float stop_r, int N) {
-
-	//Create the window
-	ImGui::Begin("Spiral Pass");
-	ImGui::Text("Spiral Pass Test");
-
-	//Define the centre point - needs to ve verified
-	std::vector<float> centre = { 200, 2160, 165 };
-
-	//Check if test storage 3 is empty
-	//If so create all the points to be visited by the circle
-	if (!traj_sent) {
-
-		double curr_r = start_r;
-
-		for (float i = 0; i <= 360*N; i++) {
-			//Calculate the next point
-			robot->add_to_traj_queue({ centre[0] + float((sin(i * (3.184 / 180)) * curr_r)) , centre[1] + float(cos(i * (3.184 / 180)) * curr_r), centre[2] });
-
-			//Calculate the radius of the spiral
-			//starting radius + percentage completion of the drawing
-			if (start_r <= stop_r) {
-				curr_r = start_r + (abs(stop_r - start_r) * (i / (360 * N)));
-			}
-			else {
-				curr_r = start_r - (abs(stop_r - start_r) * (i / (360 * N)));
-			}
-
-		}
-
-		traj_sent = true;
-
-		//Move the robot to aboive the centre point
-		robot->set_pos({ centre[0], centre[1], centre[2] + 100 });
+		//Move the robot to above the starting point
+		robot->set_pos({gen_trajectory[0][0], gen_trajectory[0][1], gen_trajectory[0][2] + 50});
 
 		//Start the trajectory
 		robot->traj_go();
@@ -579,73 +304,7 @@ void test_manager::spiral_test(float start_r, float stop_r, int N) {
 		}
 	}
 
-	//Movement "loop"
-	if (!test_complete) {
-		log_traj_data();
-	}
-
-
-	if (test_complete && !file_saved) {
-		//Save the data to a logfile
-		std::ofstream data_file(data_path);
-		for (int i = 0; i < time_data.size(); i++) {
-
-			data_file << i << "," << time_data[i] << "," <<
-				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
-				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "]" <<
-				"\n";
-		}
-
-		data_file.close();
-
-		file_saved = true;
-	}
-
-
-	//Display the test finished bit
-	if (test_complete && file_saved) {
-
-		//force_displacement_plotting({});
-
-		if (ImGui::Button("Close page")) {
-			close = true;
-			SPIRAL_PASS_FLAG = false;
-			TEST_RUNNING_FLAG = false;
-		}
-	}
-
-
-	ImGui::End();
-
-	return;
-
-}
-
-
-//APplies force in one particular point N times
-void test_manager::point_test(int N) {
-
-	//Create the window
-	ImGui::Begin("Point Test");
-	ImGui::Text("Point Test");
-
-	//Define the starting point
-	std::vector<float> start_point = { 280, 2220, 350 };
-
-	//Define the point to load
-	std::vector<float> load_point = { 280, 2220, 250 };
-
-
-	//Create the trajectory
-	if (test_trajectory.empty()) {
-		for (int i = 0; i < N; i++) {
-			test_trajectory.push_back(start_point);
-			test_trajectory.push_back(load_point);
-		}
-	}
-
-	//Loading Loop
-	//Movement "loop"
+	//Data acquisition 
 	if (!test_complete) {
 		//call the sequential move function (recursively?)
 		sequential_vertex_move(test_trajectory, 25);
@@ -672,11 +331,10 @@ void test_manager::point_test(int N) {
 	//Display the test finished bit
 	if (test_complete && file_saved) {
 
-		force_displacement_plotting({});
+		force_displacement_plotting();
 
 		if (ImGui::Button("Close page")) {
 			close = true;
-			POINT_LOAD_FLAG = false;
 			TEST_RUNNING_FLAG = false;
 		}
 	}
@@ -684,7 +342,9 @@ void test_manager::point_test(int N) {
 
 	ImGui::End();
 
-	return;
+
+
+
 
 }
 
@@ -707,13 +367,13 @@ void test_manager::log_traj_data() {
 	}
 
 	//Do the plot
-	//force_displacement_plotting({});
+	force_displacement_plotting();
 }
 
 
 //Generic plotting for force/displacement/xyzerr/
 //TODO: make more generic by adding label and allowing any extra data to be used not just error
-void test_manager::force_displacement_plotting(std::vector<float> xyz_err) {
+void test_manager::force_displacement_plotting() {
 
 	//TODO: -4 plots each contianign a set number of lines
 	//Plot orientation graph (requires a get orientation cmd) ~ ABB doesnt report it...
@@ -898,156 +558,135 @@ std::vector<float> test_manager::calc_line_err(std::vector<float> curr_xyz, floa
 void test_manager::test_selector(std::string test_name) {
 
 
-	//One giant if statement to select the test
-	
-	if (test_name == "latency_test"){	
+	//Inside if statement generate trajectory and set title
+	//Then just set test running and the main loop uses the generic trajectory command
 
-		//Setup the test
-		test_complete = false;
-		file_saved = false;
-		close = false;
-		loop_counter = 0;
-
+	if (test_name == "latency_test") {
 		//Prep storage for test data
 		float_storage.clear();
 
-		//Setup the test flags
-		TEST_RUNNING_FLAG = true;
 		LATENCY_TEST_FLAG = true;
 	}
 
+
 	if (test_name == "first_pass_test") {
+		gen_test_title = "First pass";
 
-		//Setup the test
-		traj_sent = false;
-		test_complete = false;
-		file_saved = false;
-		close = false;
-		loop_counter = 0;
-		spare_counter = 1;
+		float DES_X = 262;
+		float DES_Z = 175;
 
-		//Prep storage for the test data;
-		storage_1.clear();
-		storage_2.clear();
-		time_data.clear();
+		std::vector<float> START_POS = { DES_X, 1650, DES_Z };
+		std::vector<float> END_POS = { DES_X, 2550, DES_Z };
 
-		//Setup the test flags
-		TEST_FLAG_1 = false;
-		TEST_FLAG_2 = false;
+		gen_trajectory = {START_POS, END_POS, START_POS};
+		
 
-		TEST_RUNNING_FLAG = true;
-		FIRST_PASS_FLAG = true;
 	}
 
 	if (test_name == "tri_poly_test") {
+		gen_test_title = "Triangle";
 
-		//Setup the test
-		traj_sent = false;
-		test_complete = false;
-		file_saved = false;
-		close = false;
-		loop_counter = 0;
-		spare_counter = 1;
+		//Define the three vertexes
+		std::vector<float> P1 = { 209, 1787, 165 };
+		std::vector<float> P2 = { -108, 2167, 165 };
+		std::vector<float> P3 = { 680, 2600, 165 };
 
-		//Prep storage for the test data
-		storage_1.clear();
-		storage_2.clear();
-		time_data.clear();
-
-		//Setup the test flags
-
-		TEST_FLAG_1 = false;
-		TEST_FLAG_2 = false;
-
-		TEST_RUNNING_FLAG = true;
-		TRI_POLY_PASS_FLAG = true;
+		gen_trajectory = { P1, P2, P3, P1 };
 
 	}
 
 	if (test_name == "circle_test") {
 
-		//Setup the test
-		traj_sent = false;
-		test_complete = false;
-		file_saved = false;
-		close = false;
-		loop_counter = 0;
-		spare_counter = 1;
+		gen_test_title = "Circle";
 
-		//Prep storage for the test data
-		storage_1.clear();
-		storage_2.clear();
-		test_trajectory.clear();
+		//Define the centre point - needs to ve verified
+		std::vector<float> centre = { 200, 2160, 165 };
 
-		time_data.clear();
+		int N = 5;
+		int radius = 350;
 
-		//Setup the test flags
 
-		TEST_FLAG_1 = false;
-		TEST_FLAG_2 = false;
-
-		TEST_RUNNING_FLAG = true;
-		CIRCLE_PASS_FLAG = true;
+		gen_trajectory.clear();
+		for (int i = 0; i <= 360 * N; i++) {
+			gen_trajectory.push_back({ centre[0] + float((sin(i * (3.184 / 180)) * radius)) , centre[1] + float(cos(i * (3.184 / 180)) * radius), centre[2] });
+		}
 
 	}
 
 	if (test_name == "spiral_test") {
+		gen_test_title = "Spiral";
+		//Define the centre point - needs to ve verified
+		std::vector<float> centre = { 200, 2160, 165 };
 
-		//Setup the test
-		traj_sent = false;
-		test_complete = false;
-		file_saved = false;
-		close = false;
-		loop_counter = 0;
-		spare_counter = 1;
+		double start_r = 100;
+		double stop_r = 250;
+		int N = 5;
 
-		//Prep storage for the test data
-		storage_1.clear();
-		storage_2.clear();
-		test_trajectory.clear();
+		double curr_r = start_r;
 
-		time_data.clear();
+		for (float i = 0; i <= 360 * N; i++) {
+			//Calculate the next point
+			robot->add_to_traj_queue({ centre[0] + float((sin(i * (3.184 / 180)) * curr_r)) , centre[1] + float(cos(i * (3.184 / 180)) * curr_r), centre[2] });
 
-		//Setup the test flags
-
-		TEST_FLAG_1 = false;
-		TEST_FLAG_2 = false;
-
-		TEST_RUNNING_FLAG = true;
-		SPIRAL_PASS_FLAG = true;
-
+			//Calculate the radius of the spiral
+			//starting radius + percentage completion of the drawing
+			if (start_r <= stop_r) {
+				curr_r = start_r + (abs(stop_r - start_r) * (i / (360 * N)));
+			}
+			else {
+				curr_r = start_r - (abs(stop_r - start_r) * (i / (360 * N)));
+			}
+		}
 	}
 
 	if (test_name == "point_test") {
+		gen_test_title = "Point loading";
 
-		//Setup the test
-		traj_sent = false;
-		test_complete = false;
-		file_saved = false;
-		close = false;
-		loop_counter = 0;
-		spare_counter = 1;
+		//Define the starting point
+		std::vector<float> start_point = { 280, 2220, 350 };
 
-		//Prep storage for the test data
-		storage_1.clear();
-		storage_2.clear();
-		test_trajectory.clear();
+		//Define the point to load
+		std::vector<float> load_point = { 280, 2220, 250 };
 
-		time_data.clear();
-
-		//Setup the test flags
-
-		TEST_FLAG_1 = false;
-		TEST_FLAG_2 = false;
-
-		TEST_RUNNING_FLAG = true;
-		POINT_LOAD_FLAG = true;
+		int N = 5;
+	
+		gen_trajectory.clear();
+		for (int i = 0; i < N; i++) {
+			gen_trajectory.push_back(start_point);
+			gen_trajectory.push_back(load_point);
+		}
+		
 
 	}
 
-	
-	
+	//Reset test variables
+	// 
+	//Setup the test
+	traj_sent = false;
+	test_complete = false;
+	file_saved = false;
+	close = false;
+	loop_counter = 0;
 
-}
+
+	//Prep storage for the test data
+	storage_1.clear();
+	storage_2.clear();
+	test_trajectory.clear();
+
+	time_data.clear();
+
+	//Setup the test flags
+
+	TEST_FLAG_1 = false;
+	TEST_FLAG_2 = false;
+
+	TEST_RUNNING_FLAG = true;
+
+
+
+	}
+	
+	
 
 
