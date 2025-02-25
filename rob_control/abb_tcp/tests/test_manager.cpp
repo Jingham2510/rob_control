@@ -306,8 +306,7 @@ void test_manager::gen_test() {
 
 	//Data acquisition 
 	if (!test_complete) {
-		//call the sequential move function (recursively?)
-		sequential_vertex_move(test_trajectory, 25);
+		log_traj_data();
 	}
 
 

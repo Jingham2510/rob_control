@@ -485,13 +485,13 @@ void frontend_cntrl::load_man_control() {
 
     //Place button which moves the tool up
     if (ImGui::Button("Up")) {
-        ABB_rob.move_tool({ 0, 0, -10 });
+        ABB_rob.move_tool({ 0, 0, 10 });
     }
     
 
     //Place button which moves the tool up
     if (ImGui::Button("Down")) {
-        ABB_rob.move_tool({ 0, 0, 10 });
+        ABB_rob.move_tool({ 0, 0, -10 });
     }
 
     if (ImGui::Button("Y++")) {
