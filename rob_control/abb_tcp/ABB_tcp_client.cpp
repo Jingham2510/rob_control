@@ -334,8 +334,8 @@ void ABB_tcp_client::set_pos(std::vector<float> xyz) {
 
 }
 
-//Add to the trajectory queue of the robot
-void ABB_tcp_client::add_to_traj_queue(std::vector<float> xyz) {
+//Add a transition to the trajectory queue of the robot
+void ABB_tcp_client::add_trans_traj_queue(std::vector<float> xyz) {
 
     //The commmand constructor
     std::stringstream cmd_stream;
@@ -359,6 +359,35 @@ void ABB_tcp_client::add_to_traj_queue(std::vector<float> xyz) {
 
     return;
 }
+
+
+//Add a rotation to the trajectory queue of the robot - in quartenions
+void ABB_tcp_client::add_rot_traj_queue(std::vector<float> rot) {
+    //The commmand constructor
+    std::stringstream cmd_stream;
+
+    //Check the rot count is correct
+    if (rot.size() != 4) {
+        std::cout << "ERR: Incorrect number of orients supplied" << "\n";
+        return;
+    }
+
+    //TODO: check that quartenions are valid
+
+    //Create the command and request it 
+    cmd_stream << "RQAD:[" << com_vec_to_string(rot) << "]";
+
+    request(cmd_stream.str());
+
+    //Wait to make sure that its okay
+    recieve();
+
+
+    return;
+}
+
+
+
 
 //Start the trajectory queue
 void ABB_tcp_client::traj_go() {

@@ -287,7 +287,7 @@ void test_manager::gen_test() {
 	if (!traj_sent) {
 		//Send the trajectory
 		for (int i = 0; i < gen_trajectory.size(); i++) {
-			robot->add_to_traj_queue(gen_trajectory[i]);
+			robot->add_trans_traj_queue(gen_trajectory[i]);
 		}
 
 		traj_sent = true;
@@ -625,7 +625,7 @@ void test_manager::test_selector(std::string test_name) {
 
 		for (float i = 0; i <= 360 * N; i++) {
 			//Calculate the next point
-			robot->add_to_traj_queue({ centre[0] + float((sin(i * (3.184 / 180)) * curr_r)) , centre[1] + float(cos(i * (3.184 / 180)) * curr_r), centre[2] });
+			robot->add_trans_traj_queue({ centre[0] + float((sin(i * (3.184 / 180)) * curr_r)) , centre[1] + float(cos(i * (3.184 / 180)) * curr_r), centre[2] });
 
 			//Calculate the radius of the spiral
 			//starting radius + percentage completion of the drawing

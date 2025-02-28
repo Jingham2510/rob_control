@@ -324,9 +324,13 @@ void frontend_cntrl::ABB_control_page() {
           
 
             if (ImGui::Button("Test")) {
-                std::cout << ABB_rob.traj_done() << "\n";
-                ABB_rob.add_to_traj_queue({1000, 2230, 360});
-                std::cout << ABB_rob.traj_done() << "\n";
+                ABB_rob.add_rot_traj_queue({ 0.99749, 0.00075, 0.00851, -0.070129 });
+                ABB_rob.add_trans_traj_queue({420, 2519.88, 183});
+                ABB_rob.add_rot_traj_queue({ 0.96280, -0.26077, 0.02664, -0.06560 });
+                ABB_rob.add_trans_traj_queue({ 700, 2519.88, 183 });
+                ABB_rob.traj_go();
+
+                
             }            
            
         }

@@ -39,8 +39,11 @@ class ABB_tcp_client{
         void set_ori(std::vector<float>);
 
 
-        //Add to the trajectory queue on the robot
-        void add_to_traj_queue(std::vector<float>);
+        //Add a translation to the trajectory queue on the robot
+        void add_trans_traj_queue(std::vector<float>);
+
+        //Add an orientation to the trajectory queue on the robot
+        void add_rot_traj_queue(std::vector<float>);
 
         //Start the trajecotry queue
         void traj_go();
