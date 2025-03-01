@@ -326,19 +326,9 @@ void frontend_cntrl::ABB_control_page() {
 
             if (ImGui::Button("Test")) {
                 
-                struct quartenion q;
+                std::vector<float> zyx = { -0.7534961, -0.0316911, -0.1248541 };
 
-                q.qw = 0.9268381;
-                q.qx = -0.0638217;
-                q.qy = 0.0082441;
-                q.qz = -0.3699054;
-
-                std::vector<float> ZYX = q_to_euler(q);
-
-                std::cout << "Z: " + std::to_string(ZYX[0]);
-                std::cout << " Y: " + std::to_string(ZYX[1]);
-                std::cout << " X: " + std::to_string(ZYX[2]);
-
+                print_quart(euler_to_q(zyx));
                 
             }            
            

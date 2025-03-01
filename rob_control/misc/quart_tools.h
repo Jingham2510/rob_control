@@ -26,6 +26,10 @@ std::vector<float> q_to_euler(struct quartenion);
 //Converts a ZYX format set of euler angles to a quartenion
 struct quartenion euler_to_q(std::vector<float>);
 
+//Prints out a quartenion
+void print_quart(struct quartenion);
+
+
 //Rotates a quartenion point by a ZYX euler angle
 struct quartenion rotate_q(struct quartenion, std::vector<float>);
 
