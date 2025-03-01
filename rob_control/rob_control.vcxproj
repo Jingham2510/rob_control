@@ -23,6 +23,7 @@
     <ClCompile Include="abb_tcp\tests\test_manager.cpp" />
     <ClCompile Include="imgui\implot.cpp" />
     <ClCompile Include="imgui\implot_items.cpp" />
+    <ClCompile Include="misc\quart_tools.cpp" />
     <ClCompile Include="modelling\DH_Link.cpp" />
     <ClCompile Include="modelling\Robot_DH.cpp" />
     <ClCompile Include="src\frontend.cpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="misc\quart_tools.h" />
     <ClInclude Include="modelling\DH_Link.hpp" />
     <ClInclude Include="modelling\Robot_DH.hpp" />
     <ClInclude Include="src\frontend.hpp" />
