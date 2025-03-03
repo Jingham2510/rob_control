@@ -15,7 +15,7 @@
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include<format>
-
+#include"../misc/quart_tools.h"
 
 
 #ifndef TEST_MANAGER
@@ -31,7 +31,7 @@ public:
 	test_manager();
 
 
-	std::vector<std::string> TESTS = { "latency_test", "first_pass_test", "tri_poly_test", "circle_test", "spiral_test", "point_test"};
+	std::vector<std::string> TESTS = { "latency_test", "first_pass_test", "tri_poly_test", "circle_test", "spiral_test", "point_test", "rot_test"};
 
 	//Set the output filepath
 	void set_data_path(std::string);

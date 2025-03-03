@@ -8,14 +8,14 @@
 struct quartenion{
 
 	//Magnitude 
-	double qw;
+	float qw;
 
 	//I
-	double qx;
+	float qx;
 	//J
-	double qy;
+	float qy;
 	//K
-	double qz;
+	float qz;
 
 };
 
@@ -29,9 +29,17 @@ struct quartenion euler_to_q(std::vector<float>);
 //Prints out a quartenion
 void print_quart(struct quartenion);
 
+//Multiply two quartenions together (rotate the first by the second)
+struct quartenion rotate_q(struct quartenion, struct quartenion);
 
-//Rotates a quartenion point by a ZYX euler angle
+
+//Returns a rotated quartenion where the rotation is specified by a ZYX euler angle
 struct quartenion rotate_q(struct quartenion, std::vector<float>);
 
+//Reutnrs a quartenion in a float of structure {q1, q2, q3, q4}
+std::vector<float> quart_to_float(struct quartenion);
+
+//Converts an angle in degrees to radians
+float deg_to_rad(float);
 
 #endif

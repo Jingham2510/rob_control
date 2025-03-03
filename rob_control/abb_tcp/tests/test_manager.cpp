@@ -287,7 +287,12 @@ void test_manager::gen_test() {
 	if (!traj_sent) {
 		//Send the trajectory
 		for (int i = 0; i < gen_trajectory.size(); i++) {
-			robot->add_trans_traj_queue(gen_trajectory[i]);
+			if (gen_trajectory[i].size() == 3) {
+				robot->add_trans_traj_queue(gen_trajectory[i]);
+			}
+			else if (gen_trajectory[i].size() == 4) {
+				robot->add_rot_traj_queue(gen_trajectory[i]);
+			}
 		}
 
 		traj_sent = true;
@@ -625,7 +630,7 @@ void test_manager::test_selector(std::string test_name) {
 
 		for (float i = 0; i <= 360 * N; i++) {
 			//Calculate the next point
-			robot->add_trans_traj_queue({ centre[0] + float((sin(i * (3.184 / 180)) * curr_r)) , centre[1] + float(cos(i * (3.184 / 180)) * curr_r), centre[2] });
+			gen_trajectory.push_back({ centre[0] + float((sin(i * (3.184 / 180)) * curr_r)) , centre[1] + float(cos(i * (3.184 / 180)) * curr_r), centre[2] });
 
 			//Calculate the radius of the spiral
 			//starting radius + percentage completion of the drawing
@@ -657,6 +662,31 @@ void test_manager::test_selector(std::string test_name) {
 		
 
 	}
+
+
+	if (test_name == "rot_test") {
+		gen_test_title = "Rotation test";
+		
+		//Define the starting point
+		std::vector<float> start_point = { 280, 2220, 180 };
+
+		//Define the point of contact
+		std::vector<float> contact_point = { 280, 2220, 165 };
+
+		gen_trajectory.push_back(start_point);
+		gen_trajectory.push_back(contact_point);
+
+
+
+		//Create the rotation trjaectory
+		for (float i = 0; i < 200; i++) {
+			gen_trajectory.push_back(quart_to_float(euler_to_q({deg_to_rad(i/2), 0 , 0})));
+		}
+
+
+
+	}
+
 
 	//Reset test variables
 	// 

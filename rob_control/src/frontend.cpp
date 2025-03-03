@@ -326,9 +326,20 @@ void frontend_cntrl::ABB_control_page() {
 
             if (ImGui::Button("Test")) {
                 
-                std::vector<float> zyx = { -0.7534961, -0.0316911, -0.1248541 };
+                struct quartenion quart = { 0, 0, 0 , 1};
 
-                print_quart(euler_to_q(zyx));
+                print_quart(quart);
+
+                std::vector<float> rot_1 = { 1.5707963, 0, 0 };
+
+                std::vector<float> rot_2 = { 0.7853982, 0.2094395, 0.6457718 };
+
+                print_quart(rotate_q(quart, rot_1));
+
+                print_quart(rotate_q(quart, rot_2));
+
+
+
                 
             }            
            
