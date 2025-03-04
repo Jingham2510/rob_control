@@ -322,6 +322,7 @@ void test_manager::gen_test() {
 
 			data_file << i << "," << time_data[i] << "," <<
 				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
+				<< "[" << storage_3[i][0] << "," << storage_3[i][1] << "," << storage_3[i][2] << "]"
 				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "]" <<
 				"\n";
 		}
@@ -363,6 +364,9 @@ void test_manager::log_traj_data() {
 	//Save the force and position data
 	storage_1.push_back(robot->get_last_reported_pos());
 	storage_2.push_back(robot->get_last_reported_force());
+	storage_3.push_back(robot->get_last_reported_ori());
+
+	
 
 	//Check if the test is complete
 	if (robot->traj_done()) {
@@ -726,6 +730,7 @@ void test_manager::test_selector(std::string test_name) {
 	//Prep storage for the test data
 	storage_1.clear();
 	storage_2.clear();
+	storage_3.clear();
 	test_trajectory.clear();
 
 	time_data.clear();

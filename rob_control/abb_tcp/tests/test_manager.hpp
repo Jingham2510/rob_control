@@ -97,6 +97,7 @@ private:
 	//Generic Test storages
 	std::vector<std::vector<float>> storage_1;
 	std::vector<std::vector<float>> storage_2;
+	std::vector<std::vector<float>> storage_3;
 	std::vector<float> float_storage;
 	std::vector<std::vector<float>> test_trajectory;
 	//String storages
