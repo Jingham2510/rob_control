@@ -670,11 +670,11 @@ void test_manager::test_selector(std::string test_name) {
 		//CHECK THESE
 		
 		//Define the starting point of the first line 
-		std::vector<float> start_point = { -60, 2220, 190 };
+		std::vector<float> start_point = { -60, 1750, 250 };
 		//Define the point of contact
-		std::vector<float> contact_point = { -60, 2220, 165 };
+		std::vector<float> contact_point = { -60, 1750, 165 };
 		//Define the end point of the first line 
-		std::vector<float> end_point = { -60, 2600, 165 };
+		std::vector<float> end_point = { -60, 2450, 165 };
 		
 		//Define the rotation
 		std::vector<float> rot = { 0, 0, 0 };
@@ -698,9 +698,9 @@ void test_manager::test_selector(std::string test_name) {
 
 
 			//Update points
-			start_point = {start_point[0] + 200, start_point[1], start_point[2]};
-			contact_point = { contact_point[0] + 200, contact_point[1], contact_point[2] };
-			end_point = { end_point[0] + 200, end_point[1], end_point[2] };
+			start_point = {start_point[0] + 250, start_point[1], start_point[2]};
+			contact_point = { contact_point[0] + 250, contact_point[1], contact_point[2] };
+			end_point = { end_point[0] + 250, end_point[1], end_point[2] };
 
 			//Update the orientation
 			rot = { rot[0] + deg_to_rad(90) , rot[1], rot[2] };
