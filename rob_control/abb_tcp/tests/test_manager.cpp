@@ -664,26 +664,51 @@ void test_manager::test_selector(std::string test_name) {
 	}
 
 
-	if (test_name == "rot_test") {
+	if (test_name == "ori_frame_test") {
 		gen_test_title = "Rotation test";
+
+		//CHECK THESE
 		
-		//Define the starting point
-		std::vector<float> start_point = { 280, 2220, 180 };
-
+		//Define the starting point of the first line 
+		std::vector<float> start_point = { -60, 2220, 190 };
 		//Define the point of contact
-		std::vector<float> contact_point = { 280, 2220, 165 };
+		std::vector<float> contact_point = { -60, 2220, 165 };
+		//Define the end point of the first line 
+		std::vector<float> end_point = { -60, 2600, 165 };
+		
+		//Define the rotation
+		std::vector<float> rot = { 0, 0, 0 };
 
-		gen_trajectory.push_back(start_point);
-		gen_trajectory.push_back(contact_point);
+
+		//Create the trajectory
+		for (int i = 0; i < 3; i++) {
+	
+			//Add start point
+			gen_trajectory.push_back(start_point);
+			
+			//Rotate end-effector
+			gen_trajectory.push_back(quart_to_float(euler_to_q(rot)));
+
+			//Add contact point
+			gen_trajectory.push_back(contact_point);
+
+			//Add end point
+			gen_trajectory.push_back(end_point);
+			gen_trajectory.push_back({ end_point[0], end_point[1], end_point[2] + 25 });
+
+
+			//Update points
+			start_point = {start_point[0] + 200, start_point[1], start_point[2]};
+			contact_point = { contact_point[0] + 200, contact_point[1], contact_point[2] };
+			end_point = { end_point[0] + 200, end_point[1], end_point[2] };
+
+			//Update the orientation
+			rot = { rot[0] + deg_to_rad(90) , rot[1], rot[2] };
 
 
 
-		//Create the rotation trjaectory
-		for (float i = 0; i < 200; i++) {
-			gen_trajectory.push_back(quart_to_float(euler_to_q({deg_to_rad(i/2), 0 , 0})));
 		}
-
-
+		
 
 	}
 
