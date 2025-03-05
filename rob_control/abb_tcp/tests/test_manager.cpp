@@ -698,7 +698,7 @@ void test_manager::test_selector(std::string test_name) {
 
 			//Add end point
 			gen_trajectory.push_back(end_point);
-			gen_trajectory.push_back({ end_point[0], end_point[1], end_point[2] + 25 });
+			gen_trajectory.push_back({ end_point[0], end_point[1], end_point[2] + 85 });
 
 
 			//Update points
