@@ -581,12 +581,12 @@ void test_manager::test_selector(std::string test_name) {
 		gen_test_title = "First pass";
 
 		float DES_X = 262;
-		float DES_Z = 175;
+		float DES_Z = 85;
 
 		std::vector<float> START_POS = { DES_X, 1650, DES_Z };
 		std::vector<float> END_POS = { DES_X, 2550, DES_Z };
 
-		gen_trajectory = {START_POS, END_POS, START_POS};
+		gen_trajectory = { {DES_X, 1650, 150}, START_POS, END_POS, START_POS };
 		
 
 	}
@@ -595,9 +595,9 @@ void test_manager::test_selector(std::string test_name) {
 		gen_test_title = "Triangle";
 
 		//Define the three vertexes
-		std::vector<float> P1 = { 209, 1787, 165 };
-		std::vector<float> P2 = { -108, 2167, 165 };
-		std::vector<float> P3 = { 680, 2600, 165 };
+		std::vector<float> P1 = { 209, 1787, 85 };
+		std::vector<float> P2 = { -108, 2167, 85 };
+		std::vector<float> P3 = { 680, 2600, 85 };
 
 		gen_trajectory = { P1, P2, P3, P1 };
 
@@ -608,7 +608,7 @@ void test_manager::test_selector(std::string test_name) {
 		gen_test_title = "Circle";
 
 		//Define the centre point - needs to ve verified
-		std::vector<float> centre = { 200, 2160, 165 };
+		std::vector<float> centre = { 200, 2160, 85 };
 
 		int N = 5;
 		int radius = 350;
@@ -624,7 +624,7 @@ void test_manager::test_selector(std::string test_name) {
 	if (test_name == "spiral_test") {
 		gen_test_title = "Spiral";
 		//Define the centre point - needs to ve verified
-		std::vector<float> centre = { 200, 2160, 165 };
+		std::vector<float> centre = { 200, 2160, 85 };
 
 		double start_r = 100;
 		double stop_r = 250;
@@ -651,10 +651,10 @@ void test_manager::test_selector(std::string test_name) {
 		gen_test_title = "Point loading";
 
 		//Define the starting point
-		std::vector<float> start_point = { 280, 2220, 265 };
+		std::vector<float> start_point = { 280, 2220, 185 };
 
 		//Define the point to load
-		std::vector<float> load_point = { 280, 2220, 165 };
+		std::vector<float> load_point = { 280, 2220, 85 };
 
 		int N = 5;
 	
@@ -676,9 +676,9 @@ void test_manager::test_selector(std::string test_name) {
 		//Define the starting point of the first line 
 		std::vector<float> start_point = { -60, 1750, 250 };
 		//Define the point of contact
-		std::vector<float> contact_point = { -60, 1750, 165 };
+		std::vector<float> contact_point = { -60, 1750, 85 };
 		//Define the end point of the first line 
-		std::vector<float> end_point = { -60, 2450, 165 };
+		std::vector<float> end_point = { -60, 2450, 85 };
 		
 		//Define the rotation
 		std::vector<float> rot = { 0, 0, 0 };
