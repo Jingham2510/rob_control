@@ -66,6 +66,9 @@ class ABB_tcp_client{
         //Get the robots currently reported force
         std::vector<float> req_force();
 
+        //Get the robots  joint torques
+        std::vector<float> req_torques();
+
         //Get if the robot is moving
         bool req_rob_mov();
         bool rob_not_moving();

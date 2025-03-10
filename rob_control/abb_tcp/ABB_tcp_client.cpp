@@ -453,7 +453,7 @@ std::vector<float> ABB_tcp_client::req_jnt_angs() {
 
 }
 
-
+//Get the robots currently measured forces
 std::vector<float> ABB_tcp_client::req_force() {
     //Send the get force command
     request("GTFC:0");
@@ -464,7 +464,17 @@ std::vector<float> ABB_tcp_client::req_force() {
 
 }
 
+std::vector<float> ABB_tcp_client::req_torques() {
 
+    //Send the get torques command
+    request("GTTQ:0");
+
+    std::vector<float> torques = xyz_str_to_float(recieve());
+
+    return torques;
+}
+
+//Check if the robot is moving
 bool ABB_tcp_client::req_rob_mov() {
 
     //Send the request moving state command

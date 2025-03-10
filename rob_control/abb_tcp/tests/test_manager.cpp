@@ -310,12 +310,26 @@ void test_manager::gen_test() {
 	}
 
 	//Data acquisition 
-	if (!test_complete) {
+	if (!test_complete && !TORQUE_ONLY) {
 		log_traj_data();
+	}
+	//If its torque only measurements
+	else if (!test_complete && TORQUE_ONLY) {
+		
+		//Get the time
+		time_data.push_back(std::chrono::system_clock::now());
+		//Get the robots torque
+		storage_1.push_back(robot->req_torques());
+
+		//Check if the test is complete
+		if (robot->traj_done()) {
+			std::cout << robot->rob_not_moving() << "\n";
+			test_complete = true;
+		}
 	}
 
 
-	if (test_complete && !file_saved) {
+	if (test_complete && !file_saved && !TORQUE_ONLY) {
 		//Save the data to a logfile
 		std::ofstream data_file(data_path);
 		for (int i = 0; i < time_data.size(); i++) {
@@ -332,11 +346,29 @@ void test_manager::gen_test() {
 		file_saved = true;
 	}
 
+	else if (test_complete && !file_saved && TORQUE_ONLY) {
+		//Save the data to a logfile
+		std::ofstream data_file(data_path);
+		for (int i = 0; i < time_data.size(); i++) {
+
+			data_file << i << "," << time_data[i] << "," <<
+				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "," << storage_1[i][3] << "," << storage_1[i][4] << "," << storage_1[i][5] << "]"
+				<< "\n";
+		}
+
+		data_file.close();
+
+		file_saved = true;
+	}
+
 
 	//Display the test finished bit
 	if (test_complete && file_saved) {
 
-		force_displacement_plotting();
+		//If not measuring just torque
+		if (!TORQUE_ONLY) {
+			force_displacement_plotting();
+		}
 
 		if (ImGui::Button("Close page")) {
 			close = true;
@@ -714,6 +746,27 @@ void test_manager::test_selector(std::string test_name) {
 		}
 		
 
+	}
+
+
+	//Torque measurement test
+	if (test_name == "torque_test") {
+		gen_test_title = "Torque Measurement";
+
+		//Create the start and end point
+		//Add them to the generatred trajectory
+		gen_trajectory.push_back({ 262, 1650, 200 });
+		gen_trajectory.push_back({262, 1650, 150});
+		gen_trajectory.push_back({262, 1850, 150});
+		gen_trajectory.push_back({ 262, 1650, 150 });
+
+		//Set the torque only flag
+		TORQUE_ONLY = TRUE;
+
+	}
+
+	else {
+		TORQUE_ONLY = FALSE;
 	}
 
 
