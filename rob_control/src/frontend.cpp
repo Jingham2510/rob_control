@@ -147,9 +147,6 @@ void frontend_cntrl::load_ABB_ip_presets() {
 // *page_flag is an externally passed flag that the main loop uses to determine whether to render the page or not
 void frontend_cntrl::ABB_landing_page() {
 
-
-
-
     //Create the login window
     ImGui::Begin("ABB Connect", &not_close_window);
   
@@ -207,8 +204,6 @@ void frontend_cntrl::ABB_control_page() {
         //Attempt to connect to the robot
         ABB_rob = ABB_tcp_client(ip.c_str(), std::stoi(port), &connected);
         
-
-
     }
 
     //If not connected display the error page
@@ -324,9 +319,14 @@ void frontend_cntrl::ABB_control_page() {
 
             if (ImGui::Button("Test")) {
 
-                std::cout << ABB_rob.req_torques()[1];
+                not_close_cust_traj_wind = true;
             }            
            
+        }
+
+        //Open the custom trajectory painter window
+        if (not_close_cust_traj_wind == 1) {
+            cust_traj_generator();
         }
 
         ImGui::End();
@@ -577,6 +577,72 @@ void frontend_cntrl::load_test_section() {
     else{
         ImGui::Text("TEST RUNNING"); 
      }
+
+    return;
+}
+
+
+
+//Opens the window where the user generates the custom tests
+void frontend_cntrl::cust_traj_generator() {
+    //Create the window at a given size
+    ImGui::SetNextWindowSize(ImVec2(950, 950));
+    ImGui::Begin("Custom Trajectory Painter", &not_close_cust_traj_wind);
+
+    ImGui::Text("Soilbox Trajectory");
+    ImGui::TextColored(ImVec4(0, 255, 0, 255), "Green Lines are the soilbox boundaries");
+
+    //Draw the canvas region!-----------
+    float CANVAS_SIZE = 500;
+    //Draw the canvas at the location of the screen cursor
+    ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
+    ImVec2 canvas_sz = ImVec2(CANVAS_SIZE, CANVAS_SIZE);
+    ImVec2 canvas_p1 = ImVec2(canvas_p0.x + canvas_sz.x, canvas_p0.y + canvas_sz.y);
+
+
+    // Draw border and background color
+    ImGuiIO& io = ImGui::GetIO();
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+    draw_list->AddRectFilled(canvas_p0, canvas_p1, IM_COL32(50, 50, 50, 255));
+    draw_list->AddRect(canvas_p0, canvas_p1, IM_COL32(255, 255, 255, 255));
+
+    //Draw the boundaries of the soilbox
+    std::vector<double> sandbox_boundaries = { 0.1 * CANVAS_SIZE, 0.1 * CANVAS_SIZE, 0.9 * CANVAS_SIZE , 0.9 * CANVAS_SIZE };
+
+    draw_list->AddLine(ImVec2(canvas_p0.x + sandbox_boundaries[0], canvas_p0.y + sandbox_boundaries[1]),
+        ImVec2(canvas_p0.x + sandbox_boundaries[0], canvas_p0.y + sandbox_boundaries[3]), IM_COL32(0, 255, 0, 255));
+
+    draw_list->AddLine(ImVec2(canvas_p0.x + sandbox_boundaries[0], canvas_p0.y + sandbox_boundaries[1]),
+        ImVec2(canvas_p0.x + sandbox_boundaries[2], canvas_p0.y + sandbox_boundaries[1]), IM_COL32(0, 255, 0, 255));
+
+    draw_list->AddLine(ImVec2(canvas_p0.x + sandbox_boundaries[2], canvas_p0.y + sandbox_boundaries[3]),
+        ImVec2(canvas_p0.x + sandbox_boundaries[2], canvas_p0.y + sandbox_boundaries[1]), IM_COL32(0, 255, 0, 255));
+
+    draw_list->AddLine(ImVec2(canvas_p0.x + sandbox_boundaries[2], canvas_p0.y + sandbox_boundaries[3]),
+        ImVec2(canvas_p0.x + sandbox_boundaries[0], canvas_p0.y + sandbox_boundaries[3]), IM_COL32(0, 255, 0, 255));
+
+    //Check the moues coordinates
+        //If on the canvas
+
+    const ImVec2 mouse_pos_in_canvas(io.MousePos.x - canvas_p0.x, io.MousePos.y - canvas_p0.y);
+
+    std::cout << mouse_pos_in_canvas.x << "\n";
+
+    if (mouse_pos_in_canvas.x > canvas_p0.x and io.MousePos.x < canvas_p1.x and mouse_pos_in_canvas.y > canvas_p0.y and mouse_pos_in_canvas.y < canvas_p1.y) {
+        //If outside the soilbox position
+        if (mouse_pos_in_canvas.x < sandbox_boundaries[0] and mouse_pos_in_canvas.x > sandbox_boundaries[2] and mouse_pos_in_canvas.y < sandbox_boundaries[1] and mouse_pos_in_canvas.y > sandbox_boundaries[2]){
+            std::cout << "OUTSIDE";
+        }
+    }
+
+
+    //Draw the Settings Section
+    ImGui::Text("TEST");
+
+    //Create the start button
+
+    //End the ImGui Loop
+    ImGui::End();
 
     return;
 }

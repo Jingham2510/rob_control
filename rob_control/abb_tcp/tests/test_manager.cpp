@@ -756,8 +756,8 @@ void test_manager::test_selector(std::string test_name) {
 		//Create the start and end point
 		//Add them to the generatred trajectory
 		gen_trajectory.push_back({ 262, 1650, 200 });
-		gen_trajectory.push_back({262, 1650, 150});
-		gen_trajectory.push_back({262, 1850, 150});
+		gen_trajectory.push_back({262, 1650, 85});
+		gen_trajectory.push_back({262, 1850, 85});
 		gen_trajectory.push_back({ 262, 1650, 150 });
 
 		//Set the torque only flag

@@ -47,6 +47,9 @@ public:
 	//Close window flag
 	bool not_close_window = true;
 
+	//Custom trajecotry close window flag
+	bool not_close_cust_traj_wind = false;
+
 	//Test manager
 	test_manager test_mgr;
 
@@ -63,6 +66,9 @@ public:
 	//ABB robot control page
 	void ABB_control_page();
 
+	//Custom Test Generator Window
+	void cust_traj_generator();
+
 
 	//Displays in case of an error
 	void error_page();
@@ -75,6 +81,9 @@ public:
 
 private:
 
+
+	//Debug testing flag
+	bool TEST_FLAG = 0;
 
 
 	//Flag vector accessor

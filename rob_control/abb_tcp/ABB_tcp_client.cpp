@@ -323,7 +323,7 @@ void ABB_tcp_client::set_pos(std::vector<float> xyz) {
     request(cmd_stream.str());
 
     //Wait to recieve the response to say it is done
-    if(recieve() == "MVTO OK");
+    if (recieve() == "MVTO OK") {};
 
 
 
