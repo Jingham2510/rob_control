@@ -144,6 +144,11 @@ private:
 	std::vector<ImVec2> cust_pnts;
 	bool redo_valid = false;
 	ImVec2 redo_buff;
+	
+	//Custom trajectory settings
+	std::string cust_name;
+	int rob_speed = 25;
+	int rob_height = 85;
 
 	//Load the configs into the gui
 	void load_ABB_ip_presets();

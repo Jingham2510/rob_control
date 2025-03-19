@@ -718,9 +718,102 @@ void frontend_cntrl::cust_traj_generator() {
     }
 
  
+    //Settings Logic-------------------------------------------
+
+   
+
+    //Move the cursor across the page
+    ImGui::SetCursorScreenPos(ImVec2(canvas_p1.x * 1.05, ImGui::GetCursorScreenPos().y));
 
     //Draw the Settings Section
     ImGui::Text("Settings");
+    ImGui::SetCursorScreenPos(ImVec2(canvas_p1.x * 1.05, ImGui::GetCursorScreenPos().y));
+    ImGui::Separator();
+
+    //Test Name
+    ImGui::SetCursorScreenPos(ImVec2(canvas_p1.x * 1.05, ImGui::GetCursorScreenPos().y));
+    ImGui::SetNextItemWidth(200);
+    ImGui::InputText("Test Name", &cust_name);
+
+    //Robot Speed
+    ImGui::SetCursorScreenPos(ImVec2(canvas_p1.x * 1.05, ImGui::GetCursorScreenPos().y));
+    ImGui::SetNextItemWidth(200);
+    ImGui::SliderInt("Robot Speed", &rob_speed, 0, 1000);
+    //Robot Height
+    ImGui::SetCursorScreenPos(ImVec2(canvas_p1.x * 1.05, ImGui::GetCursorScreenPos().y));
+    ImGui::SetNextItemWidth(200);
+    ImGui::SliderInt("Robot Height", &rob_height, 70, 300);
+
+
+    //Save/Load Trajectory logic---------------
+    ImGui::SetCursorScreenPos(ImVec2(canvas_p1.x * 1.05, ImGui::GetCursorScreenPos().y));
+    
+    //Ensure there are points to be saved & that a file name exists
+    ImGui::BeginDisabled((cust_name.empty()) or (cust_pnts.empty()));
+    if (ImGui::Button("Save Trajectory")) {
+        std::ofstream data_file("cust_trajcs/" + cust_name + ".traj");
+        //Save every point seperated by a comma
+        for (int i = 0; i < cust_pnts.size(); i++) {
+            data_file << "(" << std::to_string(cust_pnts[i].x) << " " << std::to_string(cust_pnts[i].y) << "),";
+        }
+
+    }
+    ImGui::EndDisabled();
+
+
+    ImGui::SameLine();
+    if (ImGui::Button("Load Trajectory")) {
+        //Open the file specified by the trajectory name
+        std::ifstream data_file("cust_trajcs/" + cust_name + ".traj");
+        std::stringstream contents;
+        contents << data_file.rdbuf();
+        //Extract all the file info
+        std::string file_contents = contents.str();
+
+        //Split the string into seperate coordinate points
+        size_t pos = 0;
+        std::string delim = ",";
+        std::vector<std::string> str_pnts;
+        std::string token;
+        while ((pos = file_contents.find(delim)) != std::string::npos) {
+            token = file_contents.substr(0, pos);
+            str_pnts.push_back(token);
+            file_contents.erase(0, pos + delim.length());
+        }
+        str_pnts.push_back(file_contents);
+
+        //For each string point - convert it to an ImVec and add to the draw list
+        for (int i = 0; i < str_pnts.size(); i++) {
+            //Access the point
+            std::string curr_pnt = str_pnts[i];
+        
+            //Remove the front and end brackets
+            
+
+            //Split the string into two floats delimited by the space
+
+            //Create the ImVec2 point from the floats
+
+            
+            //Add the points to the point lists
+
+            
+
+        }
+
+
+
+
+
+    }
+
+
+    ImGui::NewLine();
+
+
+
+
+
 
     //Create the start button
     ImGui::Text("Start");
