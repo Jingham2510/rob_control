@@ -136,11 +136,14 @@ private:
 
 	//Robot placeholders
 	ABB_tcp_client ABB_rob;
-
-	
-
 	//Test output filepath
 	std::string data_fp;
+
+
+	//Custom test trajectory points
+	std::vector<ImVec2> cust_pnts;
+	bool redo_valid = false;
+	ImVec2 redo_buff;
 
 	//Load the configs into the gui
 	void load_ABB_ip_presets();
@@ -160,7 +163,7 @@ private:
 	//Load the manual control buttons
 	void load_man_control();
 
-	//Test section - for running eperiments
+	//Test section - for running experiments
 	void load_test_section();
 
 

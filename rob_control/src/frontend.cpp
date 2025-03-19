@@ -585,6 +585,7 @@ void frontend_cntrl::load_test_section() {
 
 //Opens the window where the user generates the custom tests
 void frontend_cntrl::cust_traj_generator() {
+
     //Create the window at a given size
     ImGui::SetNextWindowSize(ImVec2(950, 950));
     ImGui::Begin("Custom Trajectory Painter", &not_close_cust_traj_wind);
@@ -592,7 +593,42 @@ void frontend_cntrl::cust_traj_generator() {
     ImGui::Text("Soilbox Trajectory");
     ImGui::TextColored(ImVec4(0, 255, 0, 255), "Green Lines are the soilbox boundaries");
 
-    //Draw the canvas region!-----------
+    //Point drawing undo/redo logic ----------------
+
+    ImGui::BeginDisabled(!(cust_pnts.size() > 0));
+
+    //Remove the last point
+    if (ImGui::Button("Undo")) {
+        std::cout << "UNDO\n";
+
+        if (cust_pnts.size() > 0) {
+            redo_buff = cust_pnts[cust_pnts.size() - 1];
+            cust_pnts.pop_back();
+            redo_valid = true;
+        }
+    }
+    ImGui::EndDisabled();
+
+    ImGui::SameLine();
+
+    ImGui::BeginDisabled(!redo_valid);
+  
+    //Readd an undoed point point
+    if (ImGui::Button("Redo")) {
+        std::cout << "REDO\n";
+
+        if (redo_valid) {
+            cust_pnts.push_back(redo_buff);
+            redo_valid = false;
+        }       
+    }   
+    ImGui::EndDisabled();
+  
+
+
+    ImGui::NewLine();
+
+    //Draw the canvas region!--------------------------
     float CANVAS_SIZE = 500;
     //Draw the canvas at the location of the screen cursor
     ImVec2 canvas_p0 = ImGui::GetCursorScreenPos();
@@ -625,21 +661,71 @@ void frontend_cntrl::cust_traj_generator() {
         //If on the canvas
 
     const ImVec2 mouse_pos_in_canvas(io.MousePos.x - canvas_p0.x, io.MousePos.y - canvas_p0.y);
+    bool valid_pos = false;
 
-    std::cout << mouse_pos_in_canvas.x << "\n";
-
-    if (mouse_pos_in_canvas.x > canvas_p0.x and io.MousePos.x < canvas_p1.x and mouse_pos_in_canvas.y > canvas_p0.y and mouse_pos_in_canvas.y < canvas_p1.y) {
+    if (mouse_pos_in_canvas.x > 0 and io.MousePos.x < canvas_p1.x and mouse_pos_in_canvas.y > 0 and mouse_pos_in_canvas.y < canvas_p1.y) {
+ 
         //If outside the soilbox position
-        if (mouse_pos_in_canvas.x < sandbox_boundaries[0] and mouse_pos_in_canvas.x > sandbox_boundaries[2] and mouse_pos_in_canvas.y < sandbox_boundaries[1] and mouse_pos_in_canvas.y > sandbox_boundaries[2]){
-            std::cout << "OUTSIDE";
+        if (mouse_pos_in_canvas.x < sandbox_boundaries[0] or mouse_pos_in_canvas.x > sandbox_boundaries[2] or mouse_pos_in_canvas.y < sandbox_boundaries[1] or mouse_pos_in_canvas.y > sandbox_boundaries[3]) {
+            //Set flag
+            valid_pos = false;
+            //Change mouse icon
+            ImGui::SetMouseCursor(ImGuiMouseCursor_NotAllowed);
+        }
+        else {
+            valid_pos = true;
+            ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
         }
     }
+    else {
+        valid_pos = false;
+        ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
+     }
 
+
+    //Point Drawing Logic-------------------------------------
+
+    ImColor pnt_col = IM_COL32(255, 0, 0, 255);
+    float pnt_rad = 5;
+
+    
+
+    //Check if user is clicking in a valid spot
+    if (valid_pos and ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+
+        //Save the new point
+        cust_pnts.push_back(mouse_pos_in_canvas);
+
+    }
+
+    //Draw the points
+    for (int i = 0; i < cust_pnts.size(); i++) {
+
+        ImVec2 draw_pos = ImVec2(cust_pnts[i].x + canvas_p0.x, cust_pnts[i].y + canvas_p0.y);
+
+
+        draw_list->AddCircle(draw_pos, pnt_rad, pnt_col);
+
+        //If the points list is greater than one add the line to connect them
+        if (i > 0) {
+
+            ImVec2 prev_pos = ImVec2(cust_pnts[i - 1].x + canvas_p0.x, cust_pnts[i - 1].y + canvas_p0.y);
+
+            draw_list->AddLine(prev_pos, draw_pos, pnt_col);
+        }
+
+
+    }
+
+ 
 
     //Draw the Settings Section
-    ImGui::Text("TEST");
+    ImGui::Text("Settings");
 
     //Create the start button
+    ImGui::Text("Start");
+
+
 
     //End the ImGui Loop
     ImGui::End();
