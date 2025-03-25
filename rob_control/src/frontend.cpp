@@ -771,35 +771,31 @@ void frontend_cntrl::cust_traj_generator() {
         std::string file_contents = contents.str();
 
         //Split the string into seperate coordinate points
-        size_t pos = 0;
-        std::string delim = ",";
-        std::vector<std::string> str_pnts;
-        std::string token;
-        while ((pos = file_contents.find(delim)) != std::string::npos) {
-            token = file_contents.substr(0, pos);
-            str_pnts.push_back(token);
-            file_contents.erase(0, pos + delim.length());
-        }
-        str_pnts.push_back(file_contents);
-
+        std::vector<std::string> str_pnts = split(file_contents, ",");
         //For each string point - convert it to an ImVec and add to the draw list
-        for (int i = 0; i < str_pnts.size(); i++) {
+        //-1 to ignore the final new line
+        for (int i = 0; i < str_pnts.size() - 1; i++) {
             //Access the point
             std::string curr_pnt = str_pnts[i];
+
+            //std::cout << curr_pnt << "\n";
         
             //Remove the front and end brackets
-            
+            curr_pnt = lrtrim(curr_pnt);
 
             //Split the string into two floats delimited by the space
+            std::vector<std::string> coords = split(curr_pnt, " ");
 
             //Create the ImVec2 point from the floats
-
+            ImVec2 curr_vec = ImVec2(std::stof(coords[0]), std::stof(coords[1]));
             
             //Add the points to the point lists
-
+            cust_pnts.push_back(curr_vec);
             
 
         }
+
+        std::cout << "LOADED" << "\n";
 
 
 

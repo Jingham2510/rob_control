@@ -3,6 +3,7 @@
 #include <WinSock2.h>
 #include <string>
 #include <vector>
+#include"../misc/string_tools.h"
 
 //Relevant winsock library
 #pragma comment(lib, "ws2_32.lib")
@@ -157,12 +158,6 @@ class ABB_tcp_client{
 
 
 
-
-        //Helper function to create strings from vectors of floats
-        std::string com_vec_to_string(std::vector<float>);
-        
-        //Helper function - converts xyz strings to floats
-        std::vector<float> xyz_str_to_float(std::string xyz);
 
 
 };
