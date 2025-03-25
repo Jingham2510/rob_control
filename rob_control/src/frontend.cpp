@@ -763,43 +763,57 @@ void frontend_cntrl::cust_traj_generator() {
 
     ImGui::SameLine();
     if (ImGui::Button("Load Trajectory")) {
+
+     
         //Open the file specified by the trajectory name
         std::ifstream data_file("cust_trajcs/" + cust_name + ".traj");
-        std::stringstream contents;
-        contents << data_file.rdbuf();
-        //Extract all the file info
-        std::string file_contents = contents.str();
 
-        //Split the string into seperate coordinate points
-        std::vector<std::string> str_pnts = split(file_contents, ",");
-        //For each string point - convert it to an ImVec and add to the draw list
-        //-1 to ignore the final new line
-        for (int i = 0; i < str_pnts.size() - 1; i++) {
-            //Access the point
-            std::string curr_pnt = str_pnts[i];
+        //Check the file opened okay
+        if (data_file.good()) {
+            //Clear the current points
+            cust_pnts.clear();     
 
-            //std::cout << curr_pnt << "\n";
-        
-            //Remove the front and end brackets
-            curr_pnt = lrtrim(curr_pnt);
 
-            //Split the string into two floats delimited by the space
-            std::vector<std::string> coords = split(curr_pnt, " ");
+            std::stringstream contents;
+            contents << data_file.rdbuf();
+            //Extract all the file info
+            std::string file_contents = contents.str();
 
-            //Create the ImVec2 point from the floats
-            ImVec2 curr_vec = ImVec2(std::stof(coords[0]), std::stof(coords[1]));
+            //Split the string into seperate coordinate points
+            std::vector<std::string> str_pnts = split(file_contents, ",");
+            //For each string point - convert it to an ImVec and add to the draw list
+            //-1 to ignore the final new line
+            for (int i = 0; i < str_pnts.size() - 1; i++) {
+                //Access the point
+                std::string curr_pnt = str_pnts[i];
+       
+                //Remove the front and end brackets
+                curr_pnt = lrtrim(curr_pnt);
+
+                //Split the string into two floats delimited by the space
+                std::vector<std::string> coords = split(curr_pnt, " ");
+
+                //Create the ImVec2 point from the floats
+                ImVec2 curr_vec = ImVec2(std::stof(coords[0]), std::stof(coords[1]));
             
-            //Add the points to the point lists
-            cust_pnts.push_back(curr_vec);
+                //Add the points to the point lists
+                cust_pnts.push_back(curr_vec);
             
 
+            }
         }
 
-        std::cout << "LOADED" << "\n";
+        else {
+
+            //Setup the error message page
+            err_msg.prev_page = ABB_MAIN;
+            err_msg.msg = "No such trajectory!";
+
+            *page_flags[ABB_MAIN] = false;
+            *page_flags[ERR] = true;
 
 
-
-
+        }
 
     }
 
@@ -809,7 +823,7 @@ void frontend_cntrl::cust_traj_generator() {
 
 
 
-
+    //START LOGIC -----------------------------
 
     //Create the start button
     ImGui::Text("Start");
