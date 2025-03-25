@@ -272,6 +272,31 @@ void ABB_tcp_client::set_ori(std::vector<float> des_ori) {
 }
 
 
+//Set the robots desired speed
+void ABB_tcp_client::set_speed(float speed) {
+
+    //Check its a sensible speed
+    if (speed < 0 or speed > 1000) {
+        std::cout << "INVALID SPEED \n";
+        return;
+    }
+    
+
+    //Send the speed request
+    std::stringstream cmd;
+
+    cmd << "STSP:" << std::to_string(speed);
+
+    request(cmd.str());
+
+    recieve();
+
+
+    return;
+
+}
+
+
 //Move the tool relative to its current position
 void ABB_tcp_client::move_tool(std::vector<float> xyz){
 

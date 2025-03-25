@@ -39,6 +39,9 @@ class ABB_tcp_client{
         //Set the robots tool orientation - blocking
         void set_ori(std::vector<float>);
 
+        //Set the robots speed
+        void set_speed(float);
+
 
         //Add a translation to the trajectory queue on the robot
         void add_trans_traj_queue(std::vector<float>);

@@ -591,7 +591,7 @@ void frontend_cntrl::cust_traj_generator() {
     ImGui::Begin("Custom Trajectory Painter", &not_close_cust_traj_wind);
 
     ImGui::Text("Soilbox Trajectory");
-    ImGui::TextColored(ImVec4(0, 255, 0, 255), "Green Lines are the soilbox boundaries");
+
 
     //Point drawing undo/redo logic ----------------
 
@@ -722,8 +722,11 @@ void frontend_cntrl::cust_traj_generator() {
 
    
 
+
+    ImGui::TextColored(ImVec4(0, 255, 0, 255), "Green lines are the soilbox boundaries");
     //Move the cursor across the page
     ImGui::SetCursorScreenPos(ImVec2(canvas_p1.x * 1.05, ImGui::GetCursorScreenPos().y));
+    
 
     //Draw the Settings Section
     ImGui::Text("Settings");
@@ -824,11 +827,55 @@ void frontend_cntrl::cust_traj_generator() {
 
 
     //START LOGIC -----------------------------
-
+  
     //Create the start button
-    ImGui::Text("Start");
+    ImGui::SetCursorScreenPos(ImVec2(canvas_p1.x * 1.05, ImGui::GetCursorScreenPos().y));
+    ImGui::Separator();
+
+    //Disable the start buton if required
+    ImGui::SetCursorScreenPos(ImVec2(canvas_p1.x * 1.05, ImGui::GetCursorScreenPos().y));
+
+    //Disable the start button if there are no points in the canvas
+    ImGui::BeginDisabled((cust_pnts.size() == 0));
+
+    //Start button
+    if (ImGui::Button("Start")) {
+
+        
+        //Generate the points - and setup the test manager
+        float X_POINT_BASE = -785;
+        float Y_POINT_BASE = 1505;
+        
+        //Scaled - 2000mm for no of canvas pixels 
+
+        float POINT_SCALING = 2000/CANVAS_SIZE;
+
+        test_mgr.gen_trajectory.clear();
+   
+        for (int i = 0; i < cust_pnts.size(); i++) {
+            //Translate and scale the points
+            test_mgr.gen_trajectory.push_back({ X_POINT_BASE + (cust_pnts[i].x * POINT_SCALING) , Y_POINT_BASE + (cust_pnts[i].y * POINT_SCALING), static_cast<float>(rob_height)});
+            
+        }
 
 
+        //Update the robot info
+        ABB_rob.set_speed(rob_speed);
+        std::cout << "TEST\n";
+
+        //Start the test
+        test_mgr.set_data_path("C:/Users/User/Documents/Results/cust_test/" + cust_name);
+        test_mgr.gen_test_title = cust_name;
+
+
+        //Empty test name - autohandled
+        test_mgr.test_selector("");     
+
+    }
+
+
+    ImGui::EndDisabled();
+    
 
     //End the ImGui Loop
     ImGui::End();
