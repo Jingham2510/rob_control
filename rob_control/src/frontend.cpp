@@ -657,6 +657,25 @@ void frontend_cntrl::cust_traj_generator() {
     draw_list->AddLine(ImVec2(canvas_p0.x + sandbox_boundaries[2], canvas_p0.y + sandbox_boundaries[3]),
         ImVec2(canvas_p0.x + sandbox_boundaries[0], canvas_p0.y + sandbox_boundaries[3]), IM_COL32(0, 255, 0, 255));
 
+
+    //Draw the approximate working boundaries of the robot
+
+    //Scaled - 2000mm for no of canvas pixels that take up the valid sandbox space
+
+    float POINT_SCALING = 2000 / (CANVAS_SIZE*0.8);
+
+    //MAgic numbers are measurements from box 
+    ImVec2 bound_p0 = ImVec2((canvas_p0.x + sandbox_boundaries[0]), (canvas_p0.y + sandbox_boundaries[3]) - (1352 / POINT_SCALING));
+    ImVec2 bound_p1 = ImVec2((canvas_p0.x + sandbox_boundaries[0]) + (382 / POINT_SCALING), (canvas_p0.y + sandbox_boundaries[3]) - (1487 / POINT_SCALING));
+    ImVec2 bound_p2 = ImVec2((canvas_p0.x + sandbox_boundaries[0]) + (1395 / POINT_SCALING), (canvas_p0.y + sandbox_boundaries[3]) - (1487 / POINT_SCALING));
+    ImVec2 bound_p3 = ImVec2((canvas_p0.x + sandbox_boundaries[2]), (canvas_p0.y + sandbox_boundaries[3]) - (1352 / POINT_SCALING));
+
+    draw_list->AddLine(bound_p0, bound_p1, IM_COL32(0, 0, 255, 255));
+    draw_list->AddLine(bound_p1, bound_p2, IM_COL32(0, 0, 255, 255));
+    draw_list->AddLine(bound_p2, bound_p3, IM_COL32(0, 0, 255, 255));
+
+
+
     //Check the moues coordinates
         //If on the canvas
 
@@ -730,6 +749,9 @@ void frontend_cntrl::cust_traj_generator() {
 
     //Draw the Settings Section
     ImGui::Text("Settings");
+
+    ImGui::TextColored(ImVec4(0, 255, 0, 255), "Blue lines are approximate robot working boundaries");
+
     ImGui::SetCursorScreenPos(ImVec2(canvas_p1.x * 1.05, ImGui::GetCursorScreenPos().y));
     ImGui::Separator();
 
@@ -836,26 +858,31 @@ void frontend_cntrl::cust_traj_generator() {
     ImGui::SetCursorScreenPos(ImVec2(canvas_p1.x * 1.05, ImGui::GetCursorScreenPos().y));
 
     //Disable the start button if there are no points in the canvas
-    ImGui::BeginDisabled((cust_pnts.size() == 0));
+    ImGui::BeginDisabled((cust_pnts.empty()) or cust_name.empty());
 
     //Start button
     if (ImGui::Button("Start")) {
 
         
         //Generate the points - and setup the test manager
-        float X_POINT_BASE = -785;
-        float Y_POINT_BASE = 1505;
-        
-        //Scaled - 2000mm for no of canvas pixels 
+        float X_POINT_BASE = -526;
+        float Y_POINT_BASE = 1128;
 
-        float POINT_SCALING = 2000/CANVAS_SIZE;
 
         test_mgr.gen_trajectory.clear();
    
         for (int i = 0; i < cust_pnts.size(); i++) {
             //Translate and scale the points
-            test_mgr.gen_trajectory.push_back({ X_POINT_BASE + (cust_pnts[i].x * POINT_SCALING) , Y_POINT_BASE + (cust_pnts[i].y * POINT_SCALING), static_cast<float>(rob_height)});
+            //BASED ON SANDBOX BOUNDS NOT CANVAS!!!
+
+            float x_pos = X_POINT_BASE + ((cust_pnts[i].x - (CANVAS_SIZE * 0.1f)) * POINT_SCALING);
+            float y_pos = Y_POINT_BASE + ( ((CANVAS_SIZE * 0.9f) - cust_pnts[i].y) * POINT_SCALING);
+
+            test_mgr.gen_trajectory.push_back({ x_pos, y_pos, static_cast<float>(rob_height)});
             
+            std::cout << "X: " << x_pos << " Y: " << y_pos << "\n";
+
+
         }
 
 
