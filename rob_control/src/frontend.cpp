@@ -197,7 +197,18 @@ void frontend_cntrl::ABB_landing_page() {
 void frontend_cntrl::ABB_control_page() {
 
 
-    ImGui::Begin("ABB Control", &not_close_window);
+    ImGui::Begin("ABB Control", &not_close_window, ImGuiWindowFlags_MenuBar);
+
+    //Menu bar
+    if (ImGui::BeginMenuBar()) {
+        if (ImGui::BeginMenu("Tests")) {
+
+            ImGui::MenuItem("Custom Tests", NULL, &not_close_cust_traj_wind);
+
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenuBar();
+    }
 
 
     if (!connected) {
@@ -315,12 +326,7 @@ void frontend_cntrl::ABB_control_page() {
 
         //Ping test - PLACEHOLDER
         if (ImGui::CollapsingHeader("TEST FUNC")) {
-          
-
-            if (ImGui::Button("Test")) {
-
-                not_close_cust_traj_wind = true;
-            }            
+     
            
         }
 
