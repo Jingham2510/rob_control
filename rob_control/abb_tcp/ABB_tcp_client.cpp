@@ -131,6 +131,8 @@ int ABB_tcp_client::request(std::string request){
     const char *req = request.data();
 
 
+    
+
     std::cout << "REQ - " << request << "\n";
 
     //Attempt to send the request
@@ -151,7 +153,6 @@ std::string ABB_tcp_client::recieve(){
     char buff[2000];
     int recv_err;
     std::string response;
-
     
 
     //Attempt to read a reply from the socket

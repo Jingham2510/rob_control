@@ -19,9 +19,8 @@
 #include<vector>
 #include"../misc/string_tools.h"
 
-
-
-
+#include<opencv2/core.hpp>
+#include<opencv2/highgui.hpp>
 
 
 #ifndef FRONTEND
@@ -48,8 +47,6 @@ public:
 	//Close window flag
 	bool not_close_window = true;
 
-	//Custom trajecotry close window flag
-	bool not_close_cust_traj_wind = false;
 
 	//Test manager
 	test_manager test_mgr;
@@ -67,8 +64,6 @@ public:
 	//ABB robot control page
 	void ABB_control_page();
 
-	//Custom Test Generator Window
-	void cust_traj_generator();
 
 
 	//Displays in case of an error
@@ -111,7 +106,16 @@ private:
 	//pointers are private as only the gui should modify them
 	std::vector<bool*> page_flags;
 
+	//Custom trajecotry close window flag
+	bool not_close_cust_traj_wind = false;
+	//Custom Test Generator Window
+	void cust_traj_generator();
 
+
+	//Camera checker close window flag
+	bool not_close_cam_page = false;
+	//Camera checker window
+	void cam_window();
 
 	//List of IP presets from the config file
 	std::vector <std::vector<std::string>> ABB_ip_presets;

@@ -20,8 +20,6 @@ frontend_cntrl::frontend_cntrl() {
     //State flags
     connected = false;
 
-
-
     //Load config
     load_configs();
 
@@ -52,9 +50,6 @@ void frontend_cntrl::landing_page() {
     ImGui::End();
 
 }
-
-
-
 
 
 //Wrapper function which calls all the config loaders
@@ -207,6 +202,15 @@ void frontend_cntrl::ABB_control_page() {
 
             ImGui::EndMenu();
         }
+
+
+        if (ImGui::BeginMenu("Tools")) {
+
+            ImGui::MenuItem("Camera", NULL, &not_close_cam_page);
+
+            ImGui::EndMenu();
+        }
+
         ImGui::EndMenuBar();
     }
 
@@ -334,6 +338,13 @@ void frontend_cntrl::ABB_control_page() {
         if (not_close_cust_traj_wind == 1) {
             cust_traj_generator();
         }
+
+        if (not_close_cam_page == 1) {
+            cam_window();
+        }
+
+
+
 
         ImGui::End();
 
@@ -745,8 +756,6 @@ void frontend_cntrl::cust_traj_generator() {
  
     //Settings Logic-------------------------------------------
 
-   
-
 
     ImGui::TextColored(ImVec4(0, 255, 0, 255), "Green lines are the soilbox boundaries");
     //Move the cursor across the page
@@ -894,7 +903,6 @@ void frontend_cntrl::cust_traj_generator() {
 
         //Update the robot info
         ABB_rob.set_speed(rob_speed);
-        std::cout << "TEST\n";
 
         //Start the test
         test_mgr.set_data_path("C:/Users/User/Documents/Results/cust_test/" + cust_name);
@@ -914,4 +922,23 @@ void frontend_cntrl::cust_traj_generator() {
     ImGui::End();
 
     return;
+}
+
+
+
+void frontend_cntrl::cam_window() {
+
+    ImGui::Begin("Camera Check", &not_close_cam_page);
+
+    //Test the camera
+    if (ImGui::Button("Take pic")) {
+
+        cv::VideoCapture cap(0);
+
+
+    }
+
+
+
+    ImGui::End();
 }
