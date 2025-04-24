@@ -905,7 +905,7 @@ void frontend_cntrl::cust_traj_generator() {
         ABB_rob.set_speed(rob_speed);
 
         //Start the test
-        test_mgr.set_data_path("C:/Users/User/Documents/Results/cust_test/" + cust_name);
+        test_mgr.set_data_path("C:/Users/User/Documents/Results/cust_test/raw/" + cust_name);
         test_mgr.gen_test_title = cust_name;
 
 
