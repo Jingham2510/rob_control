@@ -933,7 +933,20 @@ void frontend_cntrl::cam_window() {
     //Test the camera
     if (ImGui::Button("Take pic")) {
 
-        cv::VideoCapture cap(0);
+        //Opens the first camera (webcam)
+        cv::VideoCapture cam(0);
+        cv::Mat pic;
+
+        //If it isn't connected to the camera - try and open the camera
+        while (!cam.isOpened()) {   
+            std::cout << "Failed to make connection to cam" << std::endl;
+            cam.open(0);
+        }
+        //Load the current frame into the pic variable
+        cam >> pic;
+
+        //Display the snapshot
+        cv::imshow("snap", pic);
 
 
     }

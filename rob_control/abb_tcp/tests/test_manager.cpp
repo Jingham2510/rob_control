@@ -627,9 +627,9 @@ void test_manager::test_selector(std::string test_name) {
 		gen_test_title = "Triangle";
 
 		//Define the three vertexes
-		std::vector<float> P1 = { 209, 1787, 85 };
-		std::vector<float> P2 = { -108, 2167, 85 };
-		std::vector<float> P3 = { 680, 2600, 85 };
+		std::vector<float> P1 = { 209, 1787, 100 };
+		std::vector<float> P2 = { -108, 2167, 100 };
+		std::vector<float> P3 = { 680, 2600, 100 };
 
 		gen_trajectory = { P1, P2, P3, P1 };
 
@@ -640,9 +640,9 @@ void test_manager::test_selector(std::string test_name) {
 		gen_test_title = "Circle";
 
 		//Define the centre point - needs to ve verified
-		std::vector<float> centre = { 200, 2160, 85 };
+		std::vector<float> centre = { 200, 2160, 100 };
 
-		int N = 5;
+		int N = 3;
 		int radius = 350;
 
 
@@ -656,7 +656,7 @@ void test_manager::test_selector(std::string test_name) {
 	if (test_name == "spiral_test") {
 		gen_test_title = "Spiral";
 		//Define the centre point - needs to ve verified
-		std::vector<float> centre = { 200, 2160, 85 };
+		std::vector<float> centre = { 200, 2160, 100 };
 
 		double start_r = 100;
 		double stop_r = 250;
@@ -683,12 +683,12 @@ void test_manager::test_selector(std::string test_name) {
 		gen_test_title = "Point loading";
 
 		//Define the starting point
-		std::vector<float> start_point = { 280, 2220, 185 };
+		std::vector<float> start_point = { 200, 2160, 160 };
 
 		//Define the point to load
-		std::vector<float> load_point = { 280, 2220, 85 };
+		std::vector<float> load_point = { 200, 2160, 100 };
 
-		int N = 5;
+		int N = 3;
 	
 		gen_trajectory.clear();
 		for (int i = 0; i < N; i++) {
