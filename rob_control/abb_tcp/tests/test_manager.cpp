@@ -335,8 +335,8 @@ void test_manager::gen_test() {
 		for (int i = 0; i < time_data.size(); i++) {
 
 			data_file << i << "," << time_data[i] << "," <<
-				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "]"
-				<< "[" << storage_3[i][0] << "," << storage_3[i][1] << "," << storage_3[i][2] << "]"
+				"[" << storage_1[i][0] << "," << storage_1[i][1] << "," << storage_1[i][2] << "],"
+				<< "[" << storage_3[i][0] << "," << storage_3[i][1] << "," << storage_3[i][2] << "],"
 				<< "[" << storage_2[i][0] << "," << storage_2[i][1] << "," << storage_2[i][2] << "," << storage_2[i][3] << "," << storage_2[i][4] << "," << storage_2[i][5] << "]" <<
 				"\n";
 		}
